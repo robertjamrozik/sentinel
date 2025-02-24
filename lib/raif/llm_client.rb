@@ -1,0 +1,50 @@
+# frozen_string_literal: true
+
+require_relative "adapters/base"
+require_relative "adapters/open_ai"
+require_relative "adapters/bedrock"
+
+module Raif
+  class LlmClient
+    attr_accessor :adapter
+
+    def initialize(model_name:)
+      model_config = Raif::LlmClient.model_config[model_name.to_sym]
+      raise ArgumentError, "Invalid model name - #{model_name}" unless model_config.present?
+
+      @adapter = model_config[:adapter].new(model_api_name: model_config[:model_api_name])
+    end
+
+    def chat(messages:, system_prompt: nil)
+      return unless Raif.config.llm_api_requests_enabled
+
+      adapter.chat(messages: messages, system_prompt: system_prompt)
+    end
+
+    def self.available_models
+      model_config.keys
+    end
+
+    def self.model_config
+      # WARNING: DO NOT CHANGE THE ORDER OF THE KEYS
+      {
+        open_ai_gpt_4o_mini: {
+          model_api_name: "gpt-4o-mini",
+          adapter: Raif::Adapters::OpenAi
+        }.freeze,
+        open_ai_gpt_4o: {
+          model_api_name: "gpt-4o",
+          adapter: Raif::Adapters::OpenAi
+        }.freeze,
+        open_ai_gpt_3_5_turbo: {
+          model_api_name: "gpt-3.5-turbo",
+          adapter: Raif::Adapters::OpenAi
+        }.freeze,
+        bedrock_claude_3_5_sonnet: {
+          model_api_name: "anthropic.claude-3-5-sonnet-20240620-v1:0",
+          adapter: Raif::Adapters::Bedrock
+        }
+      }.freeze
+    end
+  end
+end
