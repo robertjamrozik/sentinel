@@ -8,5 +8,5 @@ gemspec
 gem "puma"
 gem "pg"
 gem "factory_bot_rails"
-gem "rspec", "~> 3.12"
+gem "rspec-rails"
 gem "rubocop-shopify"
