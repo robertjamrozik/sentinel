@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
+begin
+  require "factory_bot_rails"
+rescue LoadError # rubocop:disable Lint/SuppressedException
+end
+
 module Raif
   class Engine < ::Rails::Engine
     isolate_namespace Raif
 
     if defined?(FactoryBotRails)
+      puts "Adding factory paths"
       config.factory_bot.definition_file_paths += [File.expand_path("../../../spec/factories", __FILE__)]
     end
 

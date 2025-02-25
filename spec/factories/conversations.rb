@@ -2,8 +2,6 @@
 
 FactoryBot.define do
   factory :sentinel_conversation, class: "Raif::Conversation" do
-    creator factory: :sentinel_test_user
-
     trait :with_entries do
       transient do
         entries_count { 3 }

@@ -22,4 +22,11 @@ en:
       tr: "Turkish"
       he: "Hebrew"
       th: "Thai"
+      uk: "Ukrainian"
       vi: "Vietnamese" 
+    model_names:
+      open_ai_gpt_4o_mini: "OpenAI GPT-4o Mini"
+      open_ai_gpt_4o: "OpenAI GPT-4o"
+      open_ai_gpt_3_5_turbo: "OpenAI GPT-3.5 Turbo"
+      bedrock_claude_3_5_sonnet: "Anthropic Claude 3.5 Sonnet (via AWS Bedrock)"
+      

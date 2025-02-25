@@ -18,7 +18,7 @@ module Raif
     boolean_timestamp :failed_at
 
     validates :response_format, presence: true, inclusion: { in: response_formats.keys }
-    validates :llm_model_name, presence: true, inclusion: { in: Raif.available_models.map(&:to_s) }
+    validates :llm_model_name, presence: true, inclusion: { in: Raif.available_models }
     validates :requested_language_key, inclusion: { in: I18n.t("sentinel.languages").keys, allow_blank: true }
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
@@ -104,8 +104,11 @@ module Raif
     def system_prompt_language_preference
       return if requested_language_key.blank?
 
-      language_name = I18n.t("sentinel.languages.#{requested_language_key}", locale: "en")
-      "You're collaborating with teammate who speaks #{language_name}. Please respond in #{language_name}."
+      "You're collaborating with teammate who speaks #{requested_language_name}. Please respond in #{requested_language_name}."
+    end
+
+    def requested_language_name
+      @requested_language_name ||= I18n.t("sentinel.languages.#{requested_language_key}", locale: "en")
     end
 
     def llm_client

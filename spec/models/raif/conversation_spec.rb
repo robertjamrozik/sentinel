@@ -3,9 +3,11 @@
 require "rails_helper"
 
 RSpec.describe Raif::Conversation, type: :model do
+  let(:creator) { Raif::TestUser.create!(email: "test@example.com") }
+
   describe "#llm_messages" do
     it "returns the messages" do
-      conversation = FB.create(:sentinel_conversation, :with_entries)
+      conversation = FB.create(:sentinel_conversation, :with_entries, creator: creator)
       expect(conversation.entries.count).to eq(3)
 
       messages = conversation.entries.oldest_first.map do |entry|

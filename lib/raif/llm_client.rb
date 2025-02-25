@@ -25,7 +25,7 @@ module Raif
     end
 
     def self.available_models
-      model_config.keys
+      model_config.keys.map(&:to_s)
     end
 
     def self.model_config

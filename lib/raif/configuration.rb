@@ -8,7 +8,7 @@ module Raif
 
     def initialize
       @aws_bedrock_region = "us-east-1"
-      @default_llm_model_name = :open_ai_gpt_4o
+      @default_llm_model_name = "open_ai_gpt_4o"
       @llm_api_requests_enabled = true
     end
 
