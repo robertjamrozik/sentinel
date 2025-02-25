@@ -3,11 +3,13 @@
 module Raif
   class Configuration
     attr_accessor :aws_bedrock_region,
+      :base_system_prompt,
       :default_llm_model_name,
       :llm_api_requests_enabled
 
     def initialize
       @aws_bedrock_region = "us-east-1"
+      @base_system_prompt = "You are a friendly assistant."
       @default_llm_model_name = "open_ai_gpt_4o"
       @llm_api_requests_enabled = true
     end

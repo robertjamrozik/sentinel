@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Raif::Adapters::Test
+class Raif::TestClient
   attr_accessor :chat_handler
 
   def chat(messages:, system_prompt: nil)

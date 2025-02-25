@@ -2,6 +2,7 @@
 
 require "sentinel/version"
 require "sentinel/root"
+require "sentinel/languages"
 require "sentinel/engine"
 require "sentinel/configuration"
 require "sentinel/errors"

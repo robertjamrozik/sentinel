@@ -2,7 +2,6 @@
 
 class Raif::TestModelTool < Raif::ModelTool
   def process_invocation(tool_arguments)
-    puts "INVOCATION: #{tool_arguments}"
   end
 
   def tool_arguments_schema

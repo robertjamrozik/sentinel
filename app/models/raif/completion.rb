@@ -19,7 +19,7 @@ module Raif
 
     validates :response_format, presence: true, inclusion: { in: response_formats.keys }
     validates :llm_model_name, presence: true, inclusion: { in: Raif.available_models }
-    validates :requested_language_key, inclusion: { in: I18n.t("sentinel.languages").keys, allow_blank: true }
+    validates :requested_language_key, inclusion: { in: Raif.supported_languages, allow_blank: true }
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
 
@@ -49,7 +49,6 @@ module Raif
       populate_prompts
 
       update_columns(started_at: Time.current) if started_at.nil?
-
       reply = llm_client.chat(messages: messages, system_prompt: system_prompt)
 
       update({
@@ -96,7 +95,7 @@ module Raif
     end
 
     def build_system_prompt
-      system_prompt = "You are a friendly assistant."
+      system_prompt = Raif.config.base_system_prompt || "You are a friendly assistant."
       system_prompt += " #{system_prompt_language_preference}" if requested_language_key.present?
       system_prompt
     end
