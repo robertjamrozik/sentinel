@@ -17,10 +17,9 @@ module Raif
     boolean_timestamp :completed_at
     boolean_timestamp :failed_at
 
-    before_validation :populate_prompts, if: :new_record?
-
     validates :response_format, presence: true, inclusion: { in: response_formats.keys }
     validates :llm_model_name, presence: true, inclusion: { in: Raif.available_models.map(&:to_s) }
+    validates :requested_language_key, inclusion: { in: I18n.t("sentinel.languages").keys, allow_blank: true }
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
 
@@ -47,6 +46,8 @@ module Raif
     end
 
     def run
+      populate_prompts
+
       update_columns(started_at: Time.current) if started_at.nil?
 
       reply = llm_client.chat(messages: messages, system_prompt: system_prompt)
