@@ -23,6 +23,8 @@ module Raif
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
 
+    before_validation ->{ self.llm_model_name ||= default_llm_model_name }
+
     def self.llm_response_format(format)
       raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
 
@@ -62,7 +64,7 @@ module Raif
       parsed_response
     end
 
-    def self.run(creator:, available_model_tools: nil, llm_model_name: Raif.config.default_llm_model_name, **args)
+    def self.run(creator:, available_model_tools: nil, llm_model_name: nil, **args)
       completion = create!(creator:, llm_model_name:, available_model_tools:, started_at: Time.current, **args)
       completion.run
     rescue StandardError => e
@@ -108,6 +110,10 @@ module Raif
 
     def requested_language_name
       @requested_language_name ||= I18n.t("sentinel.languages.#{requested_language_key}", locale: "en")
+    end
+
+    def default_llm_model_name
+      Raif.config.default_llm_model_name
     end
 
     def llm_client
