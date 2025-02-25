@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
-class Raif::TestTool < Llm::ModelTool
+class Raif::TestModelTool < Raif::ModelTool
+  def process_invocation(tool_arguments)
+    puts "INVOCATION: #{tool_arguments}"
+  end
+
   def tool_arguments_schema
     {
       type: "array",

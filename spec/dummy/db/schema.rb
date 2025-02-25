@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_24_234252) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,12 +26,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_24_234252) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "system_prompt"
-    t.integer "requested_language_key", default: 0, null: false
+    t.string "requested_language_key"
     t.integer "response_format", default: 0, null: false
     t.bigint "sentinel_conversation_entry_id"
+    t.datetime "started_at"
+    t.datetime "completed_at"
     t.datetime "failed_at"
     t.jsonb "available_model_tools"
-    t.integer "llm_model_name", null: false
+    t.string "llm_model_name", null: false
     t.index ["sentinel_conversation_entry_id"], name: "index_sentinel_completions_on_sentinel_conversation_entry_id", unique: true
     t.index ["type"], name: "index_sentinel_completions_on_type"
   end
@@ -53,7 +55,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_24_234252) do
   create_table "sentinel_conversations", force: :cascade do |t|
     t.bigint "creator_id"
     t.string "creator_type"
-    t.string "type", null: false
+    t.string "type"
     t.integer "conversation_entries_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -66,6 +68,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_24_234252) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["sentinel_completion_id"], name: "index_sentinel_model_tool_invocations_on_sentinel_completion_id"
+  end
+
+  create_table "sentinel_test_users", force: :cascade do |t|
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sentinel_user_tool_invocations", force: :cascade do |t|

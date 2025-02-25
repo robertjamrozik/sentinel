@@ -2,7 +2,7 @@
 
 module Raif
   class Completion < Raif::ApplicationRecord
-    belongs_to :creator, class_name: "User"
+    belongs_to :creator, polymorphic: true
     belongs_to :sentinel_conversation_entry, class_name: "Raif::ConversationEntry", optional: true
 
     has_many :model_tool_invocations,
@@ -13,11 +13,14 @@ module Raif
 
     enum :response_format, { text: 0, json: 1, html: 2 }, prefix: true
 
+    boolean_timestamp :started_at
+    boolean_timestamp :completed_at
     boolean_timestamp :failed_at
 
     before_validation :populate_prompts, if: :new_record?
 
     validates :response_format, presence: true, inclusion: { in: response_formats.keys }
+    validates :llm_model_name, presence: true, inclusion: { in: Raif.available_models.map(&:to_s) }
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
 
@@ -34,7 +37,7 @@ module Raif
     end
 
     def populate_prompts
-      self.requested_language_key ||= creator.preferred_language_key
+      self.requested_language_key ||= creator.preferred_language_key if creator.respond_to?(:preferred_language_key)
       self.prompt = build_prompt
       self.system_prompt = build_system_prompt
     end
@@ -44,20 +47,23 @@ module Raif
     end
 
     def run
+      update_columns(started_at: Time.current) if started_at.nil?
+
       reply = llm_client.chat(messages: messages, system_prompt: system_prompt)
 
       update({
         prompt_tokens: reply[:prompt_tokens],
         completion_tokens: reply[:completion_tokens],
-        response: reply[:response],
+        response: reply[:response]
       })
 
       process_model_tool_invocations
+      completed!
       parsed_response
     end
 
-    def self.run(creator:, available_model_tools: nil, llm_model_name:, **args)
-      completion = create!(creator:, llm_model_name:, available_model_tools:, **args)
+    def self.run(creator:, available_model_tools: nil, llm_model_name: Raif.config.default_llm_model_name, **args)
+      completion = create!(creator:, llm_model_name:, available_model_tools:, started_at: Time.current, **args)
       completion.run
     rescue StandardError => e
       completion&.failed!
@@ -89,17 +95,16 @@ module Raif
     end
 
     def build_system_prompt
-      "You are a geopolitical analyst working for a think tank. #{system_prompt_language_preference}"
+      system_prompt = "You are a friendly assistant."
+      system_prompt += " #{system_prompt_language_preference}" if requested_language_key.present?
+      system_prompt
     end
 
     def system_prompt_language_preference
-      # This could be running with I18n.locale set to a different language, so we need to specify en since our prompts are all in English
-      language_name = language_name(creator.preferred_language_key)
-      "You're collaborating with teammate who speaks #{language_name}. Please respond in #{language_name}."
-    end
+      return if requested_language_key.blank?
 
-    def language_name(language_key)
-      I18n.t("common.languages.#{language_key}", locale: "en")
+      language_name = I18n.t("sentinel.languages.#{requested_language_key}", locale: "en")
+      "You're collaborating with teammate who speaks #{language_name}. Please respond in #{language_name}."
     end
 
     def llm_client

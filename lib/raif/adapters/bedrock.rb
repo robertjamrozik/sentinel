@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
+require "aws-sdk-bedrock"
+require "aws-sdk-bedrockruntime"
+
 module Raif
   module Adapters
     class Bedrock < Base
 
       def initialize(**args)
-        args[:client] ||= Aws::BedrockRuntime::Client.new(region: ENV["AWS_REGION"])
+        args[:client] ||= Aws::BedrockRuntime::Client.new(region: Raif.config.aws_bedrock_region)
         super(**args)
       end
 

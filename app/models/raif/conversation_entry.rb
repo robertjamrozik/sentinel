@@ -2,9 +2,9 @@
 
 class Raif::ConversationEntry < Raif::ApplicationRecord
   belongs_to :sentinel_conversation, counter_cache: true, class_name: "Raif::Conversation"
-  belongs_to :creator, class_name: "User"
+  belongs_to :creator, polymorphic: true
 
-  has_one :user_tool_invocation,
+  has_one :sentinel_user_tool_invocation,
     class_name: "Raif::UserToolInvocation",
     dependent: :destroy,
     foreign_key: :sentinel_conversation_entry_id,
@@ -18,16 +18,16 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
 
   delegate :prompt, :response, to: :sentinel_completion, prefix: true
 
-  accepts_nested_attributes_for :user_tool_invocation
+  accepts_nested_attributes_for :sentinel_user_tool_invocation
 
   boolean_timestamp :started_at
   boolean_timestamp :completed_at
   boolean_timestamp :failed_at
 
   def full_user_message
-    if user_tool_invocation.present?
+    if sentinel_user_tool_invocation.present?
       <<~MESSAGE
-        #{user_tool_invocation.as_user_message}
+        #{sentinel_user_tool_invocation.as_user_message}
 
         #{user_message}
       MESSAGE

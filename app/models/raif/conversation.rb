@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Raif::Conversation < Raif::ApplicationRecord
-  belongs_to :creator, class_name: "User"
+  belongs_to :creator, polymorphic: true
 
   has_many :entries, class_name: "Raif::ConversationEntry", dependent: :destroy, foreign_key: :sentinel_conversation_id, inverse_of: :sentinel_conversation
   has_many :sentinel_completions, through: :entries

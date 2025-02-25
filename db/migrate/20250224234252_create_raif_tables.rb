@@ -14,12 +14,14 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.datetime :created_at, null: false
       t.datetime :updated_at, null: false
       t.text :system_prompt
-      t.integer :requested_language_key, default: 0, null: false
+      t.string :requested_language_key
       t.integer :response_format, default: 0, null: false
       t.bigint :sentinel_conversation_entry_id
+      t.datetime :started_at
+      t.datetime :completed_at
       t.datetime :failed_at
       t.jsonb :available_model_tools
-      t.integer :llm_model_name, null: false
+      t.string :llm_model_name, null: false
     end
 
     add_index :sentinel_completions, :sentinel_conversation_entry_id, unique: true
@@ -43,7 +45,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
     create_table :sentinel_conversations do |t|
       t.bigint :creator_id
       t.string :creator_type
-      t.string :type, null: false
+      t.string :type
       t.integer :conversation_entries_count, default: 0, null: false
       t.datetime :created_at, null: false
       t.datetime :updated_at, null: false

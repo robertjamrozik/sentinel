@@ -16,7 +16,10 @@ module Raif
     end
 
     def chat(messages:, system_prompt: nil)
-      return unless Raif.config.llm_api_requests_enabled
+      unless Raif.config.llm_api_requests_enabled
+        Raif.logger.warn("LLM API requests are disabled. Skipping request to #{adapter.model_api_name}.")
+        return
+      end
 
       adapter.chat(messages: messages, system_prompt: system_prompt)
     end
