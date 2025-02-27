@@ -1,0 +1,24 @@
+<%= simple_form_for conversation_entry,
+      url: sentinel.conversation_entries_path(conversation) do |f| %>
+
+  <% if conversation_entry.sentinel_user_tool_invocation %>
+    <%= hidden_field_tag :user_tool_type, conversation_entry.sentinel_user_tool_invocation.class.name %>
+
+    <%= f.simple_fields_for :sentinel_user_tool_invocation do |builder| %>
+      <%= render "sentinel/user_tool_invocations/form/#{conversation_entry.sentinel_user_tool_invocation.tool_key}_fields", f: builder %>
+    <% end %>
+  <% end %>
+
+  <div class="d-flex">
+    <%= f.text_field :user_message,
+          class: "form-control me-2",
+          placeholder: conversation_entry.sentinel_user_tool_invocation&.message_input_placeholder.presence || t("sentinel.common.type_your_message"),
+          aria_label: conversation_entry.sentinel_user_tool_invocation&.message_input_placeholder.presence || t("sentinel.common.type_your_message") %>
+
+    <div class="d-flex justify-content-end align-items-end">
+      <%= button_tag type: "submit", class: "btn btn-primary d-flex align-items-center" do %>
+        <%= fa_icon("paper-plane", classes: "me-2") %> <%= t("sentinel.common.send") %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

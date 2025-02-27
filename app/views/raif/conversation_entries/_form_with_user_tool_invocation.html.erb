@@ -1,0 +1,16 @@
+<div class="card text-dark bg-light">
+  <div class="card-header py-2 px-3">
+    <div class="d-flex align-items-center">
+      <h5 class="mb-0 text-uppercase flex-grow-1"><%= conversation_entry.sentinel_user_tool_invocation.tool_name %></h5>
+
+      <%= link_to sentinel.new_conversation_entry_path(conversation), class: "text-dark", data: { turbo_stream: true } do %>
+        <%= fa_icon("times") %>
+      <% end %>
+    </div>
+  </div>
+  <div class="card-body py-2 px-3">
+    <%= render "sentinel/conversation_entries/form",
+          conversation: conversation,
+          conversation_entry: conversation_entry %>
+  </div>
+</div>

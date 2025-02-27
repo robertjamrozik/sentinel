@@ -1,0 +1,26 @@
+<div id="<%= dom_id(conversation_entry) %>" class="my-2">
+  <%= render "sentinel/conversation_entries/message",
+        conversation_entry: conversation_entry,
+        content: conversation_entry.full_user_message,
+        message_type: :user %>
+
+  <% if conversation_entry.model_response_message.present? || conversation_entry.generating_response? %>
+    <%= render "sentinel/conversation_entries/message",
+          conversation_entry: conversation_entry,
+          content: conversation_entry.model_response_message.presence || content_tag(:span, "", class: 'arc-spinner'),
+          message_type: :model_response %>
+
+    <% conversation_entry.model_tool_invocations.each do |ti| %>
+      <div class="mb-4 container">
+        <%= render ti, conversation_entry: conversation_entry %>
+      </div>
+    <% end %>
+  <% elsif conversation_entry.failed? %>
+    <div class="mb-4 container">
+      <%= render "sentinel/conversation_entries/message",
+            conversation_entry: conversation_entry,
+            content: t("sentinel.common.there_was_an_error_generating_this_response"),
+            message_type: :model_response %>
+    </div>
+  <% end %>
+</div>

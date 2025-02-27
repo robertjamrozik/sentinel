@@ -1,5 +1,10 @@
 en:
   sentinel:
+    common:
+      send: "Send"
+      tools: "Tools"
+      type_your_message: "Type your message..."
+      there_was_an_error_generating_this_response: "There was an error generating this response"
     languages:
       en: "English"
       fr: "French"

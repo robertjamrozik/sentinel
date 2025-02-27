@@ -60,7 +60,7 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   end
 
   def generating_response?
-    started? && !completed?
+    started? && !completed? && !failed?
   end
 
   def model_tool_invocations

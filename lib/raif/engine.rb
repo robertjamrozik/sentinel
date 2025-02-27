@@ -10,7 +10,6 @@ module Raif
     isolate_namespace Raif
 
     if defined?(FactoryBotRails)
-      puts "Adding factory paths"
       config.factory_bot.definition_file_paths += [File.expand_path("../../../spec/factories", __FILE__)]
     end
 
