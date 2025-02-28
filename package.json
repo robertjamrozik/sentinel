@@ -1,0 +1,21 @@
+{
+  "name": "app",
+  "private": "true",
+  "dependencies": {
+    "autoprefixer": "^10.4.20",
+    "@parcel/watcher": "^2.5.0",
+    "nodemon": "^3.1.7",
+    "postcss": "^8.4.47",
+    "postcss-cli": "^11.0.0",
+    "sass": "^1.80.4"
+  },
+  "scripts": {
+    "build:css:compile:sentinel": "sass ./app/assets/stylesheets/sentinel/application.scss:./app/assets/builds/sentinel.css --no-source-map --load-path=node_modules --load-path=vendor/stylesheets",
+    "build:css:prefix:sentinel": "postcss ./app/assets/builds/sentinel.css --use=autoprefixer --output=./app/assets/builds/sentinel.css",
+    "build:css": "yarn build:css:compile:sentinel && yarn build:css:prefix:sentinel",
+    "watch:css": "nodemon --watch ./app/assets/stylesheets/ --watch ./vendor/stylesheets/ --ext scss --exec \"yarn build:css\""
+  },
+  "browserslist": [
+    "defaults"
+  ]
+}

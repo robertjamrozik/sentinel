@@ -15,7 +15,7 @@ module Raif
 
       Turbo::StreamsChannel.broadcast_action_to(
         conversation,
-        action: :scroll_to_bottom,
+        action: :sentinel_scroll_to_bottom,
         target: dom_id(conversation, :entries)
       )
     end

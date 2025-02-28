@@ -7,7 +7,7 @@
   <% if conversation_entry.model_response_message.present? || conversation_entry.generating_response? %>
     <%= render "sentinel/conversation_entries/message",
           conversation_entry: conversation_entry,
-          content: conversation_entry.model_response_message.presence || content_tag(:span, "", class: 'arc-spinner'),
+          content: conversation_entry.model_response_message.presence || content_tag(:span, "", class: "sentinel-loader"),
           message_type: :model_response %>
 
     <% conversation_entry.model_tool_invocations.each do |ti| %>
