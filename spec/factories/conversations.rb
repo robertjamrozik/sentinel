@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+Raif.config.conversation_types += ["Raif::TestConversation"]
+
 FactoryBot.define do
   factory :sentinel_conversation, class: "Raif::Conversation" do
     trait :with_entries do

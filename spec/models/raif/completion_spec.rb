@@ -2,10 +2,11 @@
 
 require "rails_helper"
 
-RSpec.describe Raif::ConversationEntry, type: :model do
+RSpec.describe Raif::Completion, type: :model do
   describe "#build_system_prompt" do
-    it "returns the system prompt" do
+    it "returns the system prompt with no language preference" do
       completion = FB.build(:sentinel_completion)
+      expect(completion.requested_language_key).to be_nil
       expect(completion.build_system_prompt).to eq("You are a friendly assistant.")
     end
 

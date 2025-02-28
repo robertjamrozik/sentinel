@@ -8,6 +8,8 @@ class Raif::Conversation < Raif::ApplicationRecord
 
   validates :type, inclusion: { in: Raif.config.conversation_types }
 
+  before_validation ->{ self.type ||= "Raif::Conversation" }, on: :create
+
   def available_model_tools
     []
   end
