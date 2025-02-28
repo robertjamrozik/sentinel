@@ -1,3 +1,4 @@
+<%# locals: () %>
 <%= turbo_stream_from conversation %>
 
 <div id="<%= dom_id(conversation, :entries) %>" class="flex-grow-1 me-4 overflow-auto" data-controller="sentinel--conversations">

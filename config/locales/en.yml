@@ -1,37 +1,38 @@
+---
 en:
   sentinel:
     common:
-      send: "Send"
-      tools: "Tools"
-      type_your_message: "Type your message..."
-      there_was_an_error_generating_this_response: "There was an error generating this response"
+      send: Send
+      there_was_an_error_generating_this_response: There was an error generating this
+        response
+      tools: Tools
+      type_your_message: Type your message...
     languages:
-      en: "English"
-      fr: "French"
-      es: "Spanish"
-      de: "German"
-      it: "Italian"
-      pt: "Portuguese"
-      ru: "Russian"
-      zh: "Chinese"
-      ja: "Japanese"
-      ko: "Korean"
-      ar: "Arabic"
-      hi: "Hindi"
-      nl: "Dutch"
-      sv: "Swedish"
-      fi: "Finnish"
-      no: "Norwegian"
-      da: "Danish"
-      pl: "Polish"
-      tr: "Turkish"
-      he: "Hebrew"
-      th: "Thai"
-      uk: "Ukrainian"
-      vi: "Vietnamese" 
+      ar: Arabic
+      da: Danish
+      de: German
+      en: English
+      es: Spanish
+      'false': Norwegian
+      fi: Finnish
+      fr: French
+      he: Hebrew
+      hi: Hindi
+      it: Italian
+      ja: Japanese
+      ko: Korean
+      nl: Dutch
+      pl: Polish
+      pt: Portuguese
+      ru: Russian
+      sv: Swedish
+      th: Thai
+      tr: Turkish
+      uk: Ukrainian
+      vi: Vietnamese
+      zh: Chinese
     model_names:
-      open_ai_gpt_4o_mini: "OpenAI GPT-4o Mini"
-      open_ai_gpt_4o: "OpenAI GPT-4o"
-      open_ai_gpt_3_5_turbo: "OpenAI GPT-3.5 Turbo"
-      bedrock_claude_3_5_sonnet: "Anthropic Claude 3.5 Sonnet (via AWS Bedrock)"
-      
+      bedrock_claude_3_5_sonnet: Anthropic Claude 3.5 Sonnet (via AWS Bedrock)
+      open_ai_gpt_3_5_turbo: OpenAI GPT-3.5 Turbo
+      open_ai_gpt_4o: OpenAI GPT-4o
+      open_ai_gpt_4o_mini: OpenAI GPT-4o Mini

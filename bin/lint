@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+
+# Check if the -a flag is passed
+if [ "$1" = "-a" ]; then
+  RUBOCOP_CMD="rubocop -a"
+  ERBLINT_CMD="bundle exec erb_lint --lint-all --enable-all-linters -a"
+  I18N_CMD="bundle exec i18n-tasks normalize"
+else
+  RUBOCOP_CMD="rubocop"
+  ERBLINT_CMD="bundle exec erb_lint --lint-all --enable-all-linters"
+  I18N_CMD="bundle exec i18n-tasks health"
+fi
+
+echo "==> Running rubocop\n"
+$RUBOCOP_CMD
+
+echo "\n\n==> Running erb lint\n"
+$ERBLINT_CMD
+
+echo "\n\n==> Running i18n-tasks\n"
+$I18N_CMD
+
+if [ "$1" = "-a" ]; then
+  echo "\n\n==> Running i18n-tasks health\n"
+  bundle exec i18n-tasks health
+fi
