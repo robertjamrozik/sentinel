@@ -4,7 +4,7 @@ class Raif::ConversationsController < Raif::ApplicationController
   before_action :validate_conversation_type
 
   def show
-    @conversations = sentinel_conversations_scope(sentinel_current_user)
+    @conversations = conversations_scope
 
     @conversation = if params[:id] == "latest"
       if @conversations.any?
@@ -25,12 +25,8 @@ private
     sentinel_conversation_type.new(creator: sentinel_current_user)
   end
 
-  def sentinel_conversations_scope(sentinel_current_user)
-    if Raif.config.conversations_scope.respond_to?(:call)
-      instance_exec(sentinel_current_user, &Raif.config.conversations_scope)
-    else
-      sentinel_conversation_type.newest_first.where(creator: sentinel_current_user)
-    end
+  def conversations_scope
+    sentinel_conversation_type.newest_first.where(creator: sentinel_current_user)
   end
 
   def validate_conversation_type
