@@ -34,18 +34,22 @@ module Raif
 
     MODEL_CONFIG = {
       open_ai_gpt_4o_mini: {
+        # i18n-tasks-use t('sentinel.model_names.open_ai_gpt_4o_mini')
         model_api_name: "gpt-4o-mini",
         adapter: Raif::Adapters::OpenAi
       }.freeze,
       open_ai_gpt_4o: {
+        # i18n-tasks-use t('sentinel.model_names.open_ai_gpt_4o')
         model_api_name: "gpt-4o",
         adapter: Raif::Adapters::OpenAi
       }.freeze,
       open_ai_gpt_3_5_turbo: {
+        # i18n-tasks-use t('sentinel.model_names.open_ai_gpt_3_5_turbo')
         model_api_name: "gpt-3.5-turbo",
         adapter: Raif::Adapters::OpenAi
       }.freeze,
       bedrock_claude_3_5_sonnet: {
+        # i18n-tasks-use t('sentinel.model_names.bedrock_claude_3_5_sonnet')
         model_api_name: "anthropic.claude-3-5-sonnet-20240620-v1:0",
         adapter: Raif::Adapters::Bedrock
       }

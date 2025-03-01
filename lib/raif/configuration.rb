@@ -29,7 +29,7 @@ module Raif
     def validate!
       unless Raif::LlmClient.available_models.include?(default_llm_model_name)
         raise Raif::Errors::InvalidConfigError,
-          "Raif.config.default_llm_model_name was set to #{default_llm_model_name}, but must be one of: #{Raif::LlmClient.available_models.join(", ")}"
+          "Raif.config.default_llm_model_name was set to #{default_llm_model_name}, but must be one of: #{Raif::LlmClient.available_models.join(", ")}" # rubocop:disable Layout/LineLength
       end
 
       if @authorize_controller_action.respond_to?(:call)

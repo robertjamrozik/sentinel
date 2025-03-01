@@ -3,8 +3,7 @@ en:
   sentinel:
     common:
       send: Send
-      there_was_an_error_generating_this_response: There was an error generating this
-        response
+      there_was_an_error_generating_this_response: There was an error generating this response
       tools: Tools
       type_your_message: Type your message...
     languages:
@@ -13,7 +12,6 @@ en:
       de: German
       en: English
       es: Spanish
-      'false': Norwegian
       fi: Finnish
       fr: French
       he: Hebrew
