@@ -2,11 +2,8 @@
 
 require_relative "concerns/boolean_timestamp"
 
-require "attr_json"
-
 class Raif::ApplicationRecord < ActiveRecord::Base
   include Raif::BooleanTimestamp
-  include AttrJson::Record
 
   self.abstract_class = true
 

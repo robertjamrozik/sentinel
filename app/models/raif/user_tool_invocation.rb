@@ -3,8 +3,6 @@
 class Raif::UserToolInvocation < Raif::ApplicationRecord
   belongs_to :sentinel_conversation_entry, class_name: "Raif::ConversationEntry"
 
-  attr_json_config default_container_attribute: :tool_settings
-
   delegate :tool_name, :tool_key, to: :class
 
   def message_input_placeholder
