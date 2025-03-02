@@ -2,7 +2,7 @@
 
 require_relative "concerns/boolean_timestamp"
 
-class Raif::ApplicationRecord < ActiveRecord::Base
+class Raif::ApplicationRecord < Raif.config.model_superclass.constantize
   include Raif::BooleanTimestamp
 
   self.abstract_class = true

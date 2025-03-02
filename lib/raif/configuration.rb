@@ -11,6 +11,7 @@ module Raif
       :current_user_method,
       :default_llm,
       :llm_api_requests_enabled,
+      :model_superclass,
       :user_tool_types
 
     def initialize
@@ -23,6 +24,7 @@ module Raif
       @current_user_method = :current_user
       @default_llm = "open_ai_gpt_4o"
       @llm_api_requests_enabled = true
+      @model_superclass = "ApplicationRecord"
       @user_tool_types = []
     end
 
@@ -32,8 +34,8 @@ module Raif
           "Raif.config.default_llm was set to #{default_llm}, but must be one of: #{Raif.available_llm_keys.join(", ")}"
       end
 
-      if @authorize_controller_action.respond_to?(:call)
-        @authorize_controller_action.freeze
+      if authorize_controller_action.respond_to?(:call)
+        authorize_controller_action.freeze
       else
         raise Raif::Errors::InvalidConfigError,
           "Raif.config.authorize_controller_action must respond to :call and return a boolean"
