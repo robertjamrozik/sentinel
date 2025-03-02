@@ -20,6 +20,33 @@ module Raif
       g.factory_bot dir: "spec/factories"
     end
 
+    initializer "sentinel.register_available_llms" do
+      [
+        {
+          key: :open_ai_gpt_4o_mini,
+          api_name: "gpt-4o-mini",
+          api_adapter: Raif::ApiAdapters::OpenAi
+        },
+        {
+          key: :open_ai_gpt_4o,
+          api_name: "gpt-4o",
+          api_adapter: Raif::ApiAdapters::OpenAi
+        },
+        {
+          key: :open_ai_gpt_3_5_turbo,
+          api_name: "gpt-3.5-turbo",
+          api_adapter: Raif::ApiAdapters::OpenAi
+        },
+        {
+          key: :bedrock_claude_3_5_sonnet,
+          api_name: "anthropic.claude-3-5-sonnet-20240620-v1:0",
+          api_adapter: Raif::ApiAdapters::Bedrock
+        }
+      ].each do |llm_config|
+        Raif.register_llm(llm_config)
+      end
+    end
+
     initializer "sentinel.validate_config" do
       Raif.config.validate!
     end

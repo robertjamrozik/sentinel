@@ -4,7 +4,7 @@ require "aws-sdk-bedrock"
 require "aws-sdk-bedrockruntime"
 
 module Raif
-  module Adapters
+  module ApiAdapters
     class Bedrock < Base
 
       def initialize(**args)

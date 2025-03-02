@@ -18,12 +18,12 @@ module Raif
     boolean_timestamp :failed_at
 
     validates :response_format, presence: true, inclusion: { in: response_formats.keys }
-    validates :llm_model_name, presence: true, inclusion: { in: Raif.available_models }
+    validates :llm_model_name, presence: true, inclusion: { in: Raif.available_llm_keys.map(&:to_s) }
     validates :requested_language_key, inclusion: { in: Raif.supported_languages, allow_blank: true }
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
 
-    before_validation ->{ self.llm_model_name ||= default_llm_model_name }
+    before_validation ->{ self.llm_model_name ||= default_llm }
 
     def self.llm_response_format(format)
       raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
@@ -51,7 +51,7 @@ module Raif
       populate_prompts
 
       update_columns(started_at: Time.current) if started_at.nil?
-      reply = llm_client.chat(messages: messages, system_prompt: system_prompt)
+      reply = llm.chat(messages: messages, system_prompt: system_prompt)
 
       update({
         prompt_tokens: reply[:prompt_tokens],
@@ -65,7 +65,8 @@ module Raif
     end
 
     def self.run(creator:, available_model_tools: nil, llm_model_name: nil, **args)
-      completion = create!(creator:, llm_model_name:, available_model_tools:, started_at: Time.current, **args)
+      completion = new(creator:, llm_model_name:, available_model_tools:, started_at: Time.current, **args)
+      completion.save!
       completion.run
     rescue StandardError => e
       completion&.failed!
@@ -112,12 +113,12 @@ module Raif
       @requested_language_name ||= I18n.t("sentinel.languages.#{requested_language_key}", locale: "en")
     end
 
-    def default_llm_model_name
-      Raif.config.default_llm_model_name
+    def default_llm
+      Raif.config.default_llm
     end
 
-    def llm_client
-      @llm_client ||= Raif::LlmClient.new(model_name: llm_model_name)
+    def llm
+      @llm ||= Raif.llm_for_key(llm_model_name.to_sym)
     end
 
     def parsed_response

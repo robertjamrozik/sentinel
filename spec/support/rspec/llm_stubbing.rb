@@ -5,9 +5,13 @@ module Raif
     module LlmStubbing
 
       def stub_sentinel_completion(completion_class, &block)
-        test_client = Raif::TestClient.new
-        test_client.chat_handler = block
-        allow_any_instance_of(completion_class).to receive(:llm_client).and_return(test_client)
+        allow_any_instance_of(Raif::Llm).to receive(:chat) do |_instance, messages|
+          {
+            response: block.call(messages),
+            prompt_tokens: rand(1..4),
+            completion_tokens: rand(10..30)
+          }
+        end
       end
 
     end

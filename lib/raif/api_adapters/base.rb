@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Raif
-  module Adapters
+  module ApiAdapters
     class Base
       include ActiveModel::Model
 

@@ -9,7 +9,7 @@ module Raif
       :conversation_types,
       :conversations_controller,
       :current_user_method,
-      :default_llm_model_name,
+      :default_llm,
       :llm_api_requests_enabled,
       :user_tool_types
 
@@ -21,15 +21,15 @@ module Raif
       @conversation_types = ["Raif::Conversation"]
       @conversations_controller = "Raif::ConversationsController"
       @current_user_method = :current_user
-      @default_llm_model_name = "open_ai_gpt_4o"
+      @default_llm = "open_ai_gpt_4o"
       @llm_api_requests_enabled = true
       @user_tool_types = []
     end
 
     def validate!
-      unless Raif::LlmClient.available_models.include?(default_llm_model_name)
+      unless Raif.llm_for_key(default_llm.to_sym).present?
         raise Raif::Errors::InvalidConfigError,
-          "Raif.config.default_llm_model_name was set to #{default_llm_model_name}, but must be one of: #{Raif::LlmClient.available_models.join(", ")}" # rubocop:disable Layout/LineLength
+          "Raif.config.default_llm was set to #{default_llm}, but must be one of: #{Raif.available_llm_keys.join(", ")}"
       end
 
       if @authorize_controller_action.respond_to?(:call)
