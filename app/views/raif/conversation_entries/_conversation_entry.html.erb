@@ -10,7 +10,7 @@
           content: conversation_entry.model_response_message.presence || content_tag(:span, "", class: "sentinel-loader"),
           message_type: :model_response %>
 
-    <% conversation_entry.model_tool_invocations.each do |ti| %>
+    <% conversation_entry.model_tool_invocations.select(&:renderable?).each do |ti| %>
       <div class="mb-4 container">
         <%= render ti, conversation_entry: conversation_entry %>
       </div>

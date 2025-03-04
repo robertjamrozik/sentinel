@@ -46,4 +46,8 @@ class Raif::ModelTool
     # implement in subclasses
   end
 
+  def renderable?
+    true
+  end
+
 end
