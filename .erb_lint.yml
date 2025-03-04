@@ -1,4 +1,5 @@
 ---
+EnableDefaultLinters: true
 exclude:
   - '**/vendor/**/*'
   - '**/node_modules/**/*'

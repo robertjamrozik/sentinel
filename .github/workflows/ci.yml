@@ -22,7 +22,7 @@ jobs:
         run: bundle exec rubocop
 
       - name: Erb Lint
-        run: bundle exec erb_lint --lint-all --enable-all-linters
+        run: bundle exec erb_lint --lint-all
 
   test:
     runs-on: ubuntu-latest
