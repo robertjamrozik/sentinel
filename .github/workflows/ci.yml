@@ -26,10 +26,11 @@ jobs:
 
     services:
       postgres:
-        image: postgres
+        image: postgres:16
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: sentinel_dummy_test
         ports:
           - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -39,6 +40,11 @@ jobs:
       #   ports:
       #     - 6379:6379
       #   options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/sentinel_dummy_test
+      # REDIS_URL: redis://localhost:6379/0
 
     steps:
       - name: Install packages
@@ -53,9 +59,8 @@ jobs:
           ruby-version: ruby-3.4.2
           bundler-cache: true
 
+      - name: Set up database
+        run: bin/rails app:db:prepare
+
       - name: Run tests
-        env:
-          RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          # REDIS_URL: redis://localhost:6379/0
         run: bundle exec rspec
