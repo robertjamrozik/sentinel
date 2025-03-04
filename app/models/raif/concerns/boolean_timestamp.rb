@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Raif::BooleanTimestamp
+module Raif::Concerns::BooleanTimestamp
   extend ActiveSupport::Concern
 
   class_methods do
