@@ -21,4 +21,12 @@ RSpec.describe Raif::Conversation, type: :model do
       expect(messages.length).to eq(6)
     end
   end
+
+  it "does not allow invalid types" do
+    conversation = FB.build(:sentinel_conversation, type: "InvalidType", creator: creator)
+    expect(conversation).not_to be_valid
+    expect(conversation.errors.full_messages).to include("Type is not included in the list")
+    conversation.type = "Raif::TestConversation"
+    expect(conversation).to be_valid
+  end
 end
