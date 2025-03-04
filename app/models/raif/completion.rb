@@ -48,9 +48,9 @@ module Raif
     end
 
     def run
-      populate_prompts
-
       update_columns(started_at: Time.current) if started_at.nil?
+
+      populate_prompts
       reply = llm.chat(messages: messages, system_prompt: system_prompt)
 
       update({
@@ -98,7 +98,7 @@ module Raif
     end
 
     def build_system_prompt
-      system_prompt = Raif.config.base_system_prompt || "You are a friendly assistant."
+      system_prompt = Raif.config.base_system_prompt.presence || "You are a friendly assistant."
       system_prompt += " #{system_prompt_language_preference}" if requested_language_key.present?
       system_prompt
     end
