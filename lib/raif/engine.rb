@@ -51,12 +51,12 @@ module Raif
       Raif.config.validate!
     end
 
-    # Not tested yet
-    # initializer "sentinel.assets" do
-    #   if Rails.application.config.respond_to?(:assets)
-    #     Rails.application.config.assets.precompile += %w(sentinel.js)
-    #   end
-    # end
+    initializer "sentinel.assets" do |app|
+      app.config.assets.precompile += [
+        "sentinel.js",
+        "sentinel.css"
+      ]
+    end
 
     initializer "sentinel.importmap", before: "importmap" do |app|
       if Rails.application.respond_to?(:importmap)
