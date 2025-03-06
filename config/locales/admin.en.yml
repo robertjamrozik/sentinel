@@ -4,6 +4,7 @@ en:
     admin:
       common:
         arguments: Arguments
+        completed: Completed
         completed_at: Completed At
         completion_tokens: Completion Tokens
         completions: Completions
@@ -14,13 +15,16 @@ en:
         details: Details
         entries_count: Entries Count
         entry: Entry
+        failed: Failed
         failed_at: Failed At
         id: ID
+        in_progress: In Progress
         invalid_json: Invalid JSON
         model: Model
         model_response: Model Response
         no_completions: No completions found.
         no_conversations: No conversations found.
+        pending: Pending
         prettified: Prettified
         prompt: Prompt
         prompt_tokens: Prompt Tokens
@@ -36,6 +40,8 @@ en:
         user_message: User Message
         view_completion: View Completion
       completions:
+        index:
+          title: Completions
         show:
           back_to_completions: Back to Completions
           title: 'Completion #%{id}'

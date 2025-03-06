@@ -57,13 +57,13 @@
             <div class="d-flex w-100 justify-content-between">
               <div>
                 <% if entry.completed_at? %>
-                  <span class="badge bg-success">Completed</span>
+                  <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span>
                 <% elsif entry.failed_at? %>
-                  <span class="badge bg-danger">Failed</span>
+                  <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span>
                 <% elsif entry.started_at? %>
-                  <span class="badge bg-warning text-dark">In Progress</span>
+                  <span class="badge bg-warning text-dark"><%= t("sentinel.admin.common.in_progress") %></span>
                 <% else %>
-                  <span class="badge bg-secondary">Pending</span>
+                  <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
                 <% end %>
               </div>
               <% if entry.sentinel_completion.present? %>
