@@ -3,11 +3,11 @@
 # Check if the -a flag is passed
 if [ "$1" = "-a" ]; then
   RUBOCOP_CMD="rubocop -a"
-  ERBLINT_CMD="bundle exec erb_lint --lint-all --enable-all-linters -a"
+  ERBLINT_CMD="bundle exec erb_lint --lint-all -a"
   I18N_CMD="bundle exec i18n-tasks normalize"
 else
   RUBOCOP_CMD="rubocop"
-  ERBLINT_CMD="bundle exec erb_lint --lint-all --enable-all-linters"
+  ERBLINT_CMD="bundle exec erb_lint --lint-all"
   I18N_CMD="bundle exec i18n-tasks health"
 fi
 
