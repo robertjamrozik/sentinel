@@ -1,0 +1,57 @@
+<h1 class="mb-4">Completions</h1>
+
+<div class="row">
+  <div class="col-12">
+    <% if @completions.any? %>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Created At</th>
+              <th>Creator</th>
+              <th>Model</th>
+              <th>Status</th>
+              <th>Tokens</th>
+              <th>Prompt</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @completions.each do |completion| %>
+              <tr>
+                <td><%= link_to "##{completion.id}", sentinel.admin_completion_path(completion) %></td>
+                <td><small class="text-muted"><%= completion.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small></td>
+                <td><%= completion.creator_type %> #<%= completion.creator_id %></td>
+                <td><%= completion.llm_model_name %></td>
+                <td>
+                  <% if completion.completed_at? %>
+                    <span class="badge bg-success">Completed</span>
+                  <% elsif completion.failed_at? %>
+                    <span class="badge bg-danger">Failed</span>
+                  <% elsif completion.started_at? %>
+                    <span class="badge bg-warning text-dark">In Progress</span>
+                  <% else %>
+                    <span class="badge bg-secondary">Pending</span>
+                  <% end %>
+                </td>
+                <td>
+                  <%= completion.prompt_tokens.to_i + completion.completion_tokens.to_i %> 
+                  (<%= completion.prompt_tokens %> prompt, <%= completion.completion_tokens %> completion)
+                </td>
+                <td><small class="text-muted"><%= truncate(completion.prompt, length: 100) %></small></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="mt-4">
+        <%== pagy_bootstrap_nav(@pagy) %>
+      </div>
+    <% else %>
+      <div class="alert alert-info">
+        No completions found.
+      </div>
+    <% end %>
+  </div>
+</div> 

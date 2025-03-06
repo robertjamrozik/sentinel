@@ -10,4 +10,8 @@ Raif::Engine.routes.draw do
       path: "entries",
       controller: "/#{Raif.config.conversation_entries_controller.constantize.controller_path}"
   end
+
+  namespace :admin do
+    resources :completions, only: [:index, :show]
+  end
 end

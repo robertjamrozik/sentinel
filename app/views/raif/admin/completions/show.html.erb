@@ -1,0 +1,150 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Completion #<%= @completion.id %></h1>
+  <%= link_to "Back to Completions", sentinel.admin_completions_path, class: "btn btn-outline-secondary" %>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0">Details</h5>
+  </div>
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-3"><strong>ID:</strong></div>
+      <div class="col-md-9"><%= @completion.id %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong>Creator:</strong></div>
+      <div class="col-md-9"><%= @completion.creator_type %> #<%= @completion.creator_id %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong>Model:</strong></div>
+      <div class="col-md-9"><%= @completion.llm_model_name %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong>Response Format:</strong></div>
+      <div class="col-md-9"><%= @completion.response_format %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong>Created At:</strong></div>
+      <div class="col-md-9"><%= @completion.created_at.strftime("%Y-%m-%d %H:%M:%S") %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong>Started At:</strong></div>
+      <div class="col-md-9">
+        <% if @completion.started_at? %>
+          <%= @completion.started_at.strftime("%Y-%m-%d %H:%M:%S") %>
+        <% else %>
+          <span class="text-muted">Not started</span>
+        <% end %>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong>Completed At:</strong></div>
+      <div class="col-md-9">
+        <% if @completion.completed_at? %>
+          <%= @completion.completed_at.strftime("%Y-%m-%d %H:%M:%S") %>
+        <% else %>
+          <span class="text-muted">Not completed</span>
+        <% end %>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong>Failed At:</strong></div>
+      <div class="col-md-9">
+        <% if @completion.failed_at? %>
+          <%= @completion.failed_at.strftime("%Y-%m-%d %H:%M:%S") %>
+        <% else %>
+          <span class="text-muted">Not failed</span>
+        <% end %>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong>Status:</strong></div>
+      <div class="col-md-9">
+        <% if @completion.completed_at? %>
+          <span class="badge bg-success">Completed</span>
+        <% elsif @completion.failed_at? %>
+          <span class="badge bg-danger">Failed</span>
+        <% elsif @completion.started_at? %>
+          <span class="badge bg-warning text-dark">In Progress</span>
+        <% else %>
+          <span class="badge bg-secondary">Pending</span>
+        <% end %>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong>Tokens:</strong></div>
+      <div class="col-md-9">
+        <%= @completion.prompt_tokens.to_i + @completion.completion_tokens.to_i %> 
+        (<%= @completion.prompt_tokens %> prompt, <%= @completion.completion_tokens %> completion)
+      </div>
+    </div>
+    <% if @completion.requested_language_key.present? %>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong>Requested Language:</strong></div>
+        <div class="col-md-9"><%= @completion.requested_language_key %></div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0">System Prompt</h5>
+  </div>
+  <div class="card-body">
+    <pre><%= @completion.system_prompt %></pre>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0">Prompt</h5>
+  </div>
+  <div class="card-body">
+    <pre><%= @completion.prompt %></pre>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0">Response</h5>
+  </div>
+  <div class="card-body">
+    <% if @completion.response_format_html? %>
+      <div class="border p-3 rounded">
+        <%= @completion.parsed_response.html_safe %>
+      </div>
+    <% elsif @completion.response_format_json? %>
+      <pre><%= JSON.pretty_generate(@completion.parsed_response) rescue @completion.response %></pre>
+    <% else %>
+      <pre><%= @completion.response %></pre>
+    <% end %>
+  </div>
+</div>
+
+<% if @completion.model_tool_invocations.any? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">Tool Invocations</h5>
+    </div>
+    <div class="card-body">
+      <div class="list-group">
+        <% @completion.model_tool_invocations.each do |invocation| %>
+          <div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1"><%= invocation.tool_name %></h5>
+              <small class="text-muted"><%= invocation.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small>
+            </div>
+            <p class="mb-1"><strong>Arguments:</strong></p>
+            <pre><%= JSON.pretty_generate(JSON.parse(invocation.arguments)) rescue invocation.arguments %></pre>
+            <% if invocation.result.present? %>
+              <p class="mb-1"><strong>Result:</strong></p>
+              <pre><%= JSON.pretty_generate(JSON.parse(invocation.result)) rescue invocation.result %></pre>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %> 

@@ -3,6 +3,7 @@
 module Raif
   class Configuration
     attr_accessor :authorize_controller_action,
+      :authorize_admin_controller_action,
       :aws_bedrock_region,
       :base_system_prompt,
       :conversation_entries_controller,
@@ -17,6 +18,7 @@ module Raif
     def initialize
       @aws_bedrock_region = "us-east-1"
       @authorize_controller_action = ->{ false }
+      @authorize_admin_controller_action = ->{ false }
       @base_system_prompt = "You are a friendly assistant."
       @conversation_entries_controller = "Raif::ConversationEntriesController"
       @conversation_types = ["Raif::Conversation"]
@@ -39,6 +41,13 @@ module Raif
       else
         raise Raif::Errors::InvalidConfigError,
           "Raif.config.authorize_controller_action must respond to :call and return a boolean"
+      end
+
+      if authorize_admin_controller_action.respond_to?(:call)
+        authorize_admin_controller_action.freeze
+      else
+        raise Raif::Errors::InvalidConfigError,
+          "Raif.config.authorize_admin_controller_action must respond to :call and return a boolean"
       end
     end
 
