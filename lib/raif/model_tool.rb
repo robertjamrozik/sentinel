@@ -2,6 +2,8 @@
 
 class Raif::ModelTool
 
+  delegate :tool_name, :tool_description, to: :class
+
   def self.tool_name
     name_key = name.split("::").last.underscore
     I18n.t("sentinel.model_tools.#{name_key}.name", default: name_key)

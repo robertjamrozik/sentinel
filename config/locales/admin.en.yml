@@ -38,6 +38,7 @@ en:
         view_completion: "View Completion"
         prettified: "Prettified"
         invalid_json: "Invalid JSON"
+        raw: "Raw"
       completions:
         show:
           title: "Completion #%{id}"

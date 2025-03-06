@@ -92,7 +92,7 @@
     <h5 class="mb-0"><%= t("sentinel.admin.common.system_prompt") %></h5>
   </div>
   <div class="card-body">
-    <pre class="text-wrap"><%= @completion.system_prompt %></pre>
+    <pre class="pre-wrap"><%= @completion.system_prompt %></pre>
   </div>
 </div>
 
@@ -110,15 +110,19 @@
     <h5 class="mb-0"><%= t("sentinel.admin.common.response") %> (<%= @completion.response_format %>)</h5>
   </div>
   <div class="card-body">
-    <pre class="text-wrap"><%= @completion.parsed_response %></pre>
 
     <% if @completion.response_format_json? %>
+      <h5 class="mb-0"><%= t("sentinel.admin.common.raw") %></h5>
+      <pre class="pre-wrap"><%= @completion.response %></pre>
+
       <h5 class="mb-0 mt-4"><%= t("sentinel.admin.common.prettified") %></h5>
       <% begin %>
-        <pre><%= JSON.pretty_generate(@completion.parsed_response) %></pre>
-      <% rescue StandardError %>
+        <pre class="pre-wrap"><%= JSON.pretty_generate(@completion.parsed_response) %></pre>
+        <% rescue StandardError %>
         <%= t("sentinel.admin.common.invalid_json") %>
       <% end %>
+    <% else %>
+      <pre class="pre-wrap"><%= @completion.response %></pre>
     <% end %>
   </div>
 </div>
@@ -136,12 +140,14 @@
               <h5 class="mb-1"><%= invocation.tool_name %></h5>
               <small class="text-muted"><%= invocation.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small>
             </div>
+
             <p class="mb-1"><strong><%= t("sentinel.admin.common.arguments") %>:</strong></p>
-            <pre><%= JSON.pretty_generate(JSON.parse(invocation.arguments)) rescue invocation.arguments %></pre>
-            <% if invocation.result.present? %>
-              <p class="mb-1"><strong><%= t("sentinel.admin.common.result") %>:</strong></p>
-              <pre><%= JSON.pretty_generate(JSON.parse(invocation.result)) rescue invocation.result %></pre>
-            <% end %>
+
+            <pre class="pre-wrap"><%= begin
+                      JSON.pretty_generate(invocation.tool_arguments)
+                    rescue StandardError
+                      invocation.tool_arguments
+                    end %></pre>
           </div>
         <% end %>
       </div>
