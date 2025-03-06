@@ -11,6 +11,7 @@ en:
         status: "Status"
         prompt_tokens: "Prompt Tokens"
         completion_tokens: "Completion Tokens"
+        completions: "Completions"
         prompt: "Prompt"
         response: "Response"
         details: "Details"
@@ -26,13 +27,12 @@ en:
         response_format: "Response Format"
         requested_language: "Requested Language"
         no_completions: "No completions found."
+        prettified: "Prettified"
+        invalid_json: "Invalid JSON"
       completions:
-        index:
-          title: "Completions"
         show:
           title: "Completion #%{id}"
           back_to_completions: "Back to Completions"
       layouts:
         admin:
           title: "Raif Admin"
-          completions: "Completions" 
