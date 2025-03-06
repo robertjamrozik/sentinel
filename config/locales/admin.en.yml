@@ -1,0 +1,37 @@
+en:
+  sentinel:
+    admin:
+      common:
+        back: "Back"
+        id: "ID"
+        created_at: "Created At"
+        started_at: "Started At"
+        completed_at: "Completed At"
+        failed_at: "Failed At"
+        status: "Status"
+        tokens: "Tokens"
+        prompt: "Prompt"
+        response: "Response"
+        details: "Details"
+        system_prompt: "System Prompt"
+        tool_invocations: "Tool Invocations"
+        arguments: "Arguments"
+        result: "Result"
+        not_started: "Not started"
+        not_completed: "Not completed"
+        not_failed: "Not failed"
+        creator: "Creator"
+        model: "Model"
+        response_format: "Response Format"
+        requested_language: "Requested Language"
+        no_completions: "No completions found."
+      completions:
+        index:
+          title: "Completions"
+        show:
+          title: "Completion #%{id}"
+          back_to_completions: "Back to Completions"
+      layouts:
+        admin:
+          title: "Raif Admin"
+          completions: "Completions" 
