@@ -12,7 +12,8 @@
               <th><%= t("sentinel.admin.common.creator") %></th>
               <th><%= t("sentinel.admin.common.model") %></th>
               <th><%= t("sentinel.admin.common.status") %></th>
-              <th><%= t("sentinel.admin.common.tokens") %></th>
+              <th><%= t("sentinel.admin.common.prompt_tokens") %></th>
+              <th><%= t("sentinel.admin.common.completion_tokens") %></th>
               <th><%= t("sentinel.admin.common.prompt") %></th>
             </tr>
           </thead>
@@ -34,10 +35,8 @@
                     <span class="badge bg-secondary">Pending</span>
                   <% end %>
                 </td>
-                <td>
-                  <%= completion.prompt_tokens.to_i + completion.completion_tokens.to_i %> 
-                  (<%= completion.prompt_tokens %> prompt, <%= completion.completion_tokens %> completion)
-                </td>
+                <td><%= completion.prompt_tokens %></td>
+                <td><%= completion.completion_tokens %></td>
                 <td><small class="text-muted"><%= truncate(completion.prompt, length: 100) %></small></td>
               </tr>
             <% end %>
