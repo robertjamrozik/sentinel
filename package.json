@@ -12,7 +12,9 @@
   "scripts": {
     "build:css:compile:sentinel": "sass ./app/assets/stylesheets/sentinel.scss:./app/assets/builds/sentinel.css --no-source-map --load-path=node_modules --load-path=vendor/stylesheets",
     "build:css:prefix:sentinel": "postcss ./app/assets/builds/sentinel.css --use=autoprefixer --output=./app/assets/builds/sentinel.css",
-    "build:css": "yarn build:css:compile:sentinel && yarn build:css:prefix:sentinel",
+    "build:css:compile:sentinel_admin": "sass ./app/assets/stylesheets/sentinel_admin.scss:./app/assets/builds/sentinel_admin.css --no-source-map --load-path=node_modules --load-path=vendor/stylesheets",
+    "build:css:prefix:sentinel_admin": "postcss ./app/assets/builds/sentinel_admin.css --use=autoprefixer --output=./app/assets/builds/sentinel_admin.css",
+    "build:css": "yarn build:css:compile:sentinel && yarn build:css:prefix:sentinel && yarn build:css:compile:sentinel_admin && yarn build:css:prefix:sentinel_admin",
     "watch:css": "nodemon --watch ./app/assets/stylesheets/ --watch ./vendor/stylesheets/ --ext scss --exec \"yarn build:css\""
   },
   "browserslist": [
