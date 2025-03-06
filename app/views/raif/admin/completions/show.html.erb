@@ -144,13 +144,13 @@
             <p class="mb-1"><strong><%= t("sentinel.admin.common.arguments") %>:</strong></p>
 
             <pre class="pre-wrap"><%= begin
-                      JSON.pretty_generate(invocation.tool_arguments)
-                    rescue StandardError
-                      invocation.tool_arguments
-                    end %></pre>
+                                        JSON.pretty_generate(invocation.tool_arguments)
+                                      rescue StandardError
+                                        invocation.tool_arguments
+                                      end %></pre>
           </div>
         <% end %>
       </div>
     </div>
   </div>
-<% end %> 
+<% end %>
