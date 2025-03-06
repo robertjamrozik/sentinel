@@ -13,4 +13,7 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  # Mount the Raif engine
+  mount Raif::Engine, at: "/sentinel"
 end

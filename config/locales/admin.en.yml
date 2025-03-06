@@ -1,0 +1,52 @@
+---
+en:
+  sentinel:
+    admin:
+      common:
+        arguments: Arguments
+        completed: Completed
+        completed_at: Completed At
+        completion_tokens: Completion Tokens
+        completions: Completions
+        conversation_entries: Conversation Entries
+        conversations: Conversations
+        created_at: Created At
+        creator: Creator
+        details: Details
+        entries_count: Entries Count
+        entry: Entry
+        failed: Failed
+        failed_at: Failed At
+        id: ID
+        in_progress: In Progress
+        invalid_json: Invalid JSON
+        model: Model
+        model_response: Model Response
+        no_completions: No completions found.
+        no_conversations: No conversations found.
+        pending: Pending
+        prettified: Prettified
+        prompt: Prompt
+        prompt_tokens: Prompt Tokens
+        raw: Raw
+        requested_language: Requested Language
+        response: Response
+        response_format: Response Format
+        started_at: Started At
+        status: Status
+        system_prompt: System Prompt
+        tool_invocations: Tool Invocations
+        type: Type
+        user_message: User Message
+        view_completion: View Completion
+      completions:
+        show:
+          back_to_completions: Back to Completions
+          title: 'Completion #%{id}'
+      conversations:
+        show:
+          back_to_conversations: Back to Conversations
+          title: 'Conversation #%{id}'
+      layouts:
+        admin:
+          title: Raif Admin

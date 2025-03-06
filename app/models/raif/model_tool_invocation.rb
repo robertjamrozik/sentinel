@@ -8,7 +8,7 @@ class Raif::ModelToolInvocation < Raif::ApplicationRecord
   validates :tool_type, presence: true
   validate :ensure_valid_tool_argument_schema, if: -> { tool_arguments_schema.present? }
 
-  delegate :tool_arguments_schema, :renderable?, to: :tool
+  delegate :tool_arguments_schema, :renderable?, :tool_name, to: :tool
 
   def tool
     @tool ||= tool_type.constantize.new

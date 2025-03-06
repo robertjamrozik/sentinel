@@ -2,6 +2,7 @@
 
 module Raif
   class ApplicationController < ::ApplicationController
+
     before_action :authorize_sentinel_action
 
     def sentinel_current_user

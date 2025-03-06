@@ -1,0 +1,7 @@
+<tr id="<%= dom_id(conversation) %>" class="sentinel-conversation">
+  <td><%= link_to "##{conversation.id}", sentinel.admin_conversation_path(conversation) %></td>
+  <td><small class="text-muted"><%= conversation.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small></td>
+  <td><%= conversation.creator_type %> #<%= conversation.creator_id %></td>
+  <td><%= conversation.type %></td>
+  <td><%= conversation.conversation_entries_count %></td>
+</tr>
