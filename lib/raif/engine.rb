@@ -11,7 +11,7 @@ module Raif
 
     # If the host app is using FactoryBot, add the factories to the host app so they can be used in host apptests
     if defined?(FactoryBotRails)
-      config.factory_bot.definition_file_paths += [File.expand_path("../../../spec/factories", __FILE__)]
+      config.factory_bot.definition_file_paths += [File.expand_path("../../../spec/factories/shared", __FILE__)]
     end
 
     config.generators do |g|

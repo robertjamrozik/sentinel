@@ -11,4 +11,4 @@
 # Pagy::DEFAULT.freeze
 
 # Add the pagy backend to a controller or to an object that includes it
-# require "pagy/extras/bootstrap"
+require "pagy/extras/bootstrap"

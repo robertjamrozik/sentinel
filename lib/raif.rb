@@ -13,6 +13,7 @@ require "sentinel/api_adapters/bedrock"
 require "sentinel/model_tool"
 
 require "openai"
+require "pagy"
 
 module Raif
   class << self

@@ -1,4 +1,4 @@
-<h1 class="my-4"><%= t(".title") %></h1>
+<h1 class="my-4"><%= t("sentinel.admin.common.completions") %></h1>
 
 <div class="row">
   <div class="col-12">
@@ -18,28 +18,7 @@
             </tr>
           </thead>
           <tbody>
-            <% @completions.each do |completion| %>
-              <tr>
-                <td><%= link_to "##{completion.id}", sentinel.admin_completion_path(completion) %></td>
-                <td><small class="text-muted"><%= completion.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small></td>
-                <td><%= completion.creator_type %> #<%= completion.creator_id %></td>
-                <td><%= completion.llm_model_name %></td>
-                <td>
-                  <% if completion.completed_at? %>
-                    <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span>
-                  <% elsif completion.failed_at? %>
-                    <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span>
-                  <% elsif completion.started_at? %>
-                    <span class="badge bg-warning text-dark"><%= t("sentinel.admin.common.in_progress") %></span>
-                  <% else %>
-                    <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
-                  <% end %>
-                </td>
-                <td><%= completion.prompt_tokens %></td>
-                <td><%= completion.completion_tokens %></td>
-                <td><small class="text-muted"><%= truncate(completion.prompt, length: 100) %></small></td>
-              </tr>
-            <% end %>
+            <%= render partial: "sentinel/admin/completions/completion", collection: @completions %>
           </tbody>
         </table>
       </div>

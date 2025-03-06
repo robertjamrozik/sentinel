@@ -40,8 +40,6 @@ en:
         user_message: User Message
         view_completion: View Completion
       completions:
-        index:
-          title: Completions
         show:
           back_to_completions: Back to Completions
           title: 'Completion #%{id}'
