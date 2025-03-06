@@ -1,0 +1,40 @@
+<h1 class="my-4"><%= t("sentinel.admin.common.conversations") %></h1>
+
+<div class="row">
+  <div class="col-12">
+    <% if @conversations.any? %>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-light">
+            <tr>
+              <th><%= t("sentinel.admin.common.id") %></th>
+              <th><%= t("sentinel.admin.common.created_at") %></th>
+              <th><%= t("sentinel.admin.common.creator") %></th>
+              <th><%= t("sentinel.admin.common.type") %></th>
+              <th><%= t("sentinel.admin.common.entries_count") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @conversations.each do |conversation| %>
+              <tr>
+                <td><%= link_to "##{conversation.id}", sentinel.admin_conversation_path(conversation) %></td>
+                <td><small class="text-muted"><%= conversation.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small></td>
+                <td><%= conversation.creator_type %> #<%= conversation.creator_id %></td>
+                <td><%= conversation.type %></td>
+                <td><%= conversation.conversation_entries_count %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="mt-4">
+        <%== pagy_bootstrap_nav(@pagy) %>
+      </div>
+    <% else %>
+      <div class="alert alert-info">
+        <%= t("sentinel.admin.common.no_conversations") %>
+      </div>
+    <% end %>
+  </div>
+</div> 

@@ -12,6 +12,13 @@ en:
         prompt_tokens: "Prompt Tokens"
         completion_tokens: "Completion Tokens"
         completions: "Completions"
+        conversations: "Conversations"
+        conversation_entries: "Conversation Entries"
+        entry: "Entry"
+        user_message: "User Message"
+        model_response: "Model Response"
+        entries_count: "Entries Count"
+        type: "Type"
         prompt: "Prompt"
         response: "Response"
         details: "Details"
@@ -27,12 +34,18 @@ en:
         response_format: "Response Format"
         requested_language: "Requested Language"
         no_completions: "No completions found."
+        no_conversations: "No conversations found."
+        view_completion: "View Completion"
         prettified: "Prettified"
         invalid_json: "Invalid JSON"
       completions:
         show:
           title: "Completion #%{id}"
           back_to_completions: "Back to Completions"
+      conversations:
+        show:
+          title: "Conversation #%{id}"
+          back_to_conversations: "Back to Conversations"
       layouts:
         admin:
           title: "Raif Admin"
