@@ -5,11 +5,7 @@ class Raif::ModelTools::FetchUrlTool < Raif::ModelTool
   def self.example_model_invocation
     {
       "name": "fetch_url",
-      "arguments": [
-        {
-          "url": "https://en.wikipedia.org/wiki/NASA"
-        }
-      ]
+      "arguments": { "url": "https://en.wikipedia.org/wiki/NASA" }
     }
   end
 
@@ -22,16 +18,27 @@ class Raif::ModelTools::FetchUrlTool < Raif::ModelTool
     }
   end
 
+  def self.observation_for_invocation(tool_invocation)
+    return "No results found" unless tool_invocation.result.present?
+
+    <<~OBSERVATION
+      Result Status: #{tool_invocation.result["status"]}
+      Result Content:
+      #{tool_invocation.result["content"]}
+    OBSERVATION
+  end
+
   def process_invocation(tool_invocation)
     url = tool_invocation.tool_arguments["url"]
-
     response = Faraday.get(url)
+
+    readable_content = Raif::Utils::ReadableContentExtractor.new(response.body).extract_readable_content
+    markdown_content = Raif::Utils::HtmlToMarkdownConverter.convert(readable_content)
 
     tool_invocation.update!(
       result: {
-        url: url,
         status: response.status,
-        body: response.body
+        content: markdown_content
       }
     )
 

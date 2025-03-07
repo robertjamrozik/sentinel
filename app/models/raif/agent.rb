@@ -2,12 +2,12 @@
 
 class Raif::Agent
 
-  attr_accessor :task, :available_tools, :creator, :completion_args
+  attr_accessor :task, :available_model_tools, :creator, :completion_args
   attr_reader :conversation_history, :final_answer
 
   def initialize(task:, tools:, creator:, completion_args: nil)
     @task = task
-    @available_tools = tools
+    @available_model_tools = tools
     @creator = creator
     @conversation_history = []
     @final_answer = nil
@@ -25,7 +25,7 @@ class Raif::Agent
       completion = Raif::AgentCompletion.run(
         creator: creator,
         agent: self,
-        available_model_tools: available_tools,
+        available_model_tools: available_model_tools,
         conversation_history: conversation_history,
         **completion_args
       )
@@ -37,15 +37,16 @@ class Raif::Agent
         puts "--------------------------------"
         puts "System Prompt:"
         puts completion.system_prompt
+        puts "\n\n"
       end
 
-      puts "\n"
+      puts "\n\n"
       puts "--------------------------------"
       puts "Running Agent iteration #{iteration}"
       puts "Prompt:\n#{completion.prompt}"
       puts "Response:\n#{completion.response}"
       puts "--------------------------------"
-      puts "\n\n\n"
+      puts "\n\n"
 
       # Extract thought, action, and answer from the completion
       thought = completion.extract_thought
@@ -66,51 +67,7 @@ class Raif::Agent
 
       # If there's an action, execute it
       if action && action["tool"] && action["arguments"]
-        tool_name = action["tool"]
-        arguments = action["arguments"]
-
-        # Find the tool class
-        debugger
-        tool_class_name = available_tools.find { |t| t.constantize.tool_name == tool_name }
-
-        if tool_class_name
-          # Create a tool invocation
-          tool_class = tool_class_name.constantize
-
-          # Execute the tool
-          observation = begin
-            tool_invocation = Raif::ModelToolInvocation.new(
-              sentinel_completion: completion,
-              tool_type: tool_class_name,
-              tool_arguments: arguments
-            )
-
-            tool_instance = tool_class.new
-            tool_instance.process_invocation(tool_invocation)
-
-            # Return a string representation of the result
-            "Tool executed successfully: #{tool_invocation.inspect}"
-          rescue StandardError => e
-            "Error: #{e.message}"
-          end
-
-          # Add the action and observation to conversation history
-          conversation_history << {
-            role: "assistant",
-            content: "<action>#{result[:action].to_json}</action>"
-          }
-
-          conversation_history << {
-            role: "user",
-            content: "<observation>#{observation}</observation>"
-          }
-        else
-          # Tool not found
-          conversation_history << {
-            role: "user",
-            content: "<observation>Error: Tool '#{tool_name}' not found. Available tools: #{available_tools.map(&:tool_name).join(", ")}</observation>"
-          }
-        end
+        process_action(action, completion)
       else
         # No action specified
         conversation_history << {
@@ -124,13 +81,45 @@ class Raif::Agent
     @final_answer
   end
 
+  def process_action(action, completion)
+    tool_name = action["tool"]
+    tool_arguments = action["arguments"]
+
+    # Find the tool class
+    tool_klass = available_model_tools_map[tool_name]
+
+    # The model tried to use a tool that doesn't exist
+    unless tool_klass
+      conversation_history << {
+        role: "user",
+        content: "<observation>Error: Tool '#{tool_name}' not found. Available tools: #{available_model_tools.map(&:tool_name).join(", ")}</observation>"
+      }
+      return
+    end
+
+    tool_invocation = tool_klass.invoke_tool(tool_arguments: tool_arguments, completion: completion)
+    observation = tool_klass.observation_for_invocation(tool_invocation)
+
+    # Add the tool invocation to conversation history
+    conversation_history << {
+      role: "user",
+      content: "<observation>#{observation}</observation>"
+    }
+  end
+
+  def available_model_tools_map
+    @available_model_tools_map ||= available_model_tools&.map do |tool_klass|
+      [tool_klass.tool_name, tool_klass]
+    end.to_h
+  end
+
   def system_prompt
     <<~PROMPT
       You are an intelligent assistant that follows the ReAct (Reasoning + Acting) framework to complete tasks step by step using tool calls.
 
       # Available Tools
       You have access to the following tools:
-      #{available_tools.map(&:description_for_llm).join("\n---\n")}
+      #{available_model_tools.map(&:description_for_llm).join("\n---\n")}
 
       # Your Responses
       Your responses should follow this structure & format:
@@ -153,6 +142,7 @@ class Raif::Agent
       - Be concise in your reasoning but thorough in your analysis
       - If a tool returns an error, try to understand why and adjust your approach
       - If you're unsure about something, explain your uncertainty, but do not make things up
+      - After each thought, make sure to also include an <action> or <answer>
       - Always provide a final answer that directly addresses the user's request
 
       Remember: Your goal is to be helpful, accurate, and efficient in solving the user's request.

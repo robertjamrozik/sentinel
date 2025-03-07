@@ -5,11 +5,7 @@ class Raif::ModelTools::UserInputTool < Raif::ModelTool
   def self.example_model_invocation
     {
       "name": "get_user_input",
-      "arguments": [
-        {
-          "query": "Are you asking about New York state or city?"
-        }
-      ]
+      "arguments": { "query": "Are you asking about New York state or city?" }
     }
   end
 

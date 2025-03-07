@@ -5,11 +5,7 @@ class Raif::ModelTools::WikipediaSearchTool < Raif::ModelTool
   def self.example_model_invocation
     {
       "name": "wikipedia_search",
-      "arguments": [
-        {
-          "query": "Jimmy Buffett"
-        }
-      ]
+      "arguments": { "query": "Jimmy Buffett" }
     }
   end
 
@@ -20,6 +16,12 @@ class Raif::ModelTools::WikipediaSearchTool < Raif::ModelTool
         description: "The query to search Wikipedia for"
       }
     }
+  end
+
+  def self.observation_for_invocation(tool_invocation)
+    return "No results found" unless tool_invocation.result.present?
+
+    JSON.pretty_generate(tool_invocation.result)
   end
 
   def process_invocation(tool_invocation)
@@ -43,7 +45,6 @@ class Raif::ModelTools::WikipediaSearchTool < Raif::ModelTool
       # Store the results in the tool_invocation
       tool_invocation.update!(
         result: {
-          query: query,
           results: search_results.map do |result|
             {
               title: result["title"],
@@ -57,7 +58,6 @@ class Raif::ModelTools::WikipediaSearchTool < Raif::ModelTool
     else
       tool_invocation.update!(
         result: {
-          query: query,
           error: "Failed to fetch results from Wikipedia API: #{response.status} #{response.reason_phrase}"
         }
       )

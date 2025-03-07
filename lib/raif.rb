@@ -11,10 +11,13 @@ require "sentinel/api_adapters/base"
 require "sentinel/api_adapters/open_ai"
 require "sentinel/api_adapters/bedrock"
 require "sentinel/model_tool"
+require "sentinel/utils"
 
 require "faraday"
+require "loofah"
 require "openai"
 require "pagy"
+require "reverse_markdown"
 
 module Raif
   class << self
