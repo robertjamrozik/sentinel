@@ -68,6 +68,7 @@ module Raif
       completion = new(creator:, llm_model_name:, available_model_tools:, started_at: Time.current, **args)
       completion.save!
       completion.run
+      completion
     rescue StandardError => e
       completion&.failed!
 

@@ -55,6 +55,9 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.bigint :sentinel_completion_id, null: false
       t.string :tool_type, null: false
       t.jsonb :tool_arguments, default: {}, null: false
+      t.jsonb :result, default: {}, null: false
+      t.datetime :completed_at
+      t.datetime :failed_at
       t.datetime :created_at, null: false
       t.datetime :updated_at, null: false
     end

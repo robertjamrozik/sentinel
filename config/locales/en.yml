@@ -34,3 +34,13 @@ en:
       open_ai_gpt_3_5_turbo: OpenAI GPT-3.5 Turbo
       open_ai_gpt_4o: OpenAI GPT-4o
       open_ai_gpt_4o_mini: OpenAI GPT-4o Mini
+    model_tools:
+      user_input_tool:
+        name: get_user_input
+        description: Get user input from the user
+      wikipedia_search_tool:
+        name: wikipedia_search
+        description: Search Wikipedia for information
+      fetch_url_tool:
+        name: fetch_url
+        description: Fetch a URL and return the response

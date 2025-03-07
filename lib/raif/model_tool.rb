@@ -2,7 +2,18 @@
 
 class Raif::ModelTool
 
-  delegate :tool_name, :tool_description, to: :class
+  delegate :tool_name, :tool_description, :tool_arguments_schema, to: :class
+
+  def self.description_for_llm
+    <<~DESCRIPTION
+      Name: #{tool_name}
+      Description: #{tool_description}
+      Arguments:
+      #{tool_arguments_schema.to_json}
+      Example Usage:
+      #{example_model_invocation.to_json}
+    DESCRIPTION
+  end
 
   def self.tool_name
     name_key = name.split("::").last.underscore
@@ -10,25 +21,12 @@ class Raif::ModelTool
   end
 
   def self.tool_description
-    I18n.t("sentinel.model_tools.#{name.underscore.gsub("/", ".")}.description")
+    name_key = name.split("::").last.underscore
+    I18n.t("sentinel.model_tools.#{name_key}.description")
   end
 
-  def self.invoke_tool(tool_arguments:, completion:)
-    tool_instance = new
-    tool_arguments = tool_instance.clean_tool_arguments(tool_arguments)
-
-    tool_invocation = Raif::ModelToolInvocation.new(
-      sentinel_completion: completion,
-      tool_type: name,
-      tool_arguments: tool_arguments
-    )
-
-    ActiveRecord::Base.transaction do
-      tool_invocation.save!
-      tool_instance.process_invocation(tool_invocation)
-    end
-
-    tool_invocation
+  def self.example_model_invocation
+    raise NotImplementedError, "#{self.class.name}#example_model_invocation is not implemented"
   end
 
   def process_invocation(invocation)
@@ -44,12 +42,34 @@ class Raif::ModelTool
     tool_arguments
   end
 
-  def tool_arguments_schema
-    # implement in subclasses
+  def self.tool_arguments_schema
+    raise NotImplementedError, "#{self.class.name}#tool_arguments_schema is not implemented"
   end
 
   def renderable?
     true
+  end
+
+  def self.invoke_tool(tool_arguments:, completion:)
+    tool_instance = new
+    tool_arguments = tool_instance.clean_tool_arguments(tool_arguments)
+
+    tool_invocation = Raif::ModelToolInvocation.new(
+      sentinel_completion: completion,
+      tool_type: name,
+      tool_arguments: tool_arguments
+    )
+
+    ActiveRecord::Base.transaction do
+      tool_invocation.save!
+      tool_instance.process_invocation(tool_invocation)
+      tool_invocation.completed!
+    end
+
+    tool_invocation
+  rescue StandardError => e
+    tool_invocation.failed!
+    raise e
   end
 
 end

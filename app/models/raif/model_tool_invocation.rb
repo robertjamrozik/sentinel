@@ -10,6 +10,9 @@ class Raif::ModelToolInvocation < Raif::ApplicationRecord
 
   delegate :tool_arguments_schema, :renderable?, :tool_name, to: :tool
 
+  boolean_timestamp :completed_at
+  boolean_timestamp :failed_at
+
   def tool
     @tool ||= tool_type.constantize.new
   end

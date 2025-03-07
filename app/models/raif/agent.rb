@@ -2,24 +2,16 @@
 
 class Raif::Agent
 
-  attr_accessor :task, :tools, :creator
+  attr_accessor :task, :available_tools, :creator, :completion_args
   attr_reader :conversation_history, :final_answer
 
-  def initialize(task:, tools:, creator:)
+  def initialize(task:, tools:, creator:, completion_args: nil)
     @task = task
-    @tools = tools
+    @available_tools = tools
     @creator = creator
     @conversation_history = []
     @final_answer = nil
-  end
-
-  # Methods to make Agent compatible with Completion creator interface
-  def id
-    object_id
-  end
-
-  def preferred_language_key
-    nil
+    @completion_args = completion_args
   end
 
   def run
@@ -33,32 +25,53 @@ class Raif::Agent
       completion = Raif::AgentCompletion.run(
         creator: creator,
         agent: self,
-        available_model_tools: tools,
-        conversation_history: conversation_history
+        available_model_tools: available_tools,
+        conversation_history: conversation_history,
+        **completion_args
       )
 
+      if iteration == 1
+        puts "\n\n"
+        puts "--------------------------------"
+        puts "Starting Agent Run"
+        puts "--------------------------------"
+        puts "System Prompt:"
+        puts completion.system_prompt
+      end
+
+      puts "\n"
+      puts "--------------------------------"
+      puts "Running Agent iteration #{iteration}"
+      puts "Prompt:\n#{completion.prompt}"
+      puts "Response:\n#{completion.response}"
+      puts "--------------------------------"
+      puts "\n\n\n"
+
       # Extract thought, action, and answer from the completion
-      result = completion.extract_thought_action_answer
+      thought = completion.extract_thought
+      action = completion.extract_action
+      answer = completion.extract_answer
 
       # Add the thought to conversation history
-      if result[:thought]
-        conversation_history << { role: "assistant", content: "<thought>#{result[:thought]}</thought>" }
+      if thought
+        conversation_history << { role: "assistant", content: "<thought>#{thought}</thought>" }
       end
 
       # If there's an answer, we're done
-      if result[:answer]
-        @final_answer = result[:answer]
-        conversation_history << { role: "assistant", content: "<answer>#{result[:answer]}</answer>" }
+      if answer
+        @final_answer = answer
+        conversation_history << { role: "assistant", content: "<answer>#{answer}</answer>" }
         break
       end
 
       # If there's an action, execute it
-      if result[:action] && result[:action]["tool"] && result[:action]["arguments"]
-        tool_name = result[:action]["tool"]
-        arguments = result[:action]["arguments"]
+      if action && action["tool"] && action["arguments"]
+        tool_name = action["tool"]
+        arguments = action["arguments"]
 
         # Find the tool class
-        tool_class_name = tools.find { |t| t.constantize.tool_name == tool_name }
+        debugger
+        tool_class_name = available_tools.find { |t| t.constantize.tool_name == tool_name }
 
         if tool_class_name
           # Create a tool invocation
@@ -113,11 +126,11 @@ class Raif::Agent
 
   def system_prompt
     <<~PROMPT
-      You are an intelligent assistant that follows the ReAct (Reasoning + Acting) framework to complete tasks step by step.
+      You are an intelligent assistant that follows the ReAct (Reasoning + Acting) framework to complete tasks step by step using tool calls.
 
       # Available Tools
       You have access to the following tools:
-      #{available_tools.map(&:to_json).join("\n")}
+      #{available_tools.map(&:description_for_llm).join("\n---\n")}
 
       # Your Responses
       Your responses should follow this structure & format:

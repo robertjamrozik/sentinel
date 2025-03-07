@@ -5,12 +5,11 @@ module Raif
     attr_accessor :agent, :conversation_history
 
     llm_response_format :text
-    llm_completion_args :agent, :conversation_history
 
-    def initialize(agent:, conversation_history: [], **args)
-      super(**args)
-      @agent = agent
-      @conversation_history = conversation_history || []
+    def initialize(attributes = nil)
+      super
+
+      @conversation_history ||= []
     end
 
     def build_prompt
@@ -19,7 +18,11 @@ module Raif
 
     def build_system_prompt
       sp = agent.system_prompt
-      sp += "\n\n" + "You're collaborating with teammate who speaks #{requested_language_name}. For your final answer, please respond in #{requested_language_name}." # rubocop:disable Layout/LineLength
+
+      if requested_language_key.present?
+        sp += "\nYou're collaborating with teammate who speaks #{requested_language_name}. For your final answer, please respond in #{requested_language_name}." # rubocop:disable Layout/LineLength
+      end
+
       sp
     end
 
@@ -37,21 +40,37 @@ module Raif
       messages
     end
 
-    def extract_thought_action_answer
+    def extract_thought
       response_text = response.to_s
-
       thought_match = response_text.match(%r{<thought>(.*?)</thought>}m)
-      action_match = response_text.match(%r{<action>(.*?)</action>}m)
-      answer_match = response_text.match(%r{<answer>(.*?)</answer>}m)
-
-      {
-        thought: thought_match ? thought_match[1].strip : nil,
-        action: action_match ? parse_action(action_match[1].strip) : nil,
-        answer: answer_match ? answer_match[1].strip : nil
-      }
+      thought_match ? thought_match[1].strip : nil
     end
 
-  private
+    def extract_action
+      response_text = response.to_s
+      action_match = response_text.match(%r{<action>(.*?)</action>}m)
+      action_match ? parse_action(action_match[1].strip) : nil
+    end
+
+    def extract_answer
+      response_text = response.to_s
+      answer_match = response_text.match(%r{<answer>(.*?)</answer>}m)
+      answer_match ? answer_match[1].strip : nil
+    end
+
+    def process_model_tool_invocations
+      # action = extract_action
+      # return unless action.present?
+
+      # debugger
+      # action_json = JSON.parse(action)
+
+      # tool_klass = available_model_tools_map[action_json["tool"]]
+      # return unless tool_klass
+
+      # debugger
+      # tool_klass.invoke_tool(tool_arguments: action_json["arguments"], completion: self)
+    end
 
     def parse_action(action_text)
       JSON.parse(action_text)

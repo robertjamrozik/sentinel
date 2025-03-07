@@ -12,6 +12,7 @@ require "sentinel/api_adapters/open_ai"
 require "sentinel/api_adapters/bedrock"
 require "sentinel/model_tool"
 
+require "faraday"
 require "openai"
 require "pagy"
 
