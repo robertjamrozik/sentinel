@@ -4,12 +4,6 @@ module Raif
   class AgentInvocation < ApplicationRecord
     include Raif::Concerns::HasLlmModelName
 
-    has_many :completions,
-      class_name: "Raif::Completions::AgentCompletion",
-      dependent: :destroy,
-      foreign_key: :sentinel_agent_invocation_id,
-      inverse_of: :sentinel_agent_invocation
-
     belongs_to :creator, polymorphic: true
 
     boolean_timestamp :started_at
@@ -17,13 +11,11 @@ module Raif
     boolean_timestamp :failed_at
 
     validates :task, presence: true
+    validates :system_prompt, presence: true
+    validates :max_iterations, presence: true, numericality: { greater_than: 0 }
 
     def llm
       @llm ||= Raif.llm_for_key(llm_model_name.to_sym)
-    end
-
-    def max_iterations
-      10
     end
 
     def run!
@@ -42,17 +34,16 @@ module Raif
           puts "--------------------------------"
           puts "System Prompt:"
           puts system_prompt
-          puts "\n\n"
         end
 
-        puts "\n\n"
+        puts "\n"
         puts "--------------------------------"
         puts "Running Agent iteration #{iteration_count}"
         model_response = llm.chat(messages: conversation_history, system_prompt: system_prompt)
-        puts "Messages:\n#{model_response.conversation_history}"
+        puts "Messages:\n#{JSON.pretty_generate(conversation_history)}"
         puts "Response:\n#{model_response.raw_response}"
         puts "--------------------------------"
-        puts "\n\n"
+        puts "\n"
 
         # Extract thought, action, and answer from the model response
         thought = extract_thought(model_response.raw_response)
@@ -73,7 +64,7 @@ module Raif
 
         # If there's an action, execute it
         if action && action["tool"] && action["arguments"]
-          process_action(action, completion)
+          process_action(action)
         else
           # No action specified
           conversation_history << {
@@ -83,7 +74,7 @@ module Raif
         end
       end
 
-      # Return the final answer
+      completed!
       final_answer
     end
 
@@ -120,7 +111,9 @@ module Raif
 
     def extract_action(model_response_text)
       action_match = model_response_text.match(%r{<action>(.*?)</action>}m)
-      action_match ? parse_action(action_match[1].strip) : nil
+      action_match ? JSON.parse(action_match[1].strip) : nil
+    rescue JSON::ParserError
+      nil
     end
 
     def extract_answer(model_response_text)
@@ -129,45 +122,10 @@ module Raif
     end
 
     def available_model_tools_map
-      @available_model_tools_map ||= available_model_tools&.map do |tool_klass|
+      @available_model_tools_map ||= available_model_tools&.map do |tool_name|
+        tool_klass = tool_name.constantize
         [tool_klass.tool_name, tool_klass]
       end.to_h
-    end
-
-    def system_prompt
-      <<~PROMPT
-        You are an intelligent assistant that follows the ReAct (Reasoning + Acting) framework to complete tasks step by step using tool calls.
-
-        # Available Tools
-        You have access to the following tools:
-        #{available_model_tools.map(&:description_for_llm).join("\n---\n")}
-
-        # Your Responses
-        Your responses should follow this structure & format:
-        <thought>Your step-by-step reasoning about what to do</thought>
-        <action>JSON object with "tool" and "arguments" keys</action>
-        <observation>Results from the tool, which will be provided to you</observation>
-        ... (repeat Thought/Action/Observation as needed until the task is complete)
-        <thought>Final reasoning based on all observations</thought>
-        <answer>Your final response to the user</answer>
-
-        # How to Use Tools
-        When you need to use a tool:
-        1. Identify which tool is appropriate for the task
-        2. Format your tool call using JSON with the required arguments and place it in the <action> tag
-        3. Here is an example: <action>{"tool": "tool_name", "arguments": {...}}</action>
-
-        # Guidelines
-        - Always think step by step
-        - Use tools when appropriate, but don't use tools for tasks you can handle directly
-        - Be concise in your reasoning but thorough in your analysis
-        - If a tool returns an error, try to understand why and adjust your approach
-        - If you're unsure about something, explain your uncertainty, but do not make things up
-        - After each thought, make sure to also include an <action> or <answer>
-        - Always provide a final answer that directly addresses the user's request
-
-        Remember: Your goal is to be helpful, accurate, and efficient in solving the user's request.
-      PROMPT
     end
   end
 end

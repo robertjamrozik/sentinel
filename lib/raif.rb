@@ -11,6 +11,7 @@ require "sentinel/api_adapters/base"
 require "sentinel/api_adapters/open_ai"
 require "sentinel/api_adapters/bedrock"
 require "sentinel/model_tool"
+require "sentinel/model_response"
 require "sentinel/utils"
 
 require "faraday"

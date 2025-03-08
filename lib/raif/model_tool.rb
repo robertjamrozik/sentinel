@@ -50,7 +50,7 @@ class Raif::ModelTool
     true
   end
 
-  def self.invoke_tool(tool_arguments:, completion:)
+  def self.invoke_tool(tool_arguments:, completion: nil)
     tool_instance = new
     tool_arguments = tool_instance.clean_tool_arguments(tool_arguments)
 

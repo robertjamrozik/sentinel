@@ -52,7 +52,8 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
     end
 
     create_table :sentinel_model_tool_invocations do |t|
-      t.bigint :sentinel_completion_id, null: false
+      t.bigint :sentinel_completion_id
+      t.bigint :sentinel_agent_invocation_id
       t.string :tool_type, null: false
       t.jsonb :tool_arguments, default: {}, null: false
       t.jsonb :result, default: {}, null: false
@@ -63,6 +64,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
     end
 
     add_index :sentinel_model_tool_invocations, :sentinel_completion_id
+    add_index :sentinel_model_tool_invocations, :sentinel_agent_invocation_id
 
     create_table :sentinel_user_tool_invocations do |t|
       t.bigint :sentinel_conversation_entry_id, null: false

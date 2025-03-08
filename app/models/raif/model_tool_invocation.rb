@@ -3,7 +3,8 @@
 require "json-schema"
 
 class Raif::ModelToolInvocation < Raif::ApplicationRecord
-  belongs_to :sentinel_completion, class_name: "Raif::Completion"
+  belongs_to :sentinel_completion, class_name: "Raif::Completion", optional: true
+  belongs_to :sentinel_agent_invocation, class_name: "Raif::AgentInvocation", optional: true
 
   validates :tool_type, presence: true
   validate :ensure_valid_tool_argument_schema, if: -> { tool_arguments_schema.present? }

@@ -12,7 +12,7 @@ module Raif
       end
 
       def chat(messages:, response_format: :text, system_prompt: nil)
-        messages.prepend({ role: "system", content: system_prompt }) if system_prompt
+        messages = [{ role: "system", content: system_prompt }] + messages if system_prompt
 
         resp = client.chat(
           parameters: {

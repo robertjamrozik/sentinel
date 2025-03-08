@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_24_234252) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -71,12 +71,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["sentinel_completion_id"], name: "index_sentinel_model_tool_invocations_on_sentinel_completion_id"
-  end
-
-  create_table "sentinel_test_users", force: :cascade do |t|
-    t.string "email"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "sentinel_user_tool_invocations", force: :cascade do |t|

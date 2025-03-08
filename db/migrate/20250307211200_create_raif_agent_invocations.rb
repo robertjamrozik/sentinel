@@ -5,7 +5,9 @@ class CreateRaifAgentInvocations < ActiveRecord::Migration[8.0]
     create_table :sentinel_agent_invocations do |t|
       t.string :llm_model_name, null: false
       t.text :task
+      t.text :system_prompt
       t.text :final_answer
+      t.integer :max_iterations, default: 10, null: false
       t.integer :iteration_count, default: 0, null: false
       t.jsonb :available_model_tools
       t.references :creator, polymorphic: true, null: false
