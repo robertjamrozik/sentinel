@@ -2,8 +2,9 @@
 
 module Raif
   class Completion < Raif::ApplicationRecord
+    include Raif::Concerns::HasLlmModelName
+
     belongs_to :creator, polymorphic: true
-    belongs_to :sentinel_conversation_entry, class_name: "Raif::ConversationEntry", optional: true
 
     has_many :model_tool_invocations,
       class_name: "Raif::ModelToolInvocation",
@@ -18,12 +19,9 @@ module Raif
     boolean_timestamp :failed_at
 
     validates :response_format, presence: true, inclusion: { in: response_formats.keys }
-    validates :llm_model_name, presence: true, inclusion: { in: Raif.available_llm_keys.map(&:to_s) }
     validates :requested_language_key, inclusion: { in: Raif.supported_languages, allow_blank: true }
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
-
-    before_validation ->{ self.llm_model_name ||= default_llm_model_name }
 
     def self.llm_response_format(format)
       raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
@@ -112,10 +110,6 @@ module Raif
 
     def requested_language_name
       @requested_language_name ||= I18n.t("sentinel.languages.#{requested_language_key}", locale: "en")
-    end
-
-    def default_llm_model_name
-      Raif.config.default_llm_model_name
     end
 
     def llm

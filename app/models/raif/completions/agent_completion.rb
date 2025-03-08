@@ -1,43 +1,27 @@
 # frozen_string_literal: true
 
-module Raif
+module Raif::Completions
   class AgentCompletion < Raif::Completion
-    attr_accessor :agent, :conversation_history
+    belongs_to :sentinel_agent_invocation, class_name: "Raif::AgentInvocation"
 
     llm_response_format :text
 
-    def initialize(attributes = nil)
-      super
-
-      @conversation_history ||= []
+    def build_prompt
+      # no-op. Agent completions overrides messages method to provide prompt
     end
 
-    def build_prompt
-      agent.task
+    def messages
+      sentinel_agent_invocation.conversation_history
     end
 
     def build_system_prompt
-      sp = agent.system_prompt
+      sp = sentinel_agent_invocation.system_prompt
 
       if requested_language_key.present?
         sp += "\nYou're collaborating with teammate who speaks #{requested_language_name}. For your final answer, please respond in #{requested_language_name}." # rubocop:disable Layout/LineLength
       end
 
       sp
-    end
-
-    def messages
-      messages = []
-
-      # Add conversation history
-      conversation_history.each do |entry|
-        messages << { "role" => entry[:role], "content" => entry[:content] }
-      end
-
-      # Add the current prompt
-      messages << { "role" => "user", "content" => prompt }
-
-      messages
     end
 
     def extract_thought
