@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Raif::Completions
-  class ConversationEntryCompletion < Raif::Completion
+  class ConversationEntry < Raif::Completion
     belongs_to :sentinel_conversation_entry, class_name: "Raif::ConversationEntry"
 
     llm_response_format :json
