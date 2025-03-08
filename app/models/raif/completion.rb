@@ -11,7 +11,7 @@ module Raif
       foreign_key: :sentinel_completion_id,
       inverse_of: :sentinel_completion
 
-    enum :response_format, { text: 0, json: 1, html: 2 }, prefix: true
+    enum :response_format, Raif::Llm.valid_response_formats, prefix: true
 
     boolean_timestamp :started_at
     boolean_timestamp :completed_at
@@ -23,7 +23,7 @@ module Raif
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
 
-    before_validation ->{ self.llm_model_name ||= default_llm }
+    before_validation ->{ self.llm_model_name ||= default_llm_model_name }
 
     def self.llm_response_format(format)
       raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
@@ -51,17 +51,17 @@ module Raif
       update_columns(started_at: Time.current) if started_at.nil?
 
       populate_prompts
-      reply = llm.chat(messages: messages, system_prompt: system_prompt)
+      model_response = llm.chat(messages: messages, system_prompt: system_prompt, response_format: response_format)
 
       update({
-        prompt_tokens: reply[:prompt_tokens],
-        completion_tokens: reply[:completion_tokens],
-        response: reply[:response]
+        prompt_tokens: model_response.prompt_tokens,
+        completion_tokens: model_response.completion_tokens,
+        response: model_response.raw_response
       })
 
       process_model_tool_invocations
       completed!
-      parsed_response
+      model_response
     end
 
     def self.run(creator:, available_model_tools: nil, llm_model_name: nil, **args)
@@ -114,36 +114,12 @@ module Raif
       @requested_language_name ||= I18n.t("sentinel.languages.#{requested_language_key}", locale: "en")
     end
 
-    def default_llm
-      Raif.config.default_llm
+    def default_llm_model_name
+      Raif.config.default_llm_model_name
     end
 
     def llm
       @llm ||= Raif.llm_for_key(llm_model_name.to_sym)
-    end
-
-    def parsed_response
-      @parsed_response ||= if response_format_json?
-        json = response.gsub("```json", "").gsub("```", "")
-        JSON.parse(json)
-      elsif response_format_html?
-        html = response.strip.gsub("```html", "").chomp("```")
-        clean_html_fragment(html)
-      else
-        response.strip
-      end
-    end
-
-    def clean_html_fragment(html)
-      fragment = Nokogiri::HTML.fragment(html)
-
-      fragment.traverse do |node|
-        if node.text? && node.text.strip.empty?
-          node.remove
-        end
-      end
-
-      ActionController::Base.helpers.sanitize(fragment.to_html).strip
     end
 
     def available_model_tools_map
