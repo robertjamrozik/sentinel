@@ -46,6 +46,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.string :llm_model_name, null: false
       t.bigint :creator_id
       t.string :creator_type
+      t.string :requested_language_key
       t.string :type
       t.integer :conversation_entries_count, default: 0, null: false
       t.datetime :created_at, null: false

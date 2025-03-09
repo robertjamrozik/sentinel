@@ -3,6 +3,7 @@
 module Raif
   class AgentInvocation < ApplicationRecord
     include Raif::Concerns::HasLlm
+    include Raif::Concerns::HasRequestedLanguage
 
     belongs_to :creator, polymorphic: true
 

@@ -3,8 +3,10 @@
 module Raif
   class Completion < Raif::ApplicationRecord
     include Raif::Concerns::HasLlm
+    include Raif::Concerns::HasRequestedLanguage
 
     belongs_to :creator, polymorphic: true
+    belongs_to :sentinel_conversation_entry, class_name: "Raif::ConversationEntry", optional: true
 
     has_many :model_tool_invocations,
       class_name: "Raif::ModelToolInvocation",
@@ -19,7 +21,6 @@ module Raif
     boolean_timestamp :failed_at
 
     validates :response_format, presence: true, inclusion: { in: response_formats.keys }
-    validates :requested_language_key, inclusion: { in: Raif.supported_languages, allow_blank: true }
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
 
@@ -97,19 +98,9 @@ module Raif
     end
 
     def build_system_prompt
-      system_prompt = Raif.config.base_system_prompt.presence || "You are a friendly assistant."
-      system_prompt += " #{system_prompt_language_preference}" if requested_language_key.present?
-      system_prompt
-    end
-
-    def system_prompt_language_preference
-      return if requested_language_key.blank?
-
-      "You're collaborating with teammate who speaks #{requested_language_name}. Please respond in #{requested_language_name}."
-    end
-
-    def requested_language_name
-      @requested_language_name ||= I18n.t("sentinel.languages.#{requested_language_key}", locale: "en")
+      sp = Raif.config.base_system_prompt.presence || "You are a friendly assistant."
+      sp += " #{system_prompt_language_preference}" if requested_language_key.present?
+      sp
     end
 
     def available_model_tools_map

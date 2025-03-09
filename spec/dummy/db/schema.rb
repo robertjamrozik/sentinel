@@ -24,6 +24,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_211200) do
     t.jsonb "available_model_tools"
     t.string "creator_type", null: false
     t.bigint "creator_id", null: false
+    t.string "requested_language_key"
     t.datetime "started_at"
     t.datetime "completed_at"
     t.datetime "failed_at"
@@ -78,6 +79,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_211200) do
     t.string "llm_model_name", null: false
     t.bigint "creator_id"
     t.string "creator_type"
+    t.string "requested_language_key"
     t.string "type"
     t.integer "conversation_entries_count", default: 0, null: false
     t.datetime "created_at", null: false

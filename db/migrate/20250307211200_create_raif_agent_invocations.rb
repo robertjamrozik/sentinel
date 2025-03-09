@@ -11,6 +11,7 @@ class CreateRaifAgentInvocations < ActiveRecord::Migration[8.0]
       t.integer :iteration_count, default: 0, null: false
       t.jsonb :available_model_tools
       t.references :creator, polymorphic: true, null: false
+      t.string :requested_language_key
       t.datetime :started_at
       t.datetime :completed_at
       t.datetime :failed_at

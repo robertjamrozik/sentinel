@@ -35,12 +35,12 @@ en:
       open_ai_gpt_4o: OpenAI GPT-4o
       open_ai_gpt_4o_mini: OpenAI GPT-4o Mini
     model_tools:
-      user_input_tool:
-        name: get_user_input
-        description: Get user input from the user
-      wikipedia_search_tool:
-        name: wikipedia_search
-        description: Search Wikipedia for information
       fetch_url_tool:
-        name: fetch_url
         description: Fetch a URL and return the response
+        name: fetch_url
+      user_input_tool:
+        description: Get user input from the user
+        name: get_user_input
+      wikipedia_search_tool:
+        description: Search Wikipedia for information
+        name: wikipedia_search

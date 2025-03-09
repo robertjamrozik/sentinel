@@ -2,8 +2,6 @@
 
 module Raif::Completions
   class ConversationEntry < Raif::Completion
-    belongs_to :sentinel_conversation_entry, class_name: "Raif::ConversationEntry"
-
     llm_response_format :json
     llm_completion_args :sentinel_conversation_entry
 

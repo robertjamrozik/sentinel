@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Raif::Conversation < Raif::ApplicationRecord
+  include Raif::Concerns::HasLlm
+  include Raif::Concerns::HasRequestedLanguage
+
   belongs_to :creator, polymorphic: true
 
   has_many :entries, class_name: "Raif::ConversationEntry", dependent: :destroy, foreign_key: :sentinel_conversation_id, inverse_of: :sentinel_conversation
@@ -14,11 +17,18 @@ class Raif::Conversation < Raif::ApplicationRecord
     []
   end
 
-  def system_prompt_addition
-    <<~PROMPT
-      Your response should be a JSON object with the following format:
-      { "message": "Your message to be displayed to the user" }
-    PROMPT
+  # def system_prompt
+  #   <<~PROMPT
+  #     Your response should be a JSON object with the following format:
+  #     { "message": "Your message to be displayed to the user" }
+  #   PROMPT
+  # end
+
+  def system_prompt
+    raise "This needs to get filled out for conversation stuff"
+    system_prompt = Raif.config.base_system_prompt.presence || "You are a friendly assistant."
+    system_prompt += " #{system_prompt_language_preference}" if requested_language_key.present?
+    system_prompt
   end
 
   def available_user_tools
