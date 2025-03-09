@@ -16,13 +16,11 @@ class Raif::ModelTool
   end
 
   def self.tool_name
-    name_key = name.split("::").last.underscore
-    I18n.t("sentinel.model_tools.#{name_key}.name", default: name_key)
+    name.split("::").last.underscore
   end
 
   def self.tool_description
-    name_key = name.split("::").last.underscore
-    I18n.t("sentinel.model_tools.#{name_key}.description")
+    raise NotImplementedError, "#{self.class.name}#tool_description is not implemented"
   end
 
   def self.example_model_invocation
@@ -50,12 +48,12 @@ class Raif::ModelTool
     true
   end
 
-  def self.invoke_tool(tool_arguments:, completion: nil)
+  def self.invoke_tool(tool_arguments:, source:)
     tool_instance = new
     tool_arguments = tool_instance.clean_tool_arguments(tool_arguments)
 
     tool_invocation = Raif::ModelToolInvocation.new(
-      sentinel_completion: completion,
+      source: source,
       tool_type: name,
       tool_arguments: tool_arguments
     )

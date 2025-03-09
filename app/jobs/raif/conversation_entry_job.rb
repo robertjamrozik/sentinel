@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Raif
-  class Completions::ConversationEntryJob < ApplicationJob
+  class ConversationEntryJob < ApplicationJob
 
     before_enqueue do |job|
       conversation_entry = job.arguments.first[:conversation_entry]
@@ -9,8 +9,8 @@ module Raif
     end
 
     def perform(conversation_entry:)
-      conversation_entry.run_completion
       conversation = conversation_entry.sentinel_conversation
+      conversation.get_model_response_for_entry(conversation_entry)
       conversation_entry.broadcast_replace_to conversation
 
       Turbo::StreamsChannel.broadcast_action_to(
@@ -18,6 +18,9 @@ module Raif
         action: :sentinel_scroll_to_bottom,
         target: dom_id(conversation, :entries)
       )
+    rescue StandardError
+      conversation_entry.failed!
+      conversation_entry.broadcast_replace_to conversation
     end
 
   end

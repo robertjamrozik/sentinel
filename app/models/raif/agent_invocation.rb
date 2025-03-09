@@ -7,6 +7,11 @@ module Raif
 
     belongs_to :creator, polymorphic: true
 
+    has_many :model_tool_invocations,
+      as: :source,
+      class_name: "Raif::ModelToolInvocation",
+      dependent: :destroy
+
     boolean_timestamp :started_at
     boolean_timestamp :completed_at
     boolean_timestamp :failed_at
@@ -91,7 +96,7 @@ module Raif
         return
       end
 
-      tool_invocation = tool_klass.invoke_tool(tool_arguments: tool_arguments)
+      tool_invocation = tool_klass.invoke_tool(tool_arguments: tool_arguments, source: self)
       observation = tool_klass.observation_for_invocation(tool_invocation)
 
       # Add the tool invocation to conversation history

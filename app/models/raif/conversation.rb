@@ -39,13 +39,23 @@ class Raif::Conversation < Raif::ApplicationRecord
     I18n.t("#{self.class.name.underscore.gsub("/", ".")}.initial_chat_message")
   end
 
+  def get_model_response_for_entry(entry)
+    model_response = llm.chat(messages: llm_messages, system_prompt: system_prompt, response_format: :json)
+    entry.update_columns(
+      model_raw_response: model_response.raw_response,
+      completed_at: Time.current
+    )
+
+    entry
+  end
+
   def llm_messages
     messages = []
 
-    entries.preload(:sentinel_completion).each do |entry|
+    entries.each do |entry|
       if entry.completed?
-        messages << { "role" => "user", "content" => entry.sentinel_completion_prompt }
-        messages << { "role" => "assistant", "content" => entry.sentinel_completion_response }
+        messages << { "role" => "user", "content" => entry.full_user_message }
+        messages << { "role" => "assistant", "content" => entry.model_response_message }
       else
         messages << { "role" => "user", "content" => entry.full_user_message }
       end

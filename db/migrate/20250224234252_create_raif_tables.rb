@@ -35,6 +35,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.datetime :completed_at
       t.datetime :failed_at
       t.text :user_message
+      t.text :model_raw_response
       t.text :model_response_message
       t.datetime :created_at, null: false
       t.datetime :updated_at, null: false
@@ -54,8 +55,8 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
     end
 
     create_table :sentinel_model_tool_invocations do |t|
-      t.bigint :sentinel_completion_id
-      t.bigint :sentinel_agent_invocation_id
+      t.bigint :source_id, null: false
+      t.string :source_type, null: false
       t.string :tool_type, null: false
       t.jsonb :tool_arguments, default: {}, null: false
       t.jsonb :result, default: {}, null: false
@@ -65,8 +66,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.datetime :updated_at, null: false
     end
 
-    add_index :sentinel_model_tool_invocations, :sentinel_completion_id
-    add_index :sentinel_model_tool_invocations, :sentinel_agent_invocation_id
+    add_index :sentinel_model_tool_invocations, [:source_type, :source_id]
 
     create_table :sentinel_user_tool_invocations do |t|
       t.bigint :sentinel_conversation_entry_id, null: false

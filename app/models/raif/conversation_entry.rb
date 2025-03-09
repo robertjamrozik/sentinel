@@ -24,6 +24,8 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   boolean_timestamp :completed_at
   boolean_timestamp :failed_at
 
+  before_save :extract_model_response_message
+
   def full_user_message
     if sentinel_user_tool_invocation.present?
       <<~MESSAGE
@@ -36,27 +38,10 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
     end.strip
   end
 
-  def run_completion
-    llm_response = Raif::Completions::ConversationEntry.run(
-      creator: creator,
-      available_model_tools: sentinel_conversation.available_model_tools,
-      sentinel_conversation_entry: self
-    )
+  def extract_model_response_message
+    return unless model_raw_response.present?
 
-    if llm_response.present?
-      self.model_response_message = llm_response["message"]
-      self.completed_at = Time.current
-      save!
-    else
-      failed!
-    end
-
-    self
-  rescue StandardError => e
-    logger.error "Raif::ConversationEntry#run_completion failed: #{e.message}"
-    logger.error e.backtrace.join("\n")
-    Airbrake.notify(e) if defined?(Airbrake)
-    failed!
+    self.model_response_message = model_raw_response.match(%r{<message>(.*?)</message>}m)[1].strip
   end
 
   def generating_response?

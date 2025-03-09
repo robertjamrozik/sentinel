@@ -10,9 +10,8 @@ module Raif
 
     has_many :model_tool_invocations,
       class_name: "Raif::ModelToolInvocation",
-      dependent: :destroy,
-      foreign_key: :sentinel_completion_id,
-      inverse_of: :sentinel_completion
+      as: :source,
+      dependent: :destroy
 
     enum :response_format, Raif::Llm.valid_response_formats, prefix: true
 
@@ -119,7 +118,7 @@ module Raif
         tool_klass = available_model_tools_map[t["name"]]
         next unless tool_klass
 
-        tool_klass.invoke_tool(tool_arguments: t["arguments"], completion: self)
+        tool_klass.invoke_tool(tool_arguments: t["arguments"], source: self)
       end
     end
 
