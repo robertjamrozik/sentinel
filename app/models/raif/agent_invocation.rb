@@ -2,7 +2,7 @@
 
 module Raif
   class AgentInvocation < ApplicationRecord
-    include Raif::Concerns::HasLlmModelName
+    include Raif::Concerns::HasLlm
 
     belongs_to :creator, polymorphic: true
 
@@ -13,10 +13,6 @@ module Raif
     validates :task, presence: true
     validates :system_prompt, presence: true
     validates :max_iterations, presence: true, numericality: { greater_than: 0 }
-
-    def llm
-      @llm ||= Raif.llm_for_key(llm_model_name.to_sym)
-    end
 
     def run!
       self.started_at = Time.current

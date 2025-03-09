@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Raif::Concerns::HasLlmModelName
+module Raif::Concerns::HasLlm
   extend ActiveSupport::Concern
 
   included do
@@ -11,5 +11,9 @@ module Raif::Concerns::HasLlmModelName
 
   def default_llm_model_name
     Raif.config.default_llm_model_name
+  end
+
+  def llm
+    @llm ||= Raif.llm_for_key(llm_model_name.to_sym)
   end
 end

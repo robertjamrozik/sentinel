@@ -2,7 +2,7 @@
 
 module Raif
   class Completion < Raif::ApplicationRecord
-    include Raif::Concerns::HasLlmModelName
+    include Raif::Concerns::HasLlm
 
     belongs_to :creator, polymorphic: true
 
@@ -110,10 +110,6 @@ module Raif
 
     def requested_language_name
       @requested_language_name ||= I18n.t("sentinel.languages.#{requested_language_key}", locale: "en")
-    end
-
-    def llm
-      @llm ||= Raif.llm_for_key(llm_model_name.to_sym)
     end
 
     def available_model_tools_map

@@ -43,6 +43,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
     add_index :sentinel_conversation_entries, :sentinel_conversation_id
 
     create_table :sentinel_conversations do |t|
+      t.string :llm_model_name, null: false
       t.bigint :creator_id
       t.string :creator_type
       t.string :type

@@ -10,9 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_24_234252) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_07_211200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "sentinel_agent_invocations", force: :cascade do |t|
+    t.string "llm_model_name", null: false
+    t.text "task"
+    t.text "system_prompt"
+    t.text "final_answer"
+    t.integer "max_iterations", default: 10, null: false
+    t.integer "iteration_count", default: 0, null: false
+    t.jsonb "available_model_tools"
+    t.string "creator_type", null: false
+    t.bigint "creator_id", null: false
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "failed_at"
+    t.text "failure_reason"
+    t.jsonb "conversation_history", default: [], null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_type", "creator_id"], name: "index_sentinel_agent_invocations_on_creator"
+  end
 
   create_table "sentinel_completions", force: :cascade do |t|
     t.string "type", null: false
@@ -34,6 +54,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_24_234252) do
     t.datetime "failed_at"
     t.jsonb "available_model_tools"
     t.string "llm_model_name", null: false
+    t.integer "sentinel_agent_invocation_id"
+    t.index ["sentinel_agent_invocation_id"], name: "index_sentinel_completions_on_sentinel_agent_invocation_id"
     t.index ["sentinel_conversation_entry_id"], name: "index_sentinel_completions_on_sentinel_conversation_entry_id", unique: true
     t.index ["type"], name: "index_sentinel_completions_on_type"
   end
@@ -53,6 +75,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_24_234252) do
   end
 
   create_table "sentinel_conversations", force: :cascade do |t|
+    t.string "llm_model_name", null: false
     t.bigint "creator_id"
     t.string "creator_type"
     t.string "type"
@@ -62,7 +85,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_24_234252) do
   end
 
   create_table "sentinel_model_tool_invocations", force: :cascade do |t|
-    t.bigint "sentinel_completion_id", null: false
+    t.bigint "sentinel_completion_id"
+    t.bigint "sentinel_agent_invocation_id"
     t.string "tool_type", null: false
     t.jsonb "tool_arguments", default: {}, null: false
     t.jsonb "result", default: {}, null: false
@@ -70,7 +94,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_24_234252) do
     t.datetime "failed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["sentinel_agent_invocation_id"], name: "index_sentinel_model_tool_invocations_on_sentinel_agent_invocation_id"
     t.index ["sentinel_completion_id"], name: "index_sentinel_model_tool_invocations_on_sentinel_completion_id"
+  end
+
+  create_table "sentinel_test_users", force: :cascade do |t|
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sentinel_user_tool_invocations", force: :cascade do |t|
