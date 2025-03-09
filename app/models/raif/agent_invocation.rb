@@ -4,13 +4,9 @@ module Raif
   class AgentInvocation < ApplicationRecord
     include Raif::Concerns::HasLlm
     include Raif::Concerns::HasRequestedLanguage
+    include Raif::Concerns::InvokesModelTools
 
     belongs_to :creator, polymorphic: true
-
-    has_many :model_tool_invocations,
-      as: :source,
-      class_name: "Raif::ModelToolInvocation",
-      dependent: :destroy
 
     boolean_timestamp :started_at
     boolean_timestamp :completed_at
@@ -123,11 +119,5 @@ module Raif
       answer_match ? answer_match[1].strip : nil
     end
 
-    def available_model_tools_map
-      @available_model_tools_map ||= available_model_tools&.map do |tool_name|
-        tool_klass = tool_name.constantize
-        [tool_klass.tool_name, tool_klass]
-      end.to_h
-    end
   end
 end

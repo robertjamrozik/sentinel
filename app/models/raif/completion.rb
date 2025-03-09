@@ -4,14 +4,10 @@ module Raif
   class Completion < Raif::ApplicationRecord
     include Raif::Concerns::HasLlm
     include Raif::Concerns::HasRequestedLanguage
+    include Raif::Concerns::InvokesModelTools
 
     belongs_to :creator, polymorphic: true
     belongs_to :sentinel_conversation_entry, class_name: "Raif::ConversationEntry", optional: true
-
-    has_many :model_tool_invocations,
-      class_name: "Raif::ModelToolInvocation",
-      as: :source,
-      dependent: :destroy
 
     enum :response_format, Raif::Llm.valid_response_formats, prefix: true
 
@@ -100,13 +96,6 @@ module Raif
       sp = Raif.config.base_system_prompt.presence || "You are a friendly assistant."
       sp += " #{system_prompt_language_preference}" if requested_language_key.present?
       sp
-    end
-
-    def available_model_tools_map
-      @available_model_tools_map ||= available_model_tools&.map do |tool|
-        tool_klass = tool.constantize
-        [tool_klass.tool_name, tool_klass]
-      end.to_h
     end
 
     def process_model_tool_invocations

@@ -9,8 +9,7 @@ module Raif
     end
 
     def perform(conversation_entry:)
-      conversation = conversation_entry.sentinel_conversation
-      conversation.get_model_response_for_entry(conversation_entry)
+      conversation_entry.process_entry!
       conversation_entry.broadcast_replace_to conversation
 
       Turbo::StreamsChannel.broadcast_action_to(

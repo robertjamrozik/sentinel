@@ -39,14 +39,8 @@ class Raif::Conversation < Raif::ApplicationRecord
     I18n.t("#{self.class.name.underscore.gsub("/", ".")}.initial_chat_message")
   end
 
-  def get_model_response_for_entry(entry)
-    model_response = llm.chat(messages: llm_messages, system_prompt: system_prompt, response_format: :json)
-    entry.update_columns(
-      model_raw_response: model_response.raw_response,
-      completed_at: Time.current
-    )
-
-    entry
+  def prompt_model_for_response
+    llm.chat(messages: llm_messages, system_prompt: system_prompt, response_format: :json)
   end
 
   def llm_messages
