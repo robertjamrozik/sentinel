@@ -79,7 +79,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.string "creator_type", null: false
     t.bigint "creator_id", null: false
     t.string "requested_language_key"
-    t.string "type"
+    t.string "type", null: false
     t.integer "conversation_entries_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
