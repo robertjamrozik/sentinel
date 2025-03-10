@@ -2,12 +2,18 @@
 
 class Raif::Agent
 
-  attr_accessor :task, :available_model_tools, :creator, :llm_model_name, :max_iterations
+  attr_accessor :task,
+    :available_model_tools,
+    :creator,
+    :requested_language_key,
+    :llm_model_name,
+    :max_iterations
 
-  def initialize(task:, tools:, creator:, llm_model_name: nil, max_iterations: 10)
+  def initialize(task:, tools:, creator:, requested_language_key: nil, llm_model_name: nil, max_iterations: 10)
     @task = task
     @available_model_tools = tools
     @creator = creator
+    @requested_language_key = requested_language_key
     @llm_model_name = llm_model_name
     @max_iterations = max_iterations
   end
@@ -18,6 +24,7 @@ class Raif::Agent
       available_model_tools: available_model_tools,
       system_prompt: system_prompt,
       creator: creator,
+      requested_language_key: requested_language_key,
       llm_model_name: llm_model_name,
       max_iterations: max_iterations
     )

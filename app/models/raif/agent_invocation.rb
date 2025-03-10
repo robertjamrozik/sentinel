@@ -18,6 +18,17 @@ module Raif
 
     def run!
       self.started_at = Time.current
+
+      # If they invoked the agent with a requested language, add that to the system prompt
+      # so the model responds in that language.
+      if requested_language_key.present?
+        self.system_prompt = <<~SYSTEM_PROMPT
+          #{system_prompt}
+
+          #{system_prompt_language_preference}
+        SYSTEM_PROMPT
+      end
+
       save!
 
       conversation_history << { role: "user", content: task }
