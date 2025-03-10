@@ -66,9 +66,6 @@
                   <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
                 <% end %>
               </div>
-              <% if entry.sentinel_completion.present? %>
-                <%= link_to t("sentinel.admin.common.view_completion"), sentinel.admin_completion_path(entry.sentinel_completion), class: "btn btn-sm btn-outline-primary" %>
-              <% end %>
             </div>
           </div>
         <% end %>

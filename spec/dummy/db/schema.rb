@@ -69,6 +69,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_211200) do
     t.datetime "completed_at"
     t.datetime "failed_at"
     t.text "user_message"
+    t.text "model_raw_response"
     t.text "model_response_message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -87,8 +88,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_211200) do
   end
 
   create_table "sentinel_model_tool_invocations", force: :cascade do |t|
-    t.bigint "sentinel_completion_id"
-    t.bigint "sentinel_agent_invocation_id"
+    t.bigint "source_id", null: false
+    t.string "source_type", null: false
     t.string "tool_type", null: false
     t.jsonb "tool_arguments", default: {}, null: false
     t.jsonb "result", default: {}, null: false
@@ -96,8 +97,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_211200) do
     t.datetime "failed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["sentinel_agent_invocation_id"], name: "index_sentinel_model_tool_invocations_on_sentinel_agent_invocation_id"
-    t.index ["sentinel_completion_id"], name: "index_sentinel_model_tool_invocations_on_sentinel_completion_id"
+    t.index ["source_type", "source_id"], name: "index_sentinel_model_tool_invocations_on_source_type_and_source_id"
   end
 
   create_table "sentinel_test_users", force: :cascade do |t|
