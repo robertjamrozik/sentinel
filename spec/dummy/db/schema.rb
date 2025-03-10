@@ -15,7 +15,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   enable_extension "pg_catalog.plpgsql"
 
   create_table "sentinel_agent_invocations", force: :cascade do |t|
-    t.string "llm_model_name", null: false
+    t.string "llm_model_key", null: false
     t.text "task"
     t.text "system_prompt"
     t.text "final_answer"
@@ -39,9 +39,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.string "type", null: false
     t.text "prompt"
     t.text "response"
-    t.integer "prompt_tokens", default: 0, null: false
-    t.integer "completion_tokens", default: 0, null: false
-    t.integer "total_tokens", default: 0, null: false
     t.string "creator_type", null: false
     t.bigint "creator_id", null: false
     t.text "system_prompt"
@@ -51,7 +48,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.datetime "completed_at"
     t.datetime "failed_at"
     t.jsonb "available_model_tools"
-    t.string "llm_model_name", null: false
+    t.string "llm_model_key", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_type", "creator_id"], name: "index_sentinel_completions_on_creator"
@@ -75,7 +72,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   end
 
   create_table "sentinel_conversations", force: :cascade do |t|
-    t.string "llm_model_name", null: false
+    t.string "llm_model_key", null: false
     t.string "creator_type", null: false
     t.bigint "creator_id", null: false
     t.string "requested_language_key"
@@ -89,7 +86,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   create_table "sentinel_model_responses", force: :cascade do |t|
     t.string "source_type", null: false
     t.bigint "source_id", null: false
-    t.string "llm_model_name", null: false
+    t.string "llm_model_key", null: false
     t.jsonb "messages", default: [], null: false
     t.text "system_prompt"
     t.text "response"

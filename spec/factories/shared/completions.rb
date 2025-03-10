@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :sentinel_completion, class: "Raif::Completion" do
     sequence(:prompt){|i| "prompt #{i} #{SecureRandom.hex(3)}" }
-    llm_model_name { Raif.available_llm_keys.sample.to_s }
+    llm_model_key { Raif.available_llm_keys.sample.to_s }
     prompt_tokens { rand(100..1000) }
 
     trait :completed do

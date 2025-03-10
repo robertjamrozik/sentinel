@@ -24,11 +24,11 @@ RSpec.describe Raif::Completion, type: :model do
     end
   end
 
-  describe "#llm_model_name" do
+  describe "#llm_model_key" do
     it "does not permit invalid model names" do
-      completion = FB.build(:sentinel_completion, llm_model_name: "invalid")
+      completion = FB.build(:sentinel_completion, llm_model_key: "invalid")
       expect(completion.valid?).to eq(false)
-      expect(completion.errors[:llm_model_name]).to include("is not included in the list")
+      expect(completion.errors[:llm_model_key]).to include("is not included in the list")
     end
   end
 end

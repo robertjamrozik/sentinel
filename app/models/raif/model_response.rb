@@ -6,7 +6,7 @@ class Raif::ModelResponse < Raif::ApplicationRecord
   enum :response_format, Raif::Llm.valid_response_formats, prefix: true
 
   validates :response_format, presence: true, inclusion: { in: response_formats.keys }
-  validates :llm_model_name, presence: true, inclusion: { in: Raif.available_llm_keys.map(&:to_s) }
+  validates :llm_model_key, presence: true, inclusion: { in: Raif.available_llm_keys.map(&:to_s) }
 
   def parsed_response
     @parsed_response ||= if response_format == :json

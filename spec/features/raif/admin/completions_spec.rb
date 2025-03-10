@@ -62,7 +62,7 @@ RSpec.describe "Admin::Completions", type: :feature do
         system_prompt: "You are a test assistant",
         prompt_tokens: 10000,
         completion_tokens: 500,
-        llm_model_name: "open_ai_gpt_4o_mini"
+        llm_model_key: "open_ai_gpt_4o_mini"
       )
     end
 

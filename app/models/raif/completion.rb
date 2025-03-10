@@ -66,8 +66,8 @@ module Raif
       model_response
     end
 
-    def self.run(creator:, available_model_tools: nil, llm_model_name: nil, **args)
-      completion = new(creator:, llm_model_name:, available_model_tools:, started_at: Time.current, **args)
+    def self.run(creator:, available_model_tools: nil, llm_model_key: nil, **args)
+      completion = new(creator:, llm_model_key:, available_model_tools:, started_at: Time.current, **args)
       completion.save!
       completion.run
       completion

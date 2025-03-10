@@ -38,7 +38,7 @@ module Raif
       end
 
       model_response = @api_adapter.chat(messages: messages, system_prompt: system_prompt)
-      model_response.llm_model_name = key.to_s
+      model_response.llm_model_key = key.to_s
       model_response.response_format = response_format
       model_response.save!
       model_response

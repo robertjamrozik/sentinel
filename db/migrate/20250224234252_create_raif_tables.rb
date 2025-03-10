@@ -6,9 +6,6 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.string :type, null: false, index: true
       t.text :prompt
       t.text :response
-      t.integer :prompt_tokens, default: 0, null: false
-      t.integer :completion_tokens, default: 0, null: false
-      t.integer :total_tokens, default: 0, null: false
       t.references :creator, polymorphic: true, null: false, index: true
       t.text :system_prompt
       t.string :requested_language_key
@@ -17,13 +14,13 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.datetime :completed_at
       t.datetime :failed_at
       t.jsonb :available_model_tools
-      t.string :llm_model_name, null: false
+      t.string :llm_model_key, null: false
 
       t.timestamps
     end
 
     create_table :sentinel_conversations do |t|
-      t.string :llm_model_name, null: false
+      t.string :llm_model_key, null: false
       t.references :creator, polymorphic: true, null: false, index: true
       t.string :requested_language_key
       t.string :type, null: false
@@ -65,7 +62,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
     end
 
     create_table :sentinel_agent_invocations do |t|
-      t.string :llm_model_name, null: false
+      t.string :llm_model_key, null: false
       t.text :task
       t.text :system_prompt
       t.text :final_answer
@@ -85,7 +82,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
 
     create_table :sentinel_model_responses do |t|
       t.references :source, polymorphic: true, null: false, index: true
-      t.string :llm_model_name, null: false
+      t.string :llm_model_key, null: false
       t.jsonb :messages, default: [], null: false
       t.text :system_prompt
       t.text :response
