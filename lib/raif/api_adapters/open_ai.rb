@@ -11,7 +11,7 @@ module Raif
         super(**args)
       end
 
-      def chat(messages:, response_format: :text, system_prompt: nil)
+      def chat(messages:, system_prompt: nil)
         messages = [{ role: "system", content: system_prompt }] + messages if system_prompt
 
         resp = client.chat(
@@ -23,8 +23,9 @@ module Raif
         )
 
         Raif::ModelResponse.new(
+          messages: messages,
+          system_prompt: system_prompt,
           raw_response: resp.dig("choices", 0, "message", "content"),
-          response_format: response_format,
           completion_tokens: resp["usage"]["completion_tokens"],
           prompt_tokens: resp["usage"]["prompt_tokens"],
           total_tokens: resp["usage"]["total_tokens"],

@@ -12,7 +12,7 @@ RSpec.describe Raif::Completion, type: :model do
 
     it "returns the system prompt with the language preference" do
       completion = FB.build(:sentinel_completion, requested_language_key: "en")
-      expect(completion.build_system_prompt).to eq("You are a friendly assistant. You're collaborating with teammate who speaks English. Please respond in English.") # rubocop:disable Layout/LineLength
+      expect(completion.build_system_prompt).to eq("You are a friendly assistant.\nYou're collaborating with teammate who speaks English. Please respond in English.") # rubocop:disable Layout/LineLength
     end
   end
 

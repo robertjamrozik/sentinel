@@ -86,6 +86,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.index ["creator_type", "creator_id"], name: "index_sentinel_conversations_on_creator"
   end
 
+  create_table "sentinel_model_responses", force: :cascade do |t|
+    t.string "source_type", null: false
+    t.bigint "source_id", null: false
+    t.string "llm_model_name", null: false
+    t.jsonb "messages", default: [], null: false
+    t.text "system_prompt"
+    t.text "response"
+    t.integer "response_format", default: 0, null: false
+    t.integer "completion_tokens"
+    t.integer "prompt_tokens"
+    t.text "raw_response"
+    t.integer "total_tokens"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["source_type", "source_id"], name: "index_sentinel_model_responses_on_source"
+  end
+
   create_table "sentinel_model_tool_invocations", force: :cascade do |t|
     t.string "source_type", null: false
     t.bigint "source_id", null: false

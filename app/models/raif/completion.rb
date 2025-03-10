@@ -9,6 +9,8 @@ module Raif
     belongs_to :creator, polymorphic: true
     belongs_to :sentinel_conversation_entry, class_name: "Raif::ConversationEntry", optional: true
 
+    has_one :model_response, as: :source, dependent: :destroy
+
     enum :response_format, Raif::Llm.valid_response_formats, prefix: true
 
     boolean_timestamp :started_at
@@ -41,16 +43,6 @@ module Raif
 
     def messages
       [{ "role" => "user", "content" => prompt }]
-    end
-
-    def model_response
-      @model_response ||= Raif::ModelResponse.new(
-        raw_response: response,
-        response_format: response_format,
-        prompt_tokens:,
-        completion_tokens:,
-        total_tokens: prompt_tokens + completion_tokens
-      )
     end
 
     def parsed_response
