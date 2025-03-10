@@ -87,7 +87,7 @@ module Raif
       unless tool_klass
         conversation_history << {
           role: "user",
-          content: "<observation>Error: Tool '#{tool_name}' not found. Available tools: #{available_model_tools.map(&:tool_name).join(", ")}</observation>"
+          content: "<observation>Error: Tool '#{tool_name}' not found. Available tools: #{available_model_tools.map(&:tool_name).join(", ")}</observation>" # rubocop:disable Layout/LineLength
         }
         return
       end

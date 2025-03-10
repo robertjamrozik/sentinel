@@ -25,7 +25,6 @@ class Raif::Conversation < Raif::ApplicationRecord
   # end
 
   def system_prompt
-    raise "This needs to get filled out for conversation stuff"
     system_prompt = Raif.config.base_system_prompt.presence || "You are a friendly assistant."
     system_prompt += " #{system_prompt_language_preference}" if requested_language_key.present?
     system_prompt
