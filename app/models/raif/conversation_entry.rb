@@ -6,19 +6,12 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   belongs_to :sentinel_conversation, counter_cache: true, class_name: "Raif::Conversation"
   belongs_to :creator, polymorphic: true
 
-  has_one :sentinel_completion,
-    class_name: "Raif::Completion",
-    dependent: :destroy,
-    foreign_key: :sentinel_conversation_entry_id,
-    inverse_of: :sentinel_conversation_entry
-
   has_one :sentinel_user_tool_invocation,
     class_name: "Raif::UserToolInvocation",
     dependent: :destroy,
     foreign_key: :sentinel_conversation_entry_id,
     inverse_of: :sentinel_conversation_entry
 
-  delegate :prompt, :response, to: :sentinel_completion, prefix: true
   delegate :available_model_tools, to: :sentinel_conversation
 
   accepts_nested_attributes_for :sentinel_user_tool_invocation
