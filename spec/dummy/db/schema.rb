@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_07_211200) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,29 +42,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_211200) do
     t.integer "prompt_tokens", default: 0, null: false
     t.integer "completion_tokens", default: 0, null: false
     t.integer "total_tokens", default: 0, null: false
-    t.bigint "creator_id"
-    t.string "creator_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "creator_type", null: false
+    t.bigint "creator_id", null: false
     t.text "system_prompt"
     t.string "requested_language_key"
     t.integer "response_format", default: 0, null: false
-    t.bigint "sentinel_conversation_entry_id"
     t.datetime "started_at"
     t.datetime "completed_at"
     t.datetime "failed_at"
     t.jsonb "available_model_tools"
     t.string "llm_model_name", null: false
-    t.integer "sentinel_agent_invocation_id"
-    t.index ["sentinel_agent_invocation_id"], name: "index_sentinel_completions_on_sentinel_agent_invocation_id"
-    t.index ["sentinel_conversation_entry_id"], name: "index_sentinel_completions_on_sentinel_conversation_entry_id", unique: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_type", "creator_id"], name: "index_sentinel_completions_on_creator"
     t.index ["type"], name: "index_sentinel_completions_on_type"
   end
 
   create_table "sentinel_conversation_entries", force: :cascade do |t|
     t.bigint "sentinel_conversation_id", null: false
-    t.bigint "creator_id"
-    t.string "creator_type"
+    t.string "creator_type", null: false
+    t.bigint "creator_id", null: false
     t.datetime "started_at"
     t.datetime "completed_at"
     t.datetime "failed_at"
@@ -73,23 +70,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_211200) do
     t.text "model_response_message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["creator_type", "creator_id"], name: "index_sentinel_conversation_entries_on_creator"
     t.index ["sentinel_conversation_id"], name: "index_sentinel_conversation_entries_on_sentinel_conversation_id"
   end
 
   create_table "sentinel_conversations", force: :cascade do |t|
     t.string "llm_model_name", null: false
-    t.bigint "creator_id"
-    t.string "creator_type"
+    t.string "creator_type", null: false
+    t.bigint "creator_id", null: false
     t.string "requested_language_key"
     t.string "type"
     t.integer "conversation_entries_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["creator_type", "creator_id"], name: "index_sentinel_conversations_on_creator"
   end
 
   create_table "sentinel_model_tool_invocations", force: :cascade do |t|
-    t.bigint "source_id", null: false
     t.string "source_type", null: false
+    t.bigint "source_id", null: false
     t.string "tool_type", null: false
     t.jsonb "tool_arguments", default: {}, null: false
     t.jsonb "result", default: {}, null: false
@@ -97,7 +96,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_211200) do
     t.datetime "failed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["source_type", "source_id"], name: "index_sentinel_model_tool_invocations_on_source_type_and_source_id"
+    t.index ["source_type", "source_id"], name: "index_sentinel_model_tool_invocations_on_source"
   end
 
   create_table "sentinel_test_users", force: :cascade do |t|
@@ -114,4 +113,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_03_07_211200) do
     t.datetime "updated_at", null: false
     t.index ["sentinel_conversation_entry_id"], name: "index_sentinel_user_tool_invocations_on_sentinel_conversation_entry_id"
   end
+
+  add_foreign_key "sentinel_conversation_entries", "sentinel_conversations"
+  add_foreign_key "sentinel_user_tool_invocations", "sentinel_conversation_entries"
 end
