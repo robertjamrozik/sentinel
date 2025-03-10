@@ -37,22 +37,26 @@ module Raif
         update_columns(iteration_count: iteration_count + 1)
 
         if iteration_count == 1
-          puts "\n\n"
-          puts "--------------------------------"
-          puts "Starting Agent Run"
-          puts "--------------------------------"
-          puts "System Prompt:"
-          puts system_prompt
+          logger.debug <<~DEBUG
+            --------------------------------
+            Starting Agent Run
+            --------------------------------
+            System Prompt:
+            #{system_prompt}
+          DEBUG
         end
 
-        puts "\n"
-        puts "--------------------------------"
-        puts "Running Agent iteration #{iteration_count}"
         model_response = llm.chat(messages: conversation_history, system_prompt: system_prompt)
-        puts "Messages:\n#{JSON.pretty_generate(conversation_history)}"
-        puts "Response:\n#{model_response.raw_response}"
-        puts "--------------------------------"
-        puts "\n"
+        logger.debug <<~DEBUG
+          --------------------------------
+          Agent iteration #{iteration_count}
+          Messages:
+          #{JSON.pretty_generate(conversation_history)}
+
+          Response:
+          #{model_response.raw_response}
+          --------------------------------
+        DEBUG
 
         # Extract thought, action, and answer from the model response
         thought = extract_thought(model_response.raw_response)
