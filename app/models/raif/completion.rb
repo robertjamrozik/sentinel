@@ -110,7 +110,7 @@ module Raif
 
     def build_system_prompt
       sp = Raif.config.base_system_prompt.presence || "You are a friendly assistant."
-      sp += " #{system_prompt_language_preference}" if requested_language_key.present?
+      sp += system_prompt_language_preference if requested_language_key.present?
       sp
     end
 

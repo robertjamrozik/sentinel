@@ -14,7 +14,7 @@ module Raif::Concerns::HasRequestedLanguage
   def system_prompt_language_preference
     return if requested_language_key.blank?
 
-    "You're collaborating with teammate who speaks #{requested_language_name}. Please respond in #{requested_language_name}."
+    "\nYou're collaborating with teammate who speaks #{requested_language_name}. Please respond in #{requested_language_name}."
   end
 
 end

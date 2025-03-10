@@ -21,7 +21,7 @@ module Raif
 
       # If they invoked the agent with a requested language, add that to the system prompt
       # so the model responds in that language.
-      if requested_language_key.present?
+      if requested_language_key.present? && !system_prompt.include?(system_prompt_language_preference)
         self.system_prompt = <<~SYSTEM_PROMPT
           #{system_prompt}
 

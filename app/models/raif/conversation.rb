@@ -38,7 +38,7 @@ class Raif::Conversation < Raif::ApplicationRecord
   end
 
   def system_prompt
-    sp = <<~PROMPT
+    <<~PROMPT
       You are a helpful assistant who is collaborating with a teammate.
 
       # Your Responses
@@ -49,10 +49,8 @@ class Raif::Conversation < Raif::ApplicationRecord
       - Only use tools if you think they are useful for the conversation.
       - **Never** include the likelihood text in the scenario title (ie. don't suggest things like "A new scenario - low likelihood").
       - **Never** provide any text outside the <message> and <tool> tags.
+      #{system_prompt_language_preference}
     PROMPT
-
-    sp += " #{system_prompt_language_preference}" if requested_language_key.present?
-    sp
   end
 
   def available_user_tools
