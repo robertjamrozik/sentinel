@@ -14,3 +14,11 @@ class Raif::TestAdapter < Raif::ApiAdapters::Base
     )
   end
 end
+
+unless Raif.available_llm_keys.include?(:sentinel_test_adapter)
+  Raif.register_llm(
+    key: :sentinel_test_adapter,
+    api_name: "sentinel_test_adapter",
+    api_adapter: Raif::TestAdapter
+  )
+end
