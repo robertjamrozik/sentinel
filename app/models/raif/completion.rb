@@ -19,6 +19,8 @@ module Raif
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
 
+    attr_writer :model_response
+
     def self.llm_response_format(format)
       raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
 
@@ -41,11 +43,25 @@ module Raif
       [{ "role" => "user", "content" => prompt }]
     end
 
+    def model_response
+      @model_response ||= Raif::ModelResponse.new(
+        raw_response: response,
+        response_format: response_format,
+        prompt_tokens:,
+        completion_tokens:,
+        total_tokens: prompt_tokens + completion_tokens
+      )
+    end
+
+    def parsed_response
+      model_response.parsed_response
+    end
+
     def run
       update_columns(started_at: Time.current) if started_at.nil?
 
       populate_prompts
-      model_response = llm.chat(messages: messages, system_prompt: system_prompt, response_format: response_format)
+      self.model_response = llm.chat(messages: messages, system_prompt: system_prompt, response_format: response_format.to_sym)
 
       update({
         prompt_tokens: model_response.prompt_tokens,

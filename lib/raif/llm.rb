@@ -23,7 +23,12 @@ module Raif
     end
 
     def chat(messages:, response_format: :text, system_prompt: nil)
-      unless VALID_RESPONSE_FORMATS.include?(response_format.to_sym)
+      unless response_format.is_a?(Symbol)
+        raise ArgumentError,
+          "Raif::Llm#chat - Invalid response format: #{response_format}. Must be a symbol (you passed #{response_format.class}) and be one of: #{VALID_RESPONSE_FORMATS.join(", ")}" # rubocop:disable Layout/LineLength
+      end
+
+      unless VALID_RESPONSE_FORMATS.include?(response_format)
         raise ArgumentError, "Raif::Llm#chat - Invalid response format: #{response_format}. Must be one of: #{VALID_RESPONSE_FORMATS.join(", ")}"
       end
 
