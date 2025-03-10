@@ -66,18 +66,6 @@
         <% end %>
       </div>
     </div>
-    <div class="row mb-3">
-      <div class="col-md-3"><strong><%= t("sentinel.admin.common.prompt_tokens") %>:</strong></div>
-      <div class="col-md-9">
-        <%= number_with_delimiter(@completion.prompt_tokens) %>
-      </div>
-    </div>
-    <div class="row mb-3">
-      <div class="col-md-3"><strong><%= t("sentinel.admin.common.completion_tokens") %>:</strong></div>
-      <div class="col-md-9">
-        <%= number_with_delimiter(@completion.completion_tokens) %>
-      </div>
-    </div>
     <% if @completion.requested_language_key.present? %>
       <div class="row mb-3">
         <div class="col-md-3"><strong><%= t("sentinel.admin.common.requested_language") %>:</strong></div>

@@ -55,11 +55,7 @@ module Raif
       populate_prompts
       self.model_response = llm.chat(messages: messages, system_prompt: system_prompt, response_format: response_format.to_sym)
 
-      update({
-        prompt_tokens: model_response.prompt_tokens,
-        completion_tokens: model_response.completion_tokens,
-        response: model_response.raw_response
-      })
+      update(response: model_response.raw_response)
 
       process_model_tool_invocations
       completed!
