@@ -4,6 +4,6 @@
   <td><%= model_response.source_type %> #<%= model_response.source_id %></td>
   <td><%= model_response.llm_model_key %></td>
   <td><%= model_response.response_format %></td>
-  <td><%= model_response.total_tokens || "-" %></td>
+  <td><%= model_response.total_tokens ? number_with_delimiter(model_response.total_tokens) : "-" %></td>
   <td><small class="text-muted"><%= truncate(model_response.raw_response, length: 100) %></small></td>
 </tr> 

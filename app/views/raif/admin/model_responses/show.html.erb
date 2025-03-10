@@ -30,15 +30,15 @@
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.prompt_tokens") %>:</strong></div>
-      <div class="col-md-9"><%= @model_response.prompt_tokens || "-" %></div>
+      <div class="col-md-9"><%= @model_response.prompt_tokens ? number_with_delimiter(@model_response.prompt_tokens) : "-" %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.completion_tokens") %>:</strong></div>
-      <div class="col-md-9"><%= @model_response.completion_tokens || "-" %></div>
+      <div class="col-md-9"><%= @model_response.completion_tokens ? number_with_delimiter(@model_response.completion_tokens) : "-" %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.total_tokens") %>:</strong></div>
-      <div class="col-md-9"><%= @model_response.total_tokens || "-" %></div>
+      <div class="col-md-9"><%= @model_response.total_tokens ? number_with_delimiter(@model_response.total_tokens) : "-" %></div>
     </div>
   </div>
 </div>
