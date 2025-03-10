@@ -53,7 +53,7 @@ module Raif
       update_columns(started_at: Time.current) if started_at.nil?
 
       populate_prompts
-      self.model_response = llm.chat(messages: messages, system_prompt: system_prompt, response_format: response_format.to_sym)
+      self.model_response = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
 
       update(response: model_response.raw_response)
 

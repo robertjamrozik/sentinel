@@ -46,7 +46,7 @@ module Raif
           DEBUG
         end
 
-        model_response = llm.chat(messages: conversation_history, system_prompt: system_prompt)
+        model_response = llm.chat(messages: conversation_history, source: self, system_prompt: system_prompt)
         logger.debug <<~DEBUG
           --------------------------------
           Agent iteration #{iteration_count}
