@@ -19,13 +19,13 @@ module Raif
     end
 
     def stub_sentinel_conversation(conversation, &block)
-      test_llm = Raif::Llm.new({
+      test_llm = Raif::Llm.new(
         key: :sentinel_test_adapter,
         api_name: "sentinel_test_adapter",
         api_adapter: Raif::TestAdapter
-      })
+      )
 
-      test_llm.adapter.chat_handler = block
+      test_llm.api_adapter.chat_handler = block
 
       allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
 
