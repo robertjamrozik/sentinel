@@ -22,7 +22,7 @@ module Raif
       I18n.t("sentinel.model_names.#{key}")
     end
 
-    def chat(messages:, system_prompt: nil, response_format: :text)
+    def chat(messages:, response_format: :text, system_prompt: nil)
       unless VALID_RESPONSE_FORMATS.include?(response_format.to_sym)
         raise ArgumentError, "Raif::Llm#chat - Invalid response format: #{response_format}. Must be one of: #{VALID_RESPONSE_FORMATS.join(", ")}"
       end

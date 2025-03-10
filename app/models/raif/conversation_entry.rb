@@ -37,11 +37,11 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   end
 
   def process_entry!
-    model_response = conversation.prompt_model_for_response
+    model_response = sentinel_conversation.prompt_model_for_response
     self.model_raw_response = model_response.raw_response
 
     if model_raw_response.present?
-      extract_message_and_invoke_tools
+      extract_message_and_invoke_tools!
     else
       failed!
     end
@@ -54,21 +54,19 @@ private
   # We expect the the model to respond with something like (tool being optional):
   # <message>The message to display to the user</message>
   # <tool>{ "name": "tool_name", "arguments": { "argument_name": "argument_value" } }</tool>
-  def extract_message_and_invoke_tools
+  def extract_message_and_invoke_tools!
     transaction do
       self.model_response_message = model_raw_response.match(%r{<message>(.*?)</message>}m)[1].strip
-      self.completed_at = Time.current
       save!
 
-      model_raw_response.match(%r{<tool>(.*?)</tool>}m).each do |action|
-        tool_call = JSON.parse(action)
-        tool_klass = available_model_tools_map[tool_call["name"]]
-        next unless tool_klass
+      tool_json = model_raw_response.match(%r{<tool>(.*?)</tool>}m)[1].strip
+      tool_call = JSON.parse(tool_json) if tool_json.present?
+      tool_klass = available_model_tools_map[tool_call["name"]]
+      next unless tool_klass
 
-        tool_klass.invoke_tool(tool_arguments: tool_call["arguments"], source: self)
-      rescue JSON::ParserError
-        logger.error("Invalid tool response: #{action}")
-      end
+      tool_klass.invoke_tool(tool_arguments: tool_call["arguments"], source: self)
+
+      completed!
     end
   end
 

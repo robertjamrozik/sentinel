@@ -12,7 +12,7 @@ module Raif::Concerns::InvokesModelTools
 
   def available_model_tools_map
     @available_model_tools_map ||= available_model_tools&.map do |tool_name|
-      tool_klass = tool_name.constantize
+      tool_klass = tool_name.is_a?(String) ? tool_name.constantize : tool_name
       [tool_klass.tool_name, tool_klass]
     end.to_h
   end

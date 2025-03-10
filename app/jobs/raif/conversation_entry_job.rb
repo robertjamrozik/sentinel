@@ -9,6 +9,7 @@ module Raif
     end
 
     def perform(conversation_entry:)
+      conversation = conversation_entry.sentinel_conversation
       conversation_entry.process_entry!
       conversation_entry.broadcast_replace_to conversation
 
@@ -17,7 +18,10 @@ module Raif
         action: :sentinel_scroll_to_bottom,
         target: dom_id(conversation, :entries)
       )
-    rescue StandardError
+    rescue StandardError => e
+      logger.error "Error processing conversation entry: #{e.message}"
+      logger.error e.backtrace.join("\n")
+
       conversation_entry.failed!
       conversation_entry.broadcast_replace_to conversation
     end
