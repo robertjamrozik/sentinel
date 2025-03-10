@@ -8,6 +8,8 @@ module Raif
 
     belongs_to :creator, polymorphic: true
 
+    has_many :model_responses, as: :source, dependent: :destroy
+
     boolean_timestamp :started_at
     boolean_timestamp :completed_at
     boolean_timestamp :failed_at

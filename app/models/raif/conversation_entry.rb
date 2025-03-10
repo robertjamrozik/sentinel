@@ -12,6 +12,8 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
     foreign_key: :sentinel_conversation_entry_id,
     inverse_of: :sentinel_conversation_entry
 
+  has_one :model_response, as: :source, dependent: :destroy
+
   delegate :available_model_tools, to: :sentinel_conversation
 
   accepts_nested_attributes_for :sentinel_user_tool_invocation
@@ -37,7 +39,7 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   end
 
   def process_entry!
-    model_response = sentinel_conversation.prompt_model_for_response
+    model_response = sentinel_conversation.prompt_model_for_entry_response(entry: self)
     self.model_raw_response = model_response.raw_response
 
     if model_raw_response.present?
