@@ -9,6 +9,10 @@ class Raif::ModelTools::FetchUrlTool < Raif::ModelTool
     }
   end
 
+  def self.tool_description
+    "Fetch a URL and return the page content as markdown"
+  end
+
   def self.tool_arguments_schema
     {
       url: {

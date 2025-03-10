@@ -9,6 +9,10 @@ class Raif::ModelTools::UserInputTool < Raif::ModelTool
     }
   end
 
+  def self.tool_description
+    "Ask the user a question and wait for their response"
+  end
+
   def self.tool_arguments_schema
     {
       query: {

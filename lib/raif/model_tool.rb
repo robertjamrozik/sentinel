@@ -4,6 +4,8 @@ class Raif::ModelTool
 
   delegate :tool_name, :tool_description, :tool_arguments_schema, to: :class
 
+  # The description of the tool that will be provided to the model
+  # when giving it a list of available tools.
   def self.description_for_llm
     <<~DESCRIPTION
       Name: #{tool_name}
@@ -15,8 +17,10 @@ class Raif::ModelTool
     DESCRIPTION
   end
 
+  # The name of the tool as it will be provided to the model & used in the model invocation.
+  # Default for something like Raif::ModelTools::WikipediaSearchTool would be "wikipedia_search"
   def self.tool_name
-    name.split("::").last.underscore
+    name.split("::").last.underscore.chomp("_tool")
   end
 
   def self.tool_description

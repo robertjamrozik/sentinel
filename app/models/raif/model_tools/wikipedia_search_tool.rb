@@ -18,6 +18,10 @@ class Raif::ModelTools::WikipediaSearchTool < Raif::ModelTool
     }
   end
 
+  def self.tool_description
+    "Search Wikipedia for information"
+  end
+
   def self.observation_for_invocation(tool_invocation)
     return "No results found" unless tool_invocation.result.present?
 
