@@ -4,7 +4,7 @@ module Raif
   class Llm
     include ActiveModel::Model
 
-    attr_accessor :key, :api_name, :api_adapter, :response_format
+    attr_accessor :key, :api_name, :api_adapter
 
     validates :key, presence: true
     validates :api_name, presence: true
