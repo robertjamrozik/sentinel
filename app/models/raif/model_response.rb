@@ -20,6 +20,8 @@ class Raif::ModelResponse < Raif::ApplicationRecord
     end
   end
 
+private
+
   def clean_html_fragment(html)
     fragment = Nokogiri::HTML.fragment(html)
 

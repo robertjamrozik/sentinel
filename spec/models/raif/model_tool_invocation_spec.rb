@@ -1,30 +1,36 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "support/test_model_tool"
 
 RSpec.describe Raif::ModelToolInvocation, type: :model do
-  it "requires the tool_arguments schema to be valid based on the tool invoked" do
-    completion = FB.build(:sentinel_completion)
-    tool_invocation = described_class.new(tool_arguments: nil, source: completion, tool_type: "Raif::TestModelTool")
-    expect(tool_invocation.valid?).to eq(false)
-    expect(tool_invocation.errors[:tool_arguments]).to include("does not match schema")
+  describe "validations" do
+    it "validates presence of tool_type" do
+      invocation = described_class.new
+      expect(invocation).not_to be_valid
+      expect(invocation.errors[:tool_type]).to include("can't be blank")
+    end
 
-    tool_invocation = described_class.new(tool_arguments: { "foo" => "bar" }, source: completion, tool_type: "Raif::TestModelTool")
-    expect(tool_invocation.valid?).to eq(false)
-    expect(tool_invocation.errors[:tool_arguments]).to include("does not match schema")
+    it "validates tool_arguments against schema" do
+      # Valid arguments
+      invocation = described_class.new(
+        source: FB.build(:sentinel_test_completion),
+        tool_type: "Raif::TestModelTool",
+        tool_arguments: [{ title: "foo", description: "bar" }]
+      )
+      expect(invocation).to be_valid
 
-    tool_invocation = described_class.new(tool_arguments: [{ "foo" => "bar" }], source: completion, tool_type: "Raif::TestModelTool")
-    expect(tool_invocation.valid?).to eq(false)
-    expect(tool_invocation.errors[:tool_arguments]).to include("does not match schema")
+      # Invalid arguments
+      invocation.tool_arguments = [{ foo: "bar" }]
+      expect(invocation).not_to be_valid
+      expect(invocation.errors[:tool_arguments]).to include("does not match schema")
 
-    # With valid schema
-    tool_invocation = described_class.new(
-      tool_arguments: [{ "title" => "foo", "description" => "bar" }],
-      source: completion,
-      tool_type: "Raif::TestModelTool"
-    )
-    expect(tool_invocation.valid?).to eq(true)
-    expect(tool_invocation.errors[:tool_arguments]).to_not include("does not match schema")
+      invocation.tool_arguments = [{ title: "foo" }]
+      expect(invocation).not_to be_valid
+      expect(invocation.errors[:tool_arguments]).to include("does not match schema")
+
+      invocation.tool_arguments = { title: "foo", description: "bar" }
+      expect(invocation).not_to be_valid
+      expect(invocation.errors[:tool_arguments]).to include("does not match schema")
+    end
   end
 end

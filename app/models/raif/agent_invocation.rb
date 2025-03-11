@@ -104,7 +104,7 @@ module Raif
       unless tool_klass
         conversation_history << {
           role: "user",
-          content: "<observation>Error: Tool '#{tool_name}' not found. Available tools: #{available_model_tools.map(&:tool_name).join(", ")}</observation>" # rubocop:disable Layout/LineLength
+          content: "<observation>Error: Tool '#{tool_name}' not found. Available tools: #{available_model_tools_map.keys.join(", ")}</observation>"
         }
         return
       end
@@ -117,23 +117,6 @@ module Raif
         role: "user",
         content: "<observation>#{observation}</observation>"
       }
-    end
-
-    def extract_thought(model_response_text)
-      thought_match = model_response_text.match(%r{<thought>(.*?)</thought>}m)
-      thought_match ? thought_match[1].strip : nil
-    end
-
-    def extract_action(model_response_text)
-      action_match = model_response_text.match(%r{<action>(.*?)</action>}m)
-      action_match ? JSON.parse(action_match[1].strip) : nil
-    rescue JSON::ParserError
-      nil
-    end
-
-    def extract_answer(model_response_text)
-      answer_match = model_response_text.match(%r{<answer>(.*?)</answer>}m)
-      answer_match ? answer_match[1].strip : nil
     end
 
   end
