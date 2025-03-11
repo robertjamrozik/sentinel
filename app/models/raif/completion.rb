@@ -7,7 +7,6 @@ module Raif
     include Raif::Concerns::InvokesModelTools
 
     belongs_to :creator, polymorphic: true
-    belongs_to :sentinel_conversation_entry, class_name: "Raif::ConversationEntry", optional: true
 
     has_one :sentinel_model_response, as: :source, dependent: :destroy, class_name: "Raif::ModelResponse"
 
@@ -21,16 +20,12 @@ module Raif
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
 
+    delegate :parsed_response, to: :sentinel_model_response, allow_nil: true
+
     def self.llm_response_format(format)
       raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
 
       after_initialize -> { self.response_format = format }, if: :new_record?
-    end
-
-    def self.llm_completion_args(*attr_names)
-      attr_names.reject{|attr| [:creator, :sentinel_conversation_entry].include?(attr) }.each do |attr_name|
-        attr_accessor(attr_name)
-      end
     end
 
     def populate_prompts
@@ -39,25 +34,18 @@ module Raif
       self.system_prompt = build_system_prompt
     end
 
-    def messages
-      [{ "role" => "user", "content" => prompt }]
-    end
-
-    def parsed_response
-      sentinel_model_response.parsed_response
-    end
-
     def run
       update_columns(started_at: Time.current) if started_at.nil?
 
       populate_prompts
+      messages = [{ "role" => "user", "content" => prompt }]
       self.sentinel_model_response = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
 
       update(response: sentinel_model_response.raw_response)
 
       process_model_tool_invocations
       completed!
-      sentinel_model_response
+      self
     end
 
     def self.run(creator:, available_model_tools: nil, llm_model_key: nil, **args)
