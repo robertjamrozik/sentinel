@@ -38,9 +38,9 @@
     </div>
     <div class="card-body">
       <div class="list-group">
-        <%= render collection: @conversation.entries.order(created_at: :asc).includes(:sentinel_model_response), 
-          partial: "sentinel/admin/conversations/conversation_entry",
-          as: :entry %>
+        <%= render collection: @conversation.entries.order(created_at: :asc).includes(:sentinel_model_response),
+              partial: "sentinel/admin/conversations/conversation_entry",
+              as: :entry %>
       </div>
     </div>
   </div>
