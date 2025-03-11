@@ -10,7 +10,7 @@ module Raif
       end
 
       def show
-        @completion = Raif::Completion.find(params[:id])
+        @completion = Raif::Completion.includes(:model_response).find(params[:id])
       end
     end
   end
