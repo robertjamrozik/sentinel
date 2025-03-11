@@ -115,7 +115,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
       let(:first_response) do
         instance_double(
           Raif::ModelResponse,
-          raw_response: "<thought>I need to search.</thought>\n<action>{\"tool\": \"search\", \"arguments\": {\"query\": \"capital of France\"}}</action>"
+          raw_response: "<thought>I need to search.</thought>\n<action>{\"tool\": \"search\", \"arguments\": {\"query\": \"capital of France\"}}</action>" # rubocop:disable Layout/LineLength
         )
       end
       let(:second_response) { instance_double(Raif::ModelResponse, raw_response: "<thought>Now I know.</thought>\n<answer>Paris</answer>") }
