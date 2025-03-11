@@ -12,6 +12,9 @@ $shadow-color: rgba(50, 50, 93, 0.1);
 $radius: 4px;
 $transition: all 0.2s ease;
 
+// Import conversation styles
+@import "sentinel/admin/conversation";
+
 // Base styles
 body.sentinel-admin {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -108,6 +111,12 @@ body.sentinel-admin {
 
     .card-body {
       padding: 1.25rem;
+    }
+    
+    &.conversation-card {
+      .card-body {
+        background-color: #f8f9fa;
+      }
     }
   }
 
@@ -248,69 +257,6 @@ body.sentinel-admin {
     .col-md-3 {
       strong {
         color: $secondary-color;
-      }
-    }
-  }
-
-  // Conversation history
-  .conversation-history {
-    .message {
-      &.user {
-        .message-content {
-          background-color: rgba($primary-color, 0.05);
-          border-color: rgba($primary-color, 0.2) !important;
-        }
-      }
-      
-      &.assistant {
-        .message-content {
-          background-color: rgba($accent-color, 0.05);
-          border-color: rgba($accent-color, 0.2) !important;
-        }
-      }
-
-      .message-header {
-        padding: 0 0.5rem;
-      }
-
-      .message-content {
-        background-color: white;
-        border-radius: $radius;
-
-        .observation, .thought, .action, .answer {
-          strong {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: $radius;
-            font-size: 0.8125rem;
-          }
-        }
-
-        .observation strong {
-          background-color: rgba($warning-color, 0.1);
-          color: darken($warning-color, 10%);
-        }
-
-        .thought strong {
-          background-color: rgba($primary-color, 0.1);
-          color: darken($primary-color, 10%);
-        }
-
-        .action strong {
-          background-color: rgba($danger-color, 0.1);
-          color: darken($danger-color, 10%);
-        }
-
-        .answer strong {
-          background-color: rgba($accent-color, 0.1);
-          color: darken($accent-color, 10%);
-        }
-
-        pre {
-          background-color: transparent;
-          border: none;
-          padding: 0.5rem;
-        }
       }
     }
   }

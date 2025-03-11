@@ -49,6 +49,7 @@ module Raif
         end
 
         model_response = llm.chat(messages: conversation_history, source: self, system_prompt: system_prompt)
+        agent_step = Raif::AgentStep.new(model_response_text: model_response.raw_response)
         logger.debug <<~DEBUG
           --------------------------------
           Agent iteration #{iteration_count}
@@ -60,30 +61,25 @@ module Raif
           --------------------------------
         DEBUG
 
-        # Extract thought, action, and answer from the model response
-        thought = extract_thought(model_response.raw_response)
-        action = extract_action(model_response.raw_response)
-        answer = extract_answer(model_response.raw_response)
-
         # Add the thought to conversation history
-        if thought
-          conversation_history << { role: "assistant", content: "<thought>#{thought}</thought>" }
+        if agent_step.thought
+          conversation_history << { role: "assistant", content: "<thought>#{agent_step.thought}</thought>" }
         end
 
         # If there's an answer, we're done
-        if answer
-          self.final_answer = answer
-          conversation_history << { role: "assistant", content: "<answer>#{answer}</answer>" }
+        if agent_step.answer
+          self.final_answer = agent_step.answer
+          conversation_history << { role: "assistant", content: "<answer>#{agent_step.answer}</answer>" }
           break
         end
 
         # If there's an action, execute it
-        next unless action
+        next unless agent_step.action
 
-        conversation_history << { role: "assistant", content: "<action>#{action}</action>" }
+        conversation_history << { role: "assistant", content: "<action>#{agent_step.action}</action>" }
 
-        if action["tool"] && action["arguments"]
-          process_action(action)
+        if agent_step.action["tool"] && agent_step.action["arguments"]
+          process_action(agent_step.action)
         else
           # No action specified
           conversation_history << {

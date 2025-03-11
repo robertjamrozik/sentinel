@@ -1,0 +1,64 @@
+// Conversation history styles
+.conversation-card {
+  .card-body {
+    background-color: #f8f9fa;
+  }
+}
+
+.conversation-history {
+  .message {
+    position: relative;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &.user {
+      border-left: 3px solid #3b82f6;
+
+      .message-content {
+        background-color: #f0f9ff;
+      }
+    }
+
+    &.assistant {
+      border-left: 3px solid rgba(25,135,84,1);
+
+      .message-content {
+        background-color: rgb(232, 255, 244);
+      }
+    }
+
+    .message-content {
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      font-size: 0.875rem;
+      line-height: 1.5;
+      color: #1e3a8a;
+
+      code {
+        display: block;
+        font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: none;
+        border: none;
+        padding: 0;
+        color: inherit;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .message-label {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+}

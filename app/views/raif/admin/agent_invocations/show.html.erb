@@ -60,15 +60,6 @@
   </div>
 </div>
 
-<div class="card mb-4">
-  <div class="card-header">
-    <h5 class="mb-0"><%= t("sentinel.admin.common.system_prompt") %></h5>
-  </div>
-  <div class="card-body">
-    <pre class="pre-wrap"><%= @agent_invocation.system_prompt %></pre>
-  </div>
-</div>
-
 <% if @agent_invocation.final_answer.present? %>
   <div class="card mb-4">
     <div class="card-header">
@@ -80,65 +71,25 @@
   </div>
 <% end %>
 
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t("sentinel.admin.common.system_prompt") %></h5>
+  </div>
+  <div class="card-body">
+    <pre class="pre-wrap"><%= @agent_invocation.system_prompt %></pre>
+  </div>
+</div>
+
 <% if @agent_invocation.conversation_history.present? %>
-  <div class="card mb-4">
+  <div class="card mb-4 conversation-card">
     <div class="card-header">
       <h5 class="mb-0"><%= t("sentinel.admin.common.conversation_history") %></h5>
     </div>
-    <div class="card-body">
-      <div class="conversation-history">
+    <div class="card-body p-0">
+      <div class="conversation-history p-3">
         <% @agent_invocation.conversation_history.each_with_index do |message, index| %>
-          <div class="message <%= message['role'] %> mb-3">
-            <div class="message-header d-flex justify-content-between align-items-center mb-2">
-              <strong class="<%= message['role'] == 'user' ? 'text-primary' : 'text-success' %>">
-                <%= message['role'].capitalize %> 
-                <% if index == 0 && message['role'] == 'user' %>
-                  (Initial Task)
-                <% end %>
-              </strong>
-              <span class="badge bg-secondary">#<%= index + 1 %></span>
-            </div>
-            <div class="message-content p-3 border rounded">
-              <% if message['content'].include?('<observation>') %>
-                <% observation = message['content'].match(/<observation>(.*?)<\/observation>/m) %>
-                <div class="observation">
-                  <strong class="text-warning">Observation:</strong>
-                  <pre class="pre-wrap mt-2 mb-0"><%= observation ? observation[1] : message['content'] %></pre>
-                </div>
-              <% else %>
-                <% if message['content'].include?('<thought>') %>
-                  <% thought = message['content'].match(/<thought>(.*?)<\/thought>/m) %>
-                  <div class="thought mb-3">
-                    <strong class="text-info">Thought:</strong>
-                    <pre class="pre-wrap mt-2 mb-0"><%= thought ? thought[1] : '' %></pre>
-                  </div>
-                <% end %>
-                
-                <% if message['content'].include?('<action>') %>
-                  <% action = message['content'].match(/<action>(.*?)<\/action>/m) %>
-                  <div class="action mb-3">
-                    <strong class="text-danger">Action:</strong>
-                    <pre class="pre-wrap mt-2 mb-0"><%= action ? action[1] : '' %></pre>
-                  </div>
-                <% end %>
-                
-                <% if message['content'].include?('<answer>') %>
-                  <% answer = message['content'].match(/<answer>(.*?)<\/answer>/m) %>
-                  <div class="answer mb-3">
-                    <strong class="text-success">Answer:</strong>
-                    <pre class="pre-wrap mt-2 mb-0"><%= answer ? answer[1] : '' %></pre>
-                  </div>
-                <% end %>
-                
-                <% if !message['content'].include?('<thought>') && 
-                      !message['content'].include?('<action>') && 
-                      !message['content'].include?('<answer>') && 
-                      !message['content'].include?('<observation>') %>
-                  <pre class="pre-wrap mb-0"><%= message['content'] %></pre>
-                <% end %>
-              <% end %>
-            </div>
-          </div>
+          <%= render partial: "sentinel/admin/agent_invocations/conversation_message", 
+                     locals: { message: message, message_count: index + 1 } %>
         <% end %>
       </div>
     </div>
