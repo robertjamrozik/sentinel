@@ -104,7 +104,7 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
     end
   end
 
-  fdescribe "show page" do
+  describe "show page" do
     let!(:text_response) do
       Raif::ModelResponse.create!(
         source: completion,
