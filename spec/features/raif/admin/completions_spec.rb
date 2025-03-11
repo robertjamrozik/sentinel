@@ -86,5 +86,33 @@ RSpec.describe "Admin::Completions", type: :feature do
       click_link I18n.t("sentinel.admin.completions.show.back_to_completions")
       expect(page).to have_current_path(sentinel.admin_completions_path)
     end
+
+    context "with model_response" do
+      let!(:model_response) do
+        FB.create(
+          :sentinel_model_response,
+          source: completion,
+          llm_model_key: completion.llm_model_key,
+          raw_response: "Test model response",
+          prompt_tokens: 1000,
+          completion_tokens: 20,
+          total_tokens: 1020
+        )
+      end
+
+      it "displays the model_response section" do
+        visit sentinel.admin_completion_path(completion)
+
+        # Check model_response section exists
+        expect(page).to have_content(I18n.t("sentinel.admin.common.model_response"))
+
+        # Check model_response details
+        expect(page).to have_link("##{model_response.id}", href: sentinel.admin_model_response_path(model_response))
+        expect(page).to have_content(model_response.created_at.rfc822)
+        expect(page).to have_content("1,000") # prompt_tokens
+        expect(page).to have_content("20") # completion_tokens
+        expect(page).to have_content("1,020") # total_tokens
+      end
+    end
   end
 end

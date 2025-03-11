@@ -1,0 +1,32 @@
+<div class="list-group-item">
+  <div class="d-flex w-100 justify-content-between">
+    <div class="d-flex align-items-center gap-2">
+      <h5 class="mb-1"><%= t("sentinel.admin.common.entry") %> #<%= entry.id %></h5>
+      <% if entry.completed_at? %>
+        <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span>
+      <% elsif entry.failed_at? %>
+        <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span>
+      <% elsif entry.started_at? %>
+        <span class="badge bg-warning text-dark"><%= t("sentinel.admin.common.in_progress") %></span>
+      <% else %>
+        <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
+      <% end %>
+    </div>
+
+    <small class="text-muted"><%= entry.created_at.rfc822 %></small>
+
+    <% if entry.sentinel_model_response.present? %>
+      <%= link_to t("sentinel.admin.common.model_response"), sentinel.admin_model_response_path(entry.sentinel_model_response) %>
+    <% end %>
+  </div>
+  <div class="mb-3">
+    <strong><%= t("sentinel.admin.common.user_message") %>:</strong>
+    <pre class="mt-2"><%= entry.user_message %></pre>
+  </div>
+  <% if entry.model_response_message.present? %>
+    <div class="mb-3">
+      <strong><%= t("sentinel.admin.common.model_response") %>:</strong>
+      <pre class="mt-2"><%= entry.model_response_message %></pre>
+    </div>
+  <% end %>
+</div>

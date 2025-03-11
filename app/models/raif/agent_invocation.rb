@@ -8,7 +8,7 @@ module Raif
 
     belongs_to :creator, polymorphic: true
 
-    has_many :model_responses, as: :source, dependent: :destroy
+    has_many :sentinel_model_responses, as: :source, dependent: :destroy, class_name: "Raif::ModelResponse"
 
     boolean_timestamp :started_at
     boolean_timestamp :completed_at

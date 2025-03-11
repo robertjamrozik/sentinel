@@ -75,6 +75,38 @@
   </div>
 </div>
 
+<% if @completion.sentinel_model_response.present? %>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t("sentinel.admin.common.model_response") %></h5>
+  </div>
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.id") %>:</strong></div>
+      <div class="col-md-9">
+        <%= link_to "##{@completion.sentinel_model_response.id}", sentinel.admin_model_response_path(@completion.sentinel_model_response) %>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.created_at") %>:</strong></div>
+      <div class="col-md-9"><%= @completion.sentinel_model_response.created_at.rfc822 %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.prompt_tokens") %>:</strong></div>
+      <div class="col-md-9"><%= @completion.sentinel_model_response.prompt_tokens ? number_with_delimiter(@completion.sentinel_model_response.prompt_tokens) : "-" %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.completion_tokens") %>:</strong></div>
+      <div class="col-md-9"><%= @completion.sentinel_model_response.completion_tokens ? number_with_delimiter(@completion.sentinel_model_response.completion_tokens) : "-" %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.total_tokens") %>:</strong></div>
+      <div class="col-md-9"><%= @completion.sentinel_model_response.total_tokens ? number_with_delimiter(@completion.sentinel_model_response.total_tokens) : "-" %></div>
+    </div>
+  </div>
+</div>
+<% end %>
+
 <div class="card mb-4">
   <div class="card-header">
     <h5 class="mb-0"><%= t("sentinel.admin.common.system_prompt") %></h5>
@@ -115,14 +147,14 @@
   </div>
 </div>
 
-<% if @completion.model_tool_invocations.any? %>
+<% if @completion.sentinel_model_tool_invocations.any? %>
   <div class="card mb-4">
     <div class="card-header">
       <h5 class="mb-0"><%= t("sentinel.admin.common.tool_invocations") %></h5>
     </div>
     <div class="card-body">
       <div class="list-group">
-        <% @completion.model_tool_invocations.each do |invocation| %>
+        <% @completion.sentinel_model_tool_invocations.each do |invocation| %>
           <div class="list-group-item">
             <div class="d-flex w-100 justify-content-between">
               <h5 class="mb-1"><%= invocation.tool_name %></h5>

@@ -96,7 +96,7 @@
   </div>
 <% end %>
 
-<% if @agent_invocation.model_responses.any? %>
+<% if @agent_invocation.sentinel_model_responses.any? %>
   <div class="card mb-4">
     <div class="card-header">
       <h5 class="mb-0"><%= t("sentinel.admin.common.model_responses") %></h5>
@@ -114,7 +114,7 @@
             </tr>
           </thead>
           <tbody>
-            <% @agent_invocation.model_responses.order(created_at: :asc).each do |model_response| %>
+            <% @agent_invocation.sentinel_model_responses.order(created_at: :asc).each do |model_response| %>
               <tr>
                 <td><%= link_to "##{model_response.id}", sentinel.admin_model_response_path(model_response) %></td>
                 <td><small class="text-muted"><%= model_response.created_at.rfc822 %></small></td>
