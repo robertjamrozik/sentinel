@@ -71,9 +71,9 @@ RSpec.describe "Admin::Completions", type: :feature do
       expect(page).to have_content(completion.response_format)
 
       # Check timestamps
-      expect(page).to have_content(completion.created_at.strftime("%Y-%m-%d %H:%M:%S"))
-      expect(page).to have_content(completion.started_at.strftime("%Y-%m-%d %H:%M:%S"))
-      expect(page).to have_content(completion.completed_at.strftime("%Y-%m-%d %H:%M:%S"))
+      expect(page).to have_content(completion.created_at.rfc822)
+      expect(page).to have_content(completion.started_at.rfc822)
+      expect(page).to have_content(completion.completed_at.rfc822)
 
       # Check prompt and response
       expect(page).to have_content("Test prompt")

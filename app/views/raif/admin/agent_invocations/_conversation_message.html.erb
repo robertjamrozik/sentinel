@@ -3,7 +3,7 @@
     <strong class="<%= message["role"] == 'user' ? 'text-primary' : 'text-success' %>">
       <%= message["role"].capitalize %>
       <% if message[:counter] == 0 && message["role"] == 'user' %>
-        (Initial Task)
+        (<%= t("sentinel.admin.common.initial_task") %>)
       <% end %>
     </strong>
     <span class="badge bg-secondary">#<%= message_count %></span>

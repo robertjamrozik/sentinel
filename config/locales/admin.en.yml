@@ -20,6 +20,7 @@ en:
         id: ID
         in_progress: In Progress
         invalid_json: Invalid JSON
+        initial_task: Initial Task
         model: Model
         model_response: Model Response
         model_responses: Model Responses

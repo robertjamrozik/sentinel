@@ -1,6 +1,6 @@
 <tr id="<%= dom_id(completion) %>" class="sentinel-completion">
   <td><%= link_to "##{completion.id}", sentinel.admin_completion_path(completion) %></td>
-  <td><small class="text-muted"><%= completion.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small></td>
+  <td><small class="text-muted"><%= completion.created_at.rfc822 %></small></td>
   <td><%= completion.creator_type %> #<%= completion.creator_id %></td>
   <td><%= completion.llm_model_key %></td>
   <td>

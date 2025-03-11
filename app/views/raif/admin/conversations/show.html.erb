@@ -22,7 +22,7 @@
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.created_at") %>:</strong></div>
-      <div class="col-md-9"><%= @conversation.created_at.strftime("%Y-%m-%d %H:%M:%S") %></div>
+      <div class="col-md-9"><%= @conversation.created_at.rfc822 %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.entries_count") %>:</strong></div>
@@ -42,7 +42,7 @@
           <div class="list-group-item">
             <div class="d-flex w-100 justify-content-between">
               <h5 class="mb-1"><%= t("sentinel.admin.common.entry") %> #<%= entry.id %></h5>
-              <small class="text-muted"><%= entry.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small>
+              <small class="text-muted"><%= entry.created_at.rfc822 %></small>
             </div>
             <div class="mb-3">
               <strong><%= t("sentinel.admin.common.user_message") %>:</strong>

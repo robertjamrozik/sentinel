@@ -14,7 +14,7 @@
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.created_at") %>:</strong></div>
-      <div class="col-md-9"><%= @agent_invocation.created_at.strftime("%Y-%m-%d %H:%M:%S") %></div>
+      <div class="col-md-9"><%= @agent_invocation.created_at.rfc822 %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.creator") %>:</strong></div>
@@ -24,11 +24,11 @@
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.status") %>:</strong></div>
       <div class="col-md-9">
         <% if @agent_invocation.completed_at? %>
-          <span class="badge bg-success">Completed</span> at <%= @agent_invocation.completed_at.strftime("%Y-%m-%d %H:%M:%S") %>
+          <span class="badge bg-success">Completed</span> at <%= @agent_invocation.completed_at.rfc822 %>
         <% elsif @agent_invocation.failed_at? %>
-          <span class="badge bg-danger">Failed</span> at <%= @agent_invocation.failed_at.strftime("%Y-%m-%d %H:%M:%S") %>
+          <span class="badge bg-danger">Failed</span> at <%= @agent_invocation.failed_at.rfc822 %>
         <% elsif @agent_invocation.started_at? %>
-          <span class="badge bg-warning">Running</span> since <%= @agent_invocation.started_at.strftime("%Y-%m-%d %H:%M:%S") %>
+          <span class="badge bg-warning">Running</span> since <%= @agent_invocation.started_at.rfc822 %>
         <% else %>
           <span class="badge bg-secondary">Pending</span>
         <% end %>
@@ -117,7 +117,7 @@
             <% @agent_invocation.model_responses.order(created_at: :asc).each do |model_response| %>
               <tr>
                 <td><%= link_to "##{model_response.id}", sentinel.admin_model_response_path(model_response) %></td>
-                <td><small class="text-muted"><%= model_response.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small></td>
+                <td><small class="text-muted"><%= model_response.created_at.rfc822 %></small></td>
                 <td><%= model_response.llm_model_key %></td>
                 <td><%= model_response.total_tokens ? number_with_delimiter(model_response.total_tokens) : "-" %></td>
                 <td><small class="text-muted"><%= truncate(model_response.raw_response, length: 100) %></small></td>
