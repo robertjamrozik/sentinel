@@ -26,9 +26,9 @@ RSpec.describe Raif::ConversationEntry, type: :model do
         entry.process_entry!
         expect(entry.reload).to be_completed
         expect(entry.model_response_message).to eq("Hello")
-        expect(entry.model_tool_invocations.count).to eq(1)
-        expect(entry.model_tool_invocations.first.tool_name).to eq("wikipedia_search")
-        expect(entry.model_tool_invocations.first.tool_arguments).to eq("query" => "Paris")
+        expect(entry.sentinel_model_tool_invocations.count).to eq(1)
+        expect(entry.sentinel_model_tool_invocations.first.tool_name).to eq("wikipedia_search")
+        expect(entry.sentinel_model_tool_invocations.first.tool_arguments).to eq("query" => "Paris")
       end
     end
 
@@ -41,7 +41,7 @@ RSpec.describe Raif::ConversationEntry, type: :model do
         entry.process_entry!
         expect(entry.reload).to be_completed
         expect(entry.model_response_message).to eq("Hello")
-        expect(entry.model_tool_invocations.count).to eq(0)
+        expect(entry.sentinel_model_tool_invocations.count).to eq(0)
       end
     end
   end

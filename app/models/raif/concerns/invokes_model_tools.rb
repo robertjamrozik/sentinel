@@ -4,7 +4,7 @@ module Raif::Concerns::InvokesModelTools
   extend ActiveSupport::Concern
 
   included do
-    has_many :model_tool_invocations,
+    has_many :sentinel_model_tool_invocations,
       class_name: "Raif::ModelToolInvocation",
       as: :source,
       dependent: :destroy

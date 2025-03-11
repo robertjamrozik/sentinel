@@ -3,8 +3,8 @@
     <h5 class="mb-1"><%= t("sentinel.admin.common.entry") %> #<%= entry.id %></h5>
     <small class="text-muted"><%= entry.created_at.rfc822 %></small>
 
-    <% if entry.model_response.present? %>
-      <%= link_to t("sentinel.admin.common.model_response"), sentinel.admin_model_response_path(entry.model_response) %>
+    <% if entry.sentinel_model_response.present? %>
+      <%= link_to t("sentinel.admin.common.model_response"), sentinel.admin_model_response_path(entry.sentinel_model_response) %>
     <% end %>
   </div>
   <div class="mb-3">
