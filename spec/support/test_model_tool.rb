@@ -4,6 +4,17 @@ class Raif::TestModelTool < Raif::ModelTool
   def process_invocation(tool_arguments)
   end
 
+  def self.tool_description
+    "Mock Tool Description"
+  end
+
+  def self.example_model_invocation
+    {
+      "name": "test_tool",
+      "arguments": [{ "title": "foo", "description": "bar" }]
+    }
+  end
+
   def self.tool_arguments_schema
     {
       type: "array",
@@ -16,6 +27,10 @@ class Raif::TestModelTool < Raif::ModelTool
         required: ["title", "description"],
       },
     }
+  end
+
+  def self.observation_for_invocation(tool_invocation)
+    "Mock Observation"
   end
 
   def clean_tool_arguments(tool_arguments)

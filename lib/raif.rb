@@ -16,6 +16,8 @@ require "sentinel/utils"
 require "faraday"
 require "loofah"
 require "openai"
+require "aws-sdk-bedrock"
+require "aws-sdk-bedrockruntime"
 require "pagy"
 require "reverse_markdown"
 

@@ -85,7 +85,6 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.string :llm_model_key, null: false
       t.jsonb :messages, default: [], null: false
       t.text :system_prompt
-      t.text :response
       t.integer :response_format, default: 0, null: false
       t.integer :completion_tokens
       t.integer :prompt_tokens

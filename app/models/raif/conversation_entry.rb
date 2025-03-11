@@ -58,15 +58,23 @@ private
   # <tool>{ "name": "tool_name", "arguments": { "argument_name": "argument_value" } }</tool>
   def extract_message_and_invoke_tools!
     transaction do
-      self.model_response_message = model_raw_response.match(%r{<message>(.*?)</message>}m)[1].strip
+      message_match = model_raw_response.match(%r{<message>(.*?)</message>}m)
+
+      if message_match.blank?
+        failed!
+        return
+      end
+
+      self.model_response_message = message_match[1].strip
       save!
 
-      tool_json = model_raw_response.match(%r{<tool>(.*?)</tool>}m)[1].strip
-      tool_call = JSON.parse(tool_json) if tool_json.present?
-      tool_klass = available_model_tools_map[tool_call["name"]]
-      next unless tool_klass
-
-      tool_klass.invoke_tool(tool_arguments: tool_call["arguments"], source: self)
+      tool_match = model_raw_response.match(%r{<tool>(.*?)</tool>}m)
+      if tool_match.present?
+        tool_json = tool_match[1].strip
+        tool_call = JSON.parse(tool_json) if tool_json.present?
+        tool_klass = available_model_tools_map[tool_call["name"]]
+        tool_klass&.invoke_tool(tool_arguments: tool_call["arguments"], source: self)
+      end
 
       completed!
     end

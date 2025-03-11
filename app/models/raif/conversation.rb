@@ -47,7 +47,7 @@ class Raif::Conversation < Raif::ApplicationRecord
       # Other rules/reminders
       - Only use tools if you think they are useful for the conversation.
       - **Never** include the likelihood text in the scenario title (ie. don't suggest things like "A new scenario - low likelihood").
-      - **Never** provide any text outside the <message> and <tool> tags.
+      - **Never** respond with any text outside the <message> and <tool> tags.
       #{system_prompt_language_preference}
     PROMPT
   end
@@ -61,7 +61,7 @@ class Raif::Conversation < Raif::ApplicationRecord
   end
 
   def prompt_model_for_entry_response(entry:)
-    llm.chat(messages: llm_messages, source: entry, system_prompt: system_prompt, response_format: :json)
+    llm.chat(messages: llm_messages, source: entry, system_prompt: system_prompt)
   end
 
   def llm_messages

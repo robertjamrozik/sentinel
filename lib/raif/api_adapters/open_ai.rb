@@ -12,12 +12,12 @@ module Raif
       end
 
       def chat(messages:, system_prompt: nil)
-        messages = [{ role: "system", content: system_prompt }] + messages if system_prompt
+        messages_with_system = [{ role: "system", content: system_prompt }] + messages if system_prompt
 
         resp = client.chat(
           parameters: {
             model: model_api_name,
-            messages: messages,
+            messages: messages_with_system,
             temperature: temperature,
           }
         )

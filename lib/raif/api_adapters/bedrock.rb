@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "aws-sdk-bedrock"
-require "aws-sdk-bedrockruntime"
-
 module Raif
   module ApiAdapters
     class Bedrock < Base
