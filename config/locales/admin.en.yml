@@ -23,6 +23,13 @@ en:
         model: Model
         model_response: Model Response
         model_responses: Model Responses
+        agent_invocations: Agent Invocations
+        conversation_history: Conversation History
+        no_agent_invocations: No agent invocations found.
+        task: Task
+        iterations: Iterations
+        final_answer: Final Answer
+        language: Language
         no_completions: No completions found.
         no_conversations: No conversations found.
         no_model_responses: No model responses found.
@@ -58,3 +65,7 @@ en:
         show:
           back_to_model_responses: Back to Model Responses
           title: 'Model Response #%{id}'
+      agent_invocations:
+        show:
+          back_to_agent_invocations: Back to Agent Invocations
+          title: 'Agent Invocation #%{id}'

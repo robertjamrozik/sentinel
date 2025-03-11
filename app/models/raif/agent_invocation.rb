@@ -78,7 +78,11 @@ module Raif
         end
 
         # If there's an action, execute it
-        if action && action["tool"] && action["arguments"]
+        next unless action
+
+        conversation_history << { role: "assistant", content: "<action>#{action}</action>" }
+
+        if action["tool"] && action["arguments"]
           process_action(action)
         else
           # No action specified

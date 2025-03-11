@@ -1,0 +1,180 @@
+<div class="d-flex justify-content-between align-items-center my-4">
+  <h1><%= t(".title", id: @agent_invocation.id) %></h1>
+  <%= link_to t(".back_to_agent_invocations"), sentinel.admin_agent_invocations_path, class: "btn btn-outline-secondary" %>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t("sentinel.admin.common.details") %></h5>
+  </div>
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.id") %>:</strong></div>
+      <div class="col-md-9"><%= @agent_invocation.id %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.created_at") %>:</strong></div>
+      <div class="col-md-9"><%= @agent_invocation.created_at.strftime("%Y-%m-%d %H:%M:%S") %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.creator") %>:</strong></div>
+      <div class="col-md-9"><%= @agent_invocation.creator_type %> #<%= @agent_invocation.creator_id %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.status") %>:</strong></div>
+      <div class="col-md-9">
+        <% if @agent_invocation.completed_at? %>
+          <span class="badge bg-success">Completed</span> at <%= @agent_invocation.completed_at.strftime("%Y-%m-%d %H:%M:%S") %>
+        <% elsif @agent_invocation.failed_at? %>
+          <span class="badge bg-danger">Failed</span> at <%= @agent_invocation.failed_at.strftime("%Y-%m-%d %H:%M:%S") %>
+        <% elsif @agent_invocation.started_at? %>
+          <span class="badge bg-warning">Running</span> since <%= @agent_invocation.started_at.strftime("%Y-%m-%d %H:%M:%S") %>
+        <% else %>
+          <span class="badge bg-secondary">Pending</span>
+        <% end %>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.iterations") %>:</strong></div>
+      <div class="col-md-9"><%= @agent_invocation.iteration_count %> / <%= @agent_invocation.max_iterations %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.model") %>:</strong></div>
+      <div class="col-md-9"><%= @agent_invocation.llm_model_key %></div>
+    </div>
+    <% if @agent_invocation.requested_language_key.present? %>
+      <div class="row mb-3">
+        <div class="col-md-3"><strong><%= t("sentinel.admin.common.language") %>:</strong></div>
+        <div class="col-md-9"><%= @agent_invocation.requested_language_key %></div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t("sentinel.admin.common.task") %></h5>
+  </div>
+  <div class="card-body">
+    <pre class="pre-wrap"><%= @agent_invocation.task %></pre>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t("sentinel.admin.common.system_prompt") %></h5>
+  </div>
+  <div class="card-body">
+    <pre class="pre-wrap"><%= @agent_invocation.system_prompt %></pre>
+  </div>
+</div>
+
+<% if @agent_invocation.final_answer.present? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0"><%= t("sentinel.admin.common.final_answer") %></h5>
+    </div>
+    <div class="card-body">
+      <pre class="pre-wrap"><%= @agent_invocation.final_answer %></pre>
+    </div>
+  </div>
+<% end %>
+
+<% if @agent_invocation.conversation_history.present? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0"><%= t("sentinel.admin.common.conversation_history") %></h5>
+    </div>
+    <div class="card-body">
+      <div class="conversation-history">
+        <% @agent_invocation.conversation_history.each_with_index do |message, index| %>
+          <div class="message <%= message['role'] %> mb-3">
+            <div class="message-header d-flex justify-content-between align-items-center mb-2">
+              <strong class="<%= message['role'] == 'user' ? 'text-primary' : 'text-success' %>">
+                <%= message['role'].capitalize %> 
+                <% if index == 0 && message['role'] == 'user' %>
+                  (Initial Task)
+                <% end %>
+              </strong>
+              <span class="badge bg-secondary">#<%= index + 1 %></span>
+            </div>
+            <div class="message-content p-3 border rounded">
+              <% if message['content'].include?('<observation>') %>
+                <% observation = message['content'].match(/<observation>(.*?)<\/observation>/m) %>
+                <div class="observation">
+                  <strong class="text-warning">Observation:</strong>
+                  <pre class="pre-wrap mt-2 mb-0"><%= observation ? observation[1] : message['content'] %></pre>
+                </div>
+              <% else %>
+                <% if message['content'].include?('<thought>') %>
+                  <% thought = message['content'].match(/<thought>(.*?)<\/thought>/m) %>
+                  <div class="thought mb-3">
+                    <strong class="text-info">Thought:</strong>
+                    <pre class="pre-wrap mt-2 mb-0"><%= thought ? thought[1] : '' %></pre>
+                  </div>
+                <% end %>
+                
+                <% if message['content'].include?('<action>') %>
+                  <% action = message['content'].match(/<action>(.*?)<\/action>/m) %>
+                  <div class="action mb-3">
+                    <strong class="text-danger">Action:</strong>
+                    <pre class="pre-wrap mt-2 mb-0"><%= action ? action[1] : '' %></pre>
+                  </div>
+                <% end %>
+                
+                <% if message['content'].include?('<answer>') %>
+                  <% answer = message['content'].match(/<answer>(.*?)<\/answer>/m) %>
+                  <div class="answer mb-3">
+                    <strong class="text-success">Answer:</strong>
+                    <pre class="pre-wrap mt-2 mb-0"><%= answer ? answer[1] : '' %></pre>
+                  </div>
+                <% end %>
+                
+                <% if !message['content'].include?('<thought>') && 
+                      !message['content'].include?('<action>') && 
+                      !message['content'].include?('<answer>') && 
+                      !message['content'].include?('<observation>') %>
+                  <pre class="pre-wrap mb-0"><%= message['content'] %></pre>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if @agent_invocation.model_responses.any? %>
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="mb-0"><%= t("sentinel.admin.common.model_responses") %></h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-light">
+            <tr>
+              <th><%= t("sentinel.admin.common.id") %></th>
+              <th><%= t("sentinel.admin.common.created_at") %></th>
+              <th><%= t("sentinel.admin.common.model") %></th>
+              <th><%= t("sentinel.admin.common.total_tokens") %></th>
+              <th><%= t("sentinel.admin.common.response") %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @agent_invocation.model_responses.order(created_at: :asc).each do |model_response| %>
+              <tr>
+                <td><%= link_to "##{model_response.id}", sentinel.admin_model_response_path(model_response) %></td>
+                <td><small class="text-muted"><%= model_response.created_at.strftime("%Y-%m-%d %H:%M:%S") %></small></td>
+                <td><%= model_response.llm_model_key %></td>
+                <td><%= model_response.total_tokens ? number_with_delimiter(model_response.total_tokens) : "-" %></td>
+                <td><small class="text-muted"><%= truncate(model_response.raw_response, length: 100) %></small></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<% end %> 
