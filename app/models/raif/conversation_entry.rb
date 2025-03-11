@@ -22,16 +22,16 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   boolean_timestamp :completed_at
   boolean_timestamp :failed_at
 
-  def full_user_message
-    if sentinel_user_tool_invocation.present?
-      <<~MESSAGE
-        #{sentinel_user_tool_invocation.as_user_message}
+  before_validation :add_user_tool_invocation_to_user_message, on: :create
 
-        #{user_message}
-      MESSAGE
-    else
-      user_message
-    end.strip
+  def add_user_tool_invocation_to_user_message
+    return unless sentinel_user_tool_invocation.present?
+
+    self.user_message = <<~MESSAGE.strip
+      #{sentinel_user_tool_invocation.as_user_message}
+
+      #{user_message}
+    MESSAGE
   end
 
   def generating_response?

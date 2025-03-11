@@ -68,12 +68,8 @@ class Raif::Conversation < Raif::ApplicationRecord
     messages = []
 
     entries.each do |entry|
-      if entry.completed?
-        messages << { "role" => "user", "content" => entry.full_user_message }
-        messages << { "role" => "assistant", "content" => entry.model_response_message }
-      else
-        messages << { "role" => "user", "content" => entry.full_user_message }
-      end
+      messages << { "role" => "user", "content" => entry.user_message }
+      messages << { "role" => "assistant", "content" => entry.model_response_message } if entry.completed?
     end
 
     messages

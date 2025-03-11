@@ -1,7 +1,7 @@
 <div id="<%= dom_id(conversation_entry) %>" class="my-2">
   <%= render "sentinel/conversation_entries/message",
         conversation_entry: conversation_entry,
-        content: conversation_entry.full_user_message,
+        content: conversation_entry.user_message,
         message_type: :user %>
 
   <% if conversation_entry.model_response_message.present? || conversation_entry.generating_response? %>
