@@ -2,13 +2,25 @@
 en:
   sentinel:
     admin:
+      agent_invocations:
+        agent_invocation:
+          completed: Completed
+          failed: Failed
+          pending: Pending
+          running: Running
+        show:
+          back_to_agent_invocations: Back to Agent Invocations
+          title: 'Agent Invocation #%{id}'
       common:
+        agent_invocations: Agent Invocations
         arguments: Arguments
+        at: at
         completed: Completed
         completed_at: Completed At
         completion_tokens: Completion Tokens
         completions: Completions
         conversation_entries: Conversation Entries
+        conversation_history: Conversation History
         conversations: Conversations
         created_at: Created At
         creator: Creator
@@ -17,20 +29,17 @@ en:
         entry: Entry
         failed: Failed
         failed_at: Failed At
+        final_answer: Final Answer
         id: ID
         in_progress: In Progress
-        invalid_json: Invalid JSON
         initial_task: Initial Task
+        invalid_json: Invalid JSON
+        iterations: Iterations
+        language: Language
         model: Model
         model_response: Model Response
         model_responses: Model Responses
-        agent_invocations: Agent Invocations
-        conversation_history: Conversation History
         no_agent_invocations: No agent invocations found.
-        task: Task
-        iterations: Iterations
-        final_answer: Final Answer
-        language: Language
         no_completions: No completions found.
         no_conversations: No conversations found.
         no_model_responses: No model responses found.
@@ -43,10 +52,13 @@ en:
         requested_language: Requested Language
         response: Response
         response_format: Response Format
+        running: Running
+        since: since
         source: Source
         started_at: Started At
         status: Status
         system_prompt: System Prompt
+        task: Task
         tool_invocations: Tool Invocations
         total_tokens: Total Tokens
         type: Type
@@ -66,7 +78,3 @@ en:
         show:
           back_to_model_responses: Back to Model Responses
           title: 'Model Response #%{id}'
-      agent_invocations:
-        show:
-          back_to_agent_invocations: Back to Agent Invocations
-          title: 'Agent Invocation #%{id}'

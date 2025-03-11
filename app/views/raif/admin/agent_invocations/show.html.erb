@@ -24,13 +24,13 @@
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.status") %>:</strong></div>
       <div class="col-md-9">
         <% if @agent_invocation.completed_at? %>
-          <span class="badge bg-success">Completed</span> at <%= @agent_invocation.completed_at.rfc822 %>
+          <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span> <%= t("sentinel.admin.common.at") %> <%= @agent_invocation.completed_at.rfc822 %>
         <% elsif @agent_invocation.failed_at? %>
-          <span class="badge bg-danger">Failed</span> at <%= @agent_invocation.failed_at.rfc822 %>
+          <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span> <%= t("sentinel.admin.common.at") %> <%= @agent_invocation.failed_at.rfc822 %>
         <% elsif @agent_invocation.started_at? %>
-          <span class="badge bg-warning">Running</span> since <%= @agent_invocation.started_at.rfc822 %>
+          <span class="badge bg-warning"><%= t("sentinel.admin.common.running") %></span> <%= t("sentinel.admin.common.since") %> <%= @agent_invocation.started_at.rfc822 %>
         <% else %>
-          <span class="badge bg-secondary">Pending</span>
+          <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
         <% end %>
       </div>
     </div>
@@ -88,8 +88,8 @@
     <div class="card-body p-0">
       <div class="conversation-history p-3">
         <% @agent_invocation.conversation_history.each_with_index do |message, index| %>
-          <%= render partial: "sentinel/admin/agent_invocations/conversation_message", 
-                     locals: { message: message, message_count: index + 1 } %>
+          <%= render partial: "sentinel/admin/agent_invocations/conversation_message",
+                locals: { message: message, message_count: index + 1 } %>
         <% end %>
       </div>
     </div>
@@ -128,4 +128,4 @@
       </div>
     </div>
   </div>
-<% end %> 
+<% end %>

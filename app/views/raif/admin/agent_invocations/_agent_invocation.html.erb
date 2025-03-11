@@ -4,15 +4,15 @@
   <td><small class="text-muted"><%= truncate(agent_invocation.task, length: 100) %></small></td>
   <td>
     <% if agent_invocation.completed_at? %>
-      <span class="badge bg-success">Completed</span>
+      <span class="badge bg-success"><%= t("sentinel.admin.agent_invocations.agent_invocation.completed") %></span>
     <% elsif agent_invocation.failed_at? %>
-      <span class="badge bg-danger">Failed</span>
+      <span class="badge bg-danger"><%= t("sentinel.admin.agent_invocations.agent_invocation.failed") %></span>
     <% elsif agent_invocation.started_at? %>
-      <span class="badge bg-warning">Running</span>
+      <span class="badge bg-warning"><%= t("sentinel.admin.agent_invocations.agent_invocation.running") %></span>
     <% else %>
-      <span class="badge bg-secondary">Pending</span>
+      <span class="badge bg-secondary"><%= t("sentinel.admin.agent_invocations.agent_invocation.pending") %></span>
     <% end %>
   </td>
   <td><%= agent_invocation.iteration_count %> / <%= agent_invocation.max_iterations %></td>
   <td><small class="text-muted"><%= truncate(agent_invocation.final_answer, length: 100) if agent_invocation.final_answer %></small></td>
-</tr> 
+</tr>

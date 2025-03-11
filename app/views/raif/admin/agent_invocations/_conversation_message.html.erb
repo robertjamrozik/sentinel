@@ -1,6 +1,6 @@
 <div class="message <%= message["role"] %> mb-3">
   <div class="message-header d-flex justify-content-between align-items-center mb-2 px-2">
-    <strong class="<%= message["role"] == 'user' ? 'text-primary' : 'text-success' %>">
+    <strong class="<%= message["role"] == "user" ? "text-primary" : "text-success" %>">
       <%= message["role"].capitalize %>
       <% if message[:counter] == 0 && message["role"] == 'user' %>
         (<%= t("sentinel.admin.common.initial_task") %>)
@@ -13,4 +13,3 @@
     <code><%= message["content"] %></code>
   </div>
 </div>
- 
