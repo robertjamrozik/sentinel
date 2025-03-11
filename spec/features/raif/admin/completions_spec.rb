@@ -11,7 +11,7 @@ RSpec.describe "Admin::Completions", type: :feature do
     let!(:failed_completion){ FB.create(:sentinel_test_completion, :failed, creator: creator) }
     let!(:in_progress_completion){ FB.create(:sentinel_test_completion, creator: creator, started_at: 1.minute.ago) }
     let!(:long_prompt_completion) do
-      FB.create(:sentinel_test_completion, prompt: "a" * 200, creator: creator, prompt_tokens: 1000, completion_tokens: 500)
+      FB.create(:sentinel_test_completion, prompt: "a" * 200, creator: creator)
     end
 
     it "displays completions with all details, allows navigation, and handles edge cases" do
@@ -24,8 +24,6 @@ RSpec.describe "Admin::Completions", type: :feature do
       expect(page).to have_content(I18n.t("sentinel.admin.common.creator"))
       expect(page).to have_content(I18n.t("sentinel.admin.common.model"))
       expect(page).to have_content(I18n.t("sentinel.admin.common.status"))
-      expect(page).to have_content(I18n.t("sentinel.admin.common.prompt_tokens"))
-      expect(page).to have_content(I18n.t("sentinel.admin.common.completion_tokens"))
       expect(page).to have_content(I18n.t("sentinel.admin.common.prompt"))
 
       # Check completions count and status badges
@@ -34,12 +32,6 @@ RSpec.describe "Admin::Completions", type: :feature do
       expect(page).to have_css(".badge.bg-danger", text: I18n.t("sentinel.admin.common.failed"))
       expect(page).to have_css(".badge.bg-warning", text: I18n.t("sentinel.admin.common.in_progress"))
       expect(page).to have_css(".badge.bg-secondary", text: I18n.t("sentinel.admin.common.pending"))
-
-      # Check token counts
-      within("table tbody") do
-        expect(page).to have_content("1,000") # prompt_tokens
-        expect(page).to have_content("500") # completion_tokens
-      end
 
       # Truncated long prompt
       expect(page).to have_content("a" * 97 + "...")
@@ -60,9 +52,7 @@ RSpec.describe "Admin::Completions", type: :feature do
         prompt: "Test prompt",
         response: "Test response",
         system_prompt: "You are a test assistant",
-        prompt_tokens: 10000,
-        completion_tokens: 500,
-        llm_model_name: "open_ai_gpt_4o_mini"
+        llm_model_key: "open_ai_gpt_4o_mini"
       )
     end
 
@@ -84,10 +74,6 @@ RSpec.describe "Admin::Completions", type: :feature do
       expect(page).to have_content(completion.created_at.strftime("%Y-%m-%d %H:%M:%S"))
       expect(page).to have_content(completion.started_at.strftime("%Y-%m-%d %H:%M:%S"))
       expect(page).to have_content(completion.completed_at.strftime("%Y-%m-%d %H:%M:%S"))
-
-      # Check token counts
-      expect(page).to have_content("10,000") # prompt_tokens
-      expect(page).to have_content("500") # completion_tokens
 
       # Check prompt and response
       expect(page).to have_content("Test prompt")

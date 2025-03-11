@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 class Raif::Conversation < Raif::ApplicationRecord
+  include Raif::Concerns::HasLlm
+  include Raif::Concerns::HasRequestedLanguage
+
   belongs_to :creator, polymorphic: true
 
   has_many :entries, class_name: "Raif::ConversationEntry", dependent: :destroy, foreign_key: :sentinel_conversation_id, inverse_of: :sentinel_conversation
-  has_many :sentinel_completions, through: :entries
 
   validates :type, inclusion: { in: ->{ Raif.config.conversation_types } }
 
@@ -14,10 +16,39 @@ class Raif::Conversation < Raif::ApplicationRecord
     []
   end
 
-  def system_prompt_addition
+  def tool_usage_system_prompt
+    return if available_model_tools.empty?
+
     <<~PROMPT
-      Your response should be a JSON object with the following format:
-      { "message": "Your message to be displayed to the user" }
+
+      # Tool Usage
+      You may also optionally include a <tool> tag with a JSON object containing the name of the tool you want to use and the arguments for that tool. An example response that invokes a tool:
+      <message>I suggest we add a new scenario.</message>
+      <tool>{"tool": "add_scenarios", "arguments": [{"title": "A new scenario", "description": "A description of the new scenario."}]}</tool>
+
+      An example response that invokes no tools:
+      <message>Could you clarify what you mean by that?</message>
+
+      # Available Tools
+      You have access to the following tools:
+      #{available_model_tools.map(&:description_for_llm).join("\n---\n")}
+
+    PROMPT
+  end
+
+  def system_prompt
+    <<~PROMPT
+      You are a helpful assistant who is collaborating with a teammate.
+
+      # Your Responses
+      Your responses should always begin with a <message> tag with your response to your collaborator. For example:
+      <message>Your response message</message>
+      #{tool_usage_system_prompt}
+      # Other rules/reminders
+      - Only use tools if you think they are useful for the conversation.
+      - **Never** include the likelihood text in the scenario title (ie. don't suggest things like "A new scenario - low likelihood").
+      - **Never** provide any text outside the <message> and <tool> tags.
+      #{system_prompt_language_preference}
     PROMPT
   end
 
@@ -29,13 +60,17 @@ class Raif::Conversation < Raif::ApplicationRecord
     I18n.t("#{self.class.name.underscore.gsub("/", ".")}.initial_chat_message")
   end
 
+  def prompt_model_for_entry_response(entry:)
+    llm.chat(messages: llm_messages, source: entry, system_prompt: system_prompt, response_format: :json)
+  end
+
   def llm_messages
     messages = []
 
-    entries.preload(:sentinel_completion).each do |entry|
+    entries.each do |entry|
       if entry.completed?
-        messages << { "role" => "user", "content" => entry.sentinel_completion_prompt }
-        messages << { "role" => "assistant", "content" => entry.sentinel_completion_response }
+        messages << { "role" => "user", "content" => entry.full_user_message }
+        messages << { "role" => "assistant", "content" => entry.model_response_message }
       else
         messages << { "role" => "user", "content" => entry.full_user_message }
       end

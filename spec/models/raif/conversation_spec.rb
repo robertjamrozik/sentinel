@@ -12,8 +12,8 @@ RSpec.describe Raif::Conversation, type: :model do
 
       messages = conversation.entries.oldest_first.map do |entry|
         [
-          { "role" => "user", "content" => entry.sentinel_completion.prompt },
-          { "role" => "assistant", "content" => entry.sentinel_completion.response }
+          { "role" => "user", "content" => entry.full_user_message },
+          { "role" => "assistant", "content" => entry.model_response_message }
         ]
       end.flatten
 

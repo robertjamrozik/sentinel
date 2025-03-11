@@ -14,5 +14,6 @@ Raif::Engine.routes.draw do
   namespace :admin do
     resources :completions, only: [:index, :show]
     resources :conversations, only: [:index, :show]
+    resources :model_responses, only: [:index, :show]
   end
 end

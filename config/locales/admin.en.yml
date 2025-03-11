@@ -22,23 +22,27 @@ en:
         invalid_json: Invalid JSON
         model: Model
         model_response: Model Response
+        model_responses: Model Responses
         no_completions: No completions found.
         no_conversations: No conversations found.
+        no_model_responses: No model responses found.
         pending: Pending
         prettified: Prettified
         prompt: Prompt
         prompt_tokens: Prompt Tokens
         raw: Raw
+        rendered: Rendered
         requested_language: Requested Language
         response: Response
         response_format: Response Format
+        source: Source
         started_at: Started At
         status: Status
         system_prompt: System Prompt
         tool_invocations: Tool Invocations
+        total_tokens: Total Tokens
         type: Type
         user_message: User Message
-        view_completion: View Completion
       completions:
         show:
           back_to_completions: Back to Completions
@@ -50,3 +54,7 @@ en:
       layouts:
         admin:
           title: Raif Admin
+      model_responses:
+        show:
+          back_to_model_responses: Back to Model Responses
+          title: 'Model Response #%{id}'

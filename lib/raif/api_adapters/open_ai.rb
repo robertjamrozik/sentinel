@@ -12,7 +12,7 @@ module Raif
       end
 
       def chat(messages:, system_prompt: nil)
-        messages.prepend({ role: "system", content: system_prompt }) if system_prompt
+        messages = [{ role: "system", content: system_prompt }] + messages if system_prompt
 
         resp = client.chat(
           parameters: {
@@ -22,12 +22,14 @@ module Raif
           }
         )
 
-        {
-          response: resp.dig("choices", 0, "message", "content"),
+        Raif::ModelResponse.new(
+          messages: messages,
+          system_prompt: system_prompt,
+          raw_response: resp.dig("choices", 0, "message", "content"),
           completion_tokens: resp["usage"]["completion_tokens"],
           prompt_tokens: resp["usage"]["prompt_tokens"],
           total_tokens: resp["usage"]["total_tokens"],
-        }
+        )
       end
     end
   end

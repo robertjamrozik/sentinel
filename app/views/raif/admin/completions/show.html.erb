@@ -18,7 +18,7 @@
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.model") %>:</strong></div>
-      <div class="col-md-9"><%= @completion.llm_model_name %></div>
+      <div class="col-md-9"><%= @completion.llm_model_key %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.response_format") %>:</strong></div>
@@ -64,18 +64,6 @@
         <% else %>
           <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
         <% end %>
-      </div>
-    </div>
-    <div class="row mb-3">
-      <div class="col-md-3"><strong><%= t("sentinel.admin.common.prompt_tokens") %>:</strong></div>
-      <div class="col-md-9">
-        <%= number_with_delimiter(@completion.prompt_tokens) %>
-      </div>
-    </div>
-    <div class="row mb-3">
-      <div class="col-md-3"><strong><%= t("sentinel.admin.common.completion_tokens") %>:</strong></div>
-      <div class="col-md-9">
-        <%= number_with_delimiter(@completion.completion_tokens) %>
       </div>
     </div>
     <% if @completion.requested_language_key.present? %>

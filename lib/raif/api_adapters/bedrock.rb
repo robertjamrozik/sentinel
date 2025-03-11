@@ -39,12 +39,14 @@ module Raif
           response_text = assistant_message[:content] + response_text
         end
 
-        {
-          response: response_text,
+        Raif::ModelResponse.new(
+          messages: messages,
+          system_prompt: system_prompt,
+          raw_response: response_text,
           completion_tokens: resp.usage.output_tokens,
           prompt_tokens: resp.usage.input_tokens,
           total_tokens: resp.usage.total_tokens,
-        }
+        )
       end
     end
   end
