@@ -6,7 +6,7 @@ class Raif::ModelToolInvocation < Raif::ApplicationRecord
   belongs_to :source, polymorphic: true
 
   validates :tool_type, presence: true
-  validate :ensure_valid_tool_argument_schema, if: -> { tool_arguments_schema.present? }
+  validate :ensure_valid_tool_argument_schema, if: -> { tool_type.present? && tool_arguments_schema.present? }
 
   delegate :tool_arguments_schema, :renderable?, :tool_name, to: :tool
 
