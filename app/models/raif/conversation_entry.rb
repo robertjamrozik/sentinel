@@ -15,7 +15,7 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   has_one :sentinel_model_response, as: :source, dependent: :destroy, class_name: "Raif::ModelResponse"
 
   delegate :available_model_tools, to: :sentinel_conversation
-  delegate :system_prompt, to: :sentinel_model_response, allow_nil: true
+  delegate :system_prompt, :llm_model_key, to: :sentinel_model_response, allow_nil: true
 
   accepts_nested_attributes_for :sentinel_user_tool_invocation
 
