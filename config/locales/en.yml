@@ -39,3 +39,4 @@ en:
       open_ai_gpt_3_5_turbo: OpenAI GPT-3.5 Turbo
       open_ai_gpt_4o: OpenAI GPT-4o
       open_ai_gpt_4o_mini: OpenAI GPT-4o Mini
+      sentinel_test_adapter: Raif Test Adapter
