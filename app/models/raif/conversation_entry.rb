@@ -53,30 +53,38 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
 
 private
 
-  # We expect the the model to respond with something like (tool being optional):
-  # <message>The message to display to the user</message>
-  # <tool>{ "name": "tool_name", "arguments": { "argument_name": "argument_value" } }</tool>
+  # We expect the the model to respond with JSON like:
+  # {
+  #   "message": "The message to display to the user",
+  #   "tool": {
+  #     "name": "tool_name",
+  #     "arguments": { "argument_name": "argument_value" }
+  #   }
+  # }
   def extract_message_and_invoke_tools!
     transaction do
-      message_match = model_raw_response.match(%r{<message>(.*?)</message>}m)
+      begin
+        parsed_response = JSON.parse(model_raw_response)
+        
+        if parsed_response["message"].blank?
+          failed!
+          return
+        end
 
-      if message_match.blank?
+        self.model_response_message = parsed_response["message"].strip
+        save!
+
+        if parsed_response["tool"].present?
+          tool_call = parsed_response["tool"]
+          tool_klass = available_model_tools_map[tool_call["name"]]
+          tool_klass&.invoke_tool(tool_arguments: tool_call["arguments"], source: self)
+        end
+
+        completed!
+      rescue JSON::ParserError
         failed!
         return
       end
-
-      self.model_response_message = message_match[1].strip
-      save!
-
-      tool_match = model_raw_response.match(%r{<tool>(.*?)</tool>}m)
-      if tool_match.present?
-        tool_json = tool_match[1].strip
-        tool_call = JSON.parse(tool_json) if tool_json.present?
-        tool_klass = available_model_tools_map[tool_call["name"]]
-        tool_klass&.invoke_tool(tool_arguments: tool_call["arguments"], source: self)
-      end
-
-      completed!
     end
   end
 

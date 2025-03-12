@@ -10,7 +10,7 @@ class Raif::ModelTool
     <<~DESCRIPTION
       Name: #{tool_name}
       Description: #{tool_description}
-      Arguments:
+      Arguments Schema:
       #{tool_arguments_schema.to_json}
       Example Usage:
       #{example_model_invocation.to_json}
