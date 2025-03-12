@@ -41,9 +41,35 @@ module Raif
           key: :bedrock_claude_3_5_sonnet,
           api_name: "anthropic.claude-3-5-sonnet-20240620-v1:0",
           api_adapter: Raif::ApiAdapters::Bedrock
+        },
+        {
+          key: :anthropic_claude_3_7_sonnet,
+          api_name: "claude-3-7-sonnet-latest",
+          api_adapter: Raif::ApiAdapters::Anthropic
+        },
+        {
+          key: :anthropic_claude_3_5_sonnet,
+          api_name: "claude-3-5-sonnet-latest",
+          api_adapter: Raif::ApiAdapters::Anthropic
+        },
+        {
+          key: :anthropic_claude_3_opus,
+          api_name: "claude-3-opus-latest",
+          api_adapter: Raif::ApiAdapters::Anthropic
+        },
+        {
+          key: :anthropic_claude_3_haiku,
+          api_name: "claude-3-haiku-20240307",
+          api_adapter: Raif::ApiAdapters::Anthropic
         }
       ].each do |llm_config|
         Raif.register_llm(llm_config)
+      end
+    end
+
+    initializer "sentinel.setup_anthropic" do
+      ::Anthropic.setup do |config|
+        config.api_key = ENV["ANTHROPIC_API_KEY"]
       end
     end
 
