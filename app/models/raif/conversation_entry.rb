@@ -15,6 +15,7 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   has_one :sentinel_model_response, as: :source, dependent: :destroy, class_name: "Raif::ModelResponse"
 
   delegate :available_model_tools, to: :sentinel_conversation
+  delegate :system_prompt, to: :sentinel_model_response, allow_nil: true
 
   accepts_nested_attributes_for :sentinel_user_tool_invocation
 
@@ -63,28 +64,26 @@ private
   # }
   def extract_message_and_invoke_tools!
     transaction do
-      begin
-        parsed_response = JSON.parse(model_raw_response)
-        
-        if parsed_response["message"].blank?
-          failed!
-          return
-        end
+      parsed_response = JSON.parse(model_raw_response)
 
-        self.model_response_message = parsed_response["message"].strip
-        save!
-
-        if parsed_response["tool"].present?
-          tool_call = parsed_response["tool"]
-          tool_klass = available_model_tools_map[tool_call["name"]]
-          tool_klass&.invoke_tool(tool_arguments: tool_call["arguments"], source: self)
-        end
-
-        completed!
-      rescue JSON::ParserError
+      if parsed_response["message"].blank?
         failed!
         return
       end
+
+      self.model_response_message = parsed_response["message"].strip
+      save!
+
+      if parsed_response["tool"].present?
+        tool_call = parsed_response["tool"]
+        tool_klass = available_model_tools_map[tool_call["name"]]
+        tool_klass&.invoke_tool(tool_arguments: tool_call["arguments"], source: self)
+      end
+
+      completed!
+    rescue JSON::ParserError
+      failed!
+      return
     end
   end
 
