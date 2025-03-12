@@ -42,7 +42,7 @@ module Raif
     end
 
     def validate!
-      unless Raif.llm_for_key(default_llm_model_key.to_sym).present?
+      unless Raif.available_llm_keys.include?(default_llm_model_key.to_sym)
         raise Raif::Errors::InvalidConfigError,
           "Raif.config.default_llm_model_key was set to #{default_llm_model_key}, but must be one of: #{Raif.available_llm_keys.join(", ")}"
       end

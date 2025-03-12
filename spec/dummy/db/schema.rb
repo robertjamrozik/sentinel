@@ -84,8 +84,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   end
 
   create_table "sentinel_model_responses", force: :cascade do |t|
-    t.string "source_type", null: false
-    t.bigint "source_id", null: false
+    t.string "source_type"
+    t.bigint "source_id"
     t.string "llm_model_key", null: false
     t.jsonb "messages", default: [], null: false
     t.text "system_prompt"

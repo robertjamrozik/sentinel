@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "test_adapter"
-
 module Raif
   module RspecHelpers
 
@@ -9,7 +7,7 @@ module Raif
       test_llm = Raif::Llm.new(
         key: :sentinel_test_adapter,
         api_name: "sentinel_test_adapter",
-        api_adapter: Raif::TestAdapter
+        api_adapter: Raif::ApiAdapters::Test
       )
 
       test_llm.api_adapter.chat_handler = block
@@ -22,7 +20,7 @@ module Raif
       test_llm = Raif::Llm.new(
         key: :sentinel_test_adapter,
         api_name: "sentinel_test_adapter",
-        api_adapter: Raif::TestAdapter
+        api_adapter: Raif::ApiAdapters::Test
       )
 
       test_llm.api_adapter.chat_handler = block
@@ -34,6 +32,14 @@ module Raif
       else
         allow_any_instance_of(conversation).to receive(:llm){ test_llm }
       end
+    end
+
+    def stub_sentinel_llm(llm, &block)
+      llm.api_adapter.chat_handler = block
+
+      allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
+
+      test_llm
     end
 
   end

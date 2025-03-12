@@ -22,7 +22,7 @@ module Raif
       I18n.t("sentinel.model_names.#{key}")
     end
 
-    def chat(messages:, source:, response_format: :text, system_prompt: nil)
+    def chat(messages:, response_format: :text, source: nil, system_prompt: nil)
       unless response_format.is_a?(Symbol)
         raise ArgumentError,
           "Raif::Llm#chat - Invalid response format: #{response_format}. Must be a symbol (you passed #{response_format.class}) and be one of: #{VALID_RESPONSE_FORMATS.join(", ")}" # rubocop:disable Layout/LineLength
@@ -33,11 +33,11 @@ module Raif
       end
 
       unless Raif.config.llm_api_requests_enabled
-        Raif.logger.warn("LLM API requests are disabled. Skipping request to #{adapter.model_api_name}.")
+        Raif.logger.warn("LLM API requests are disabled. Skipping request to #{api_adapter.model_api_name}.")
         return
       end
 
-      model_response = @api_adapter.chat(messages: messages, system_prompt: system_prompt)
+      model_response = api_adapter.chat(messages: messages, system_prompt: system_prompt)
       model_response.llm_model_key = key.to_s
       model_response.response_format = response_format
       model_response.source = source

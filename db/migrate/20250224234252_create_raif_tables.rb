@@ -81,7 +81,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
     end
 
     create_table :sentinel_model_responses do |t|
-      t.references :source, polymorphic: true, null: false, index: true
+      t.references :source, polymorphic: true, index: true
       t.string :llm_model_key, null: false
       t.jsonb :messages, default: [], null: false
       t.text :system_prompt

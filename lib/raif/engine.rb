@@ -21,7 +21,7 @@ module Raif
     end
 
     initializer "sentinel.setup_open_ai" do
-      return unless Raif.config.open_ai_models_enabled
+      next unless Raif.config.open_ai_models_enabled
 
       require "openai"
       require "sentinel/api_adapters/open_ai"
@@ -40,13 +40,13 @@ module Raif
     end
 
     initializer "sentinel.setup_anthropic" do
-      return unless Raif.config.anthropic_models_enabled
+      next unless Raif.config.anthropic_models_enabled
 
       require "anthropic"
       require "sentinel/api_adapters/anthropic"
 
       ::Anthropic.setup do |config|
-        config.api_key = ENV["ANTHROPIC_API_KEY"]
+        config.api_key = Raif.config.anthropic_api_key
       end
 
       [
@@ -60,7 +60,7 @@ module Raif
     end
 
     initializer "sentinel.setup_anthropic_bedrock" do
-      return unless Raif.config.anthropic_bedrock_models_enabled
+      next unless Raif.config.anthropic_bedrock_models_enabled
 
       require "aws-sdk-bedrock"
       require "aws-sdk-bedrockruntime"
@@ -72,6 +72,13 @@ module Raif
       ].each do |llm_config|
         Raif.register_llm(api_adapter: Raif::ApiAdapters::Bedrock, **llm_config)
       end
+    end
+
+    initializer "sentinel.setup_test_adapter" do
+      next unless Rails.env.test?
+
+      require "#{Raif::Engine.root}/spec/support/test_adapter"
+      Raif.register_llm(api_adapter: Raif::ApiAdapters::Test, key: :sentinel_test_adapter, api_name: "sentinel_test_adapter")
     end
 
     initializer "sentinel.validate_config" do
