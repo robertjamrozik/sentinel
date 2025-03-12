@@ -20,56 +20,57 @@ module Raif
       g.factory_bot dir: "spec/factories"
     end
 
-    initializer "sentinel.register_available_llms" do
+    initializer "sentinel.setup_open_ai" do
+      return unless Raif.config.open_ai_models_enabled
+
+      require "openai"
+      require "sentinel/api_adapters/open_ai"
+
+      ::OpenAI.configure do |config|
+        config.access_token = Raif.config.open_ai_api_key
+      end
+
       [
-        {
-          key: :open_ai_gpt_4o_mini,
-          api_name: "gpt-4o-mini",
-          api_adapter: Raif::ApiAdapters::OpenAi
-        },
-        {
-          key: :open_ai_gpt_4o,
-          api_name: "gpt-4o",
-          api_adapter: Raif::ApiAdapters::OpenAi
-        },
-        {
-          key: :open_ai_gpt_3_5_turbo,
-          api_name: "gpt-3.5-turbo",
-          api_adapter: Raif::ApiAdapters::OpenAi
-        },
-        {
-          key: :bedrock_claude_3_5_sonnet,
-          api_name: "anthropic.claude-3-5-sonnet-20240620-v1:0",
-          api_adapter: Raif::ApiAdapters::Bedrock
-        },
-        {
-          key: :anthropic_claude_3_7_sonnet,
-          api_name: "claude-3-7-sonnet-latest",
-          api_adapter: Raif::ApiAdapters::Anthropic
-        },
-        {
-          key: :anthropic_claude_3_5_sonnet,
-          api_name: "claude-3-5-sonnet-latest",
-          api_adapter: Raif::ApiAdapters::Anthropic
-        },
-        {
-          key: :anthropic_claude_3_opus,
-          api_name: "claude-3-opus-latest",
-          api_adapter: Raif::ApiAdapters::Anthropic
-        },
-        {
-          key: :anthropic_claude_3_haiku,
-          api_name: "claude-3-haiku-20240307",
-          api_adapter: Raif::ApiAdapters::Anthropic
-        }
+        { key: :open_ai_gpt_4o_mini, api_name: "gpt-4o-mini" },
+        { key: :open_ai_gpt_4o, api_name: "gpt-4o" },
+        { key: :open_ai_gpt_3_5_turbo, api_name: "gpt-3.5-turbo" }
       ].each do |llm_config|
-        Raif.register_llm(llm_config)
+        Raif.register_llm(api_adapter: Raif::ApiAdapters::OpenAi, **llm_config)
       end
     end
 
     initializer "sentinel.setup_anthropic" do
+      return unless Raif.config.anthropic_models_enabled
+
+      require "anthropic"
+      require "sentinel/api_adapters/anthropic"
+
       ::Anthropic.setup do |config|
         config.api_key = ENV["ANTHROPIC_API_KEY"]
+      end
+
+      [
+        { key: :anthropic_claude_3_7_sonnet, api_name: "claude-3-7-sonnet-latest" },
+        { key: :anthropic_claude_3_5_sonnet, api_name: "claude-3-5-sonnet-latest" },
+        { key: :anthropic_claude_3_opus, api_name: "claude-3-opus-latest" },
+        { key: :anthropic_claude_3_haiku, api_name: "claude-3-haiku-20240307" }
+      ].each do |llm_config|
+        Raif.register_llm(api_adapter: Raif::ApiAdapters::Anthropic, **llm_config)
+      end
+    end
+
+    initializer "sentinel.setup_anthropic_bedrock" do
+      return unless Raif.config.anthropic_bedrock_models_enabled
+
+      require "aws-sdk-bedrock"
+      require "aws-sdk-bedrockruntime"
+      require "sentinel/api_adapters/bedrock"
+
+      [
+        { key: :bedrock_claude_3_5_sonnet, api_name: "anthropic.claude-3-5-sonnet-20240620-v1:0" },
+        { key: :bedrock_claude_3_7_sonnet, api_name: "anthropic.claude-3-7-sonnet-20250219-v1:0" }
+      ].each do |llm_config|
+        Raif.register_llm(api_adapter: Raif::ApiAdapters::Bedrock, **llm_config)
       end
     end
 
