@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Raif::TestAdapter < Raif::ApiAdapters::Base
+class Raif::ApiAdapters::Test < Raif::ApiAdapters::Base
   attr_accessor :chat_handler
 
   def chat(messages:, system_prompt: nil)
@@ -19,6 +19,6 @@ unless Raif.available_llm_keys.include?(:sentinel_test_adapter)
   Raif.register_llm(
     key: :sentinel_test_adapter,
     api_name: "sentinel_test_adapter",
-    api_adapter: Raif::TestAdapter
+    api_adapter: Raif::ApiAdapters::Test
   )
 end

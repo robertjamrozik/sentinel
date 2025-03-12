@@ -1,0 +1,83 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+RSpec.describe Raif::Llm, type: :model do
+  describe "#chat" do
+    let(:messages) { [{ role: "user", content: "Hello" }] }
+    let(:system_prompt) { "You are a helpful assistant." }
+
+    let(:test_llm) do
+      described_class.new(key: :sentinel_test_adapter, api_name: "test_api", api_adapter: Raif::ApiAdapters::Test)
+    end
+
+    context "when llm_api_requests_enabled is false" do
+      before do
+        allow(Raif.config).to receive(:llm_api_requests_enabled).and_return(false)
+      end
+
+      it "doesn't call the api_adapter" do
+        expect(test_llm.api_adapter).not_to receive(:chat)
+        result = test_llm.chat(messages: messages)
+        expect(result).to be_nil
+      end
+    end
+
+    context "when llm_api_requests_enabled is true" do
+      before do
+        allow(Raif.config).to receive(:llm_api_requests_enabled).and_return(true)
+
+        stub_sentinel_llm(test_llm) do |messages|
+          "This is a test response for: #{messages.first[:content]}"
+        end
+      end
+
+      it "calls the api_adapter and returns a model response" do
+        result = test_llm.chat(messages: messages, system_prompt: system_prompt)
+
+        expect(result).to be_a(Raif::ModelResponse)
+        expect(result).to be_persisted
+        expect(result.llm_model_key).to eq("sentinel_test_adapter")
+        expect(result.response_format).to eq("text")
+        expect(result.raw_response).to eq("This is a test response for: Hello")
+        expect(result.source).to eq(nil)
+        expect(result.messages).to eq([{ "role" => "user", "content" => "Hello" }])
+        expect(result.system_prompt).to eq("You are a helpful assistant.")
+        expect(result.completion_tokens).to be_present
+        expect(result.prompt_tokens).to be_present
+        expect(result.total_tokens).to be_present
+      end
+
+      it "sets the source if provided" do
+        user = FB.create(:sentinel_test_user)
+        result = test_llm.chat(messages: messages, system_prompt: system_prompt, source: user)
+
+        expect(result).to be_a(Raif::ModelResponse)
+        expect(result).to be_persisted
+        expect(result.llm_model_key).to eq("sentinel_test_adapter")
+        expect(result.response_format).to eq("text")
+        expect(result.raw_response).to eq("This is a test response for: Hello")
+        expect(result.source).to eq(user)
+        expect(result.messages).to eq([{ "role" => "user", "content" => "Hello" }])
+        expect(result.system_prompt).to eq("You are a helpful assistant.")
+        expect(result.completion_tokens).to be_present
+        expect(result.prompt_tokens).to be_present
+        expect(result.total_tokens).to be_present
+      end
+    end
+
+    context "with invalid response_format" do
+      it "raises an error when response_format is not a symbol" do
+        expect do
+          test_llm.chat(messages: messages, response_format: "text")
+        end.to raise_error(ArgumentError, /Invalid response format/)
+      end
+
+      it "raises an error when response_format is not valid" do
+        expect do
+          test_llm.chat(messages: messages, response_format: :invalid)
+        end.to raise_error(ArgumentError, /Invalid response format/)
+      end
+    end
+  end
+end

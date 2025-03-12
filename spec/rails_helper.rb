@@ -16,7 +16,7 @@ require "rspec/rails"
 
 ActiveRecord::Migrator.migrations_paths = [File.expand_path("../spec/dummy/db/migrate", __dir__)]
 
-Raif.root.glob("spec/support/**/*.rb").sort_by(&:to_s).each { |f| require f }
+Raif::Engine.root.glob("spec/support/**/*.rb").sort_by(&:to_s).each { |f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.

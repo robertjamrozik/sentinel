@@ -14,6 +14,6 @@ module Raif::Concerns::HasLlm
   end
 
   def llm
-    @llm ||= Raif.llm_for_key(llm_model_key.to_sym)
+    @llm ||= Raif.llm(model_key: llm_model_key.to_sym)
   end
 end

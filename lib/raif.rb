@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "sentinel/version"
-require "sentinel/root"
 require "sentinel/languages"
 require "sentinel/engine"
 require "sentinel/configuration"
@@ -44,11 +43,11 @@ module Raif
     end
 
     @llm_registry ||= {}
-    @llm_registry[llm.key] = llm
+    @llm_registry[llm.key] = llm_config
   end
 
-  def self.llm_for_key(key)
-    llm_registry[key]
+  def self.llm(model_key:)
+    Raif::Llm.new(**llm_registry[model_key])
   end
 
   def self.available_llms
