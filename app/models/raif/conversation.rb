@@ -77,7 +77,7 @@ class Raif::Conversation < Raif::ApplicationRecord
   end
 
   def prompt_model_for_entry_response(entry:)
-    llm.chat(messages: llm_messages, source: entry, system_prompt: system_prompt)
+    llm.chat(messages: llm_messages, source: entry, response_format: :json, system_prompt: system_prompt)
   end
 
   def llm_messages

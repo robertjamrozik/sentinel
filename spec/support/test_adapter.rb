@@ -4,6 +4,14 @@ class Raif::ApiAdapters::Test < Raif::ApiAdapters::Base
   attr_accessor :chat_handler
 
   def chat(messages:, system_prompt: nil)
+    if chat_handler.blank?
+      raise "No chat handler set for Raif test adapter."
+    end
+
+    unless chat_handler.respond_to?(:call)
+      raise "Raif test chat handler must respond to #call."
+    end
+
     Raif::ModelCompletion.new(
       messages: messages,
       system_prompt: system_prompt,
