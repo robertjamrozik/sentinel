@@ -24,7 +24,6 @@ class Raif::Conversation < Raif::ApplicationRecord
       # Available Tools
       You have access to the following tools:
       #{available_model_tools.map(&:description_for_llm).join("\n---\n")}
-
       # Tool Usage
       To utilize a tool, include a tool object in your JSON response with the name of the tool you want to use and the arguments for that tool. An example response that invokes a tool:
       {
@@ -34,7 +33,6 @@ class Raif::Conversation < Raif::ApplicationRecord
           "arguments": {"arg_name": "Example arg"}
         }
       }
-
     PROMPT
   end
 
@@ -54,14 +52,19 @@ class Raif::Conversation < Raif::ApplicationRecord
   end
 
   def system_prompt_intro
-    "You are a helpful assistant who is collaborating with a teammate."
+    Raif.config.conversation_system_prompt_intro
+  end
+
+  def system_prompt_tools_reminder
+    return if available_model_tools.empty?
+
+    "- Use tools if you think they are useful for the conversation.\n"
   end
 
   def system_prompt_reminders
     <<~PROMPT.strip
       # Other rules/reminders
-      - Only use tools if you think they are useful for the conversation.
-      - **Always** respond with a single, valid JSON object containing at minimum a "message" field, and optionally a "tool" field.
+      #{system_prompt_tools_reminder}- **Always** respond with a single, valid JSON object containing at minimum a "message" field, and optionally a "tool" field.
     PROMPT
   end
 
