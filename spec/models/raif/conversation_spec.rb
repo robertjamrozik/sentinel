@@ -154,7 +154,7 @@ RSpec.describe Raif::Conversation, type: :model do
       completion = conversation.prompt_model_for_entry_response(entry: conversation.entries.first)
       expect(completion).to be_a(Raif::ModelCompletion)
       expect(completion.raw_response).to eq("{ \"message\" : \"Hello\" }")
-      expect(completion.response_format).to eq(:json)
+      expect(completion.response_format).to eq("json")
     end
   end
 end
