@@ -19,16 +19,17 @@ RSpec.describe Raif::ConversationEntry, type: :model do
 
     context "when the response includes a tool call" do
       before do
-        resp = <<~JSON.strip
-          {
-            "message" : "Hello",
-            "tool" : {
-              "name": "wikipedia_search",
-              "arguments": { "query": "Paris" }
+        stub_sentinel_conversation(conversation) do |_messages|
+          <<~JSON.strip
+            {
+              "message" : "Hello",
+              "tool" : {
+                "name": "wikipedia_search",
+                "arguments": { "query": "Paris" }
+              }
             }
-          }
-        JSON
-        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelCompletion.new(raw_response: resp))
+          JSON
+        end
       end
 
       it "processes the entry" do
@@ -43,13 +44,13 @@ RSpec.describe Raif::ConversationEntry, type: :model do
 
     context "when the response does not include a tool call" do
       before do
-        resp = <<~JSON.strip
-          {
-            "message" : "Hello"
-          }
-        JSON
-
-        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelCompletion.new(raw_response: resp))
+        stub_sentinel_conversation(conversation) do |_messages|
+          <<~JSON.strip
+            {
+              "message" : "Hello"
+            }
+          JSON
+        end
       end
 
       it "processes the entry" do
@@ -62,8 +63,9 @@ RSpec.describe Raif::ConversationEntry, type: :model do
 
     context "when the response contains malformed JSON" do
       before do
-        resp = "This is not valid JSON"
-        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelCompletion.new(raw_response: resp))
+        stub_sentinel_conversation(conversation) do |_messages|
+          "This is not valid JSON"
+        end
       end
 
       it "marks the entry as failed" do
@@ -76,7 +78,9 @@ RSpec.describe Raif::ConversationEntry, type: :model do
 
     context "when the response is empty" do
       before do
-        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelCompletion.new(raw_response: nil))
+        stub_sentinel_conversation(conversation) do |_messages|
+          nil
+        end
       end
 
       it "marks the entry as failed" do
