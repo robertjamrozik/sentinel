@@ -20,11 +20,10 @@ module Raif
       g.factory_bot dir: "spec/factories"
     end
 
-    initializer "sentinel.setup_open_ai" do
+    config.after_initialize do
       next unless Raif.config.open_ai_models_enabled
 
       require "openai"
-      require "sentinel/api_adapters/open_ai"
 
       ::OpenAI.configure do |config|
         config.access_token = Raif.config.open_ai_api_key
@@ -35,15 +34,14 @@ module Raif
         { key: :open_ai_gpt_4o, api_name: "gpt-4o" },
         { key: :open_ai_gpt_3_5_turbo, api_name: "gpt-3.5-turbo" }
       ].each do |llm_config|
-        Raif.register_llm(api_adapter: Raif::ApiAdapters::OpenAi, **llm_config)
+        Raif.register_llm(model_completion_type: Raif::ModelCompletions::OpenAi, **llm_config)
       end
     end
 
-    initializer "sentinel.setup_anthropic" do
+    config.after_initialize do
       next unless Raif.config.anthropic_models_enabled
 
       require "anthropic"
-      require "sentinel/api_adapters/anthropic"
 
       ::Anthropic.setup do |config|
         config.api_key = Raif.config.anthropic_api_key
@@ -55,33 +53,32 @@ module Raif
         { key: :anthropic_claude_3_opus, api_name: "claude-3-opus-latest" },
         { key: :anthropic_claude_3_haiku, api_name: "claude-3-haiku-20240307" }
       ].each do |llm_config|
-        Raif.register_llm(api_adapter: Raif::ApiAdapters::Anthropic, **llm_config)
+        Raif.register_llm(model_completion_type: Raif::ModelCompletions::Anthropic, **llm_config)
       end
     end
 
-    initializer "sentinel.setup_anthropic_bedrock" do
+    config.after_initialize do
       next unless Raif.config.anthropic_bedrock_models_enabled
 
       require "aws-sdk-bedrock"
       require "aws-sdk-bedrockruntime"
-      require "sentinel/api_adapters/bedrock"
 
       [
         { key: :bedrock_claude_3_5_sonnet, api_name: "anthropic.claude-3-5-sonnet-20240620-v1:0" },
         { key: :bedrock_claude_3_7_sonnet, api_name: "anthropic.claude-3-7-sonnet-20250219-v1:0" }
       ].each do |llm_config|
-        Raif.register_llm(api_adapter: Raif::ApiAdapters::Bedrock, **llm_config)
+        Raif.register_llm(model_completion_type: Raif::ModelCompletions::BedrockClaude, **llm_config)
       end
     end
 
-    initializer "sentinel.setup_test_adapter" do
+    config.after_initialize do
       next unless Rails.env.test?
 
-      require "#{Raif::Engine.root}/spec/support/test_adapter"
-      Raif.register_llm(api_adapter: Raif::ApiAdapters::Test, key: :sentinel_test_adapter, api_name: "sentinel_test_adapter")
+      require "#{Raif::Engine.root}/spec/support/test_completion"
+      Raif.register_llm(model_completion_type: Raif::ModelCompletions::Test, key: :sentinel_test_llm, api_name: "sentinel-test-llm")
     end
 
-    initializer "sentinel.validate_config" do
+    config.after_initialize do
       Raif.config.validate!
     end
 

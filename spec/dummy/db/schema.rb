@@ -64,12 +64,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   end
 
   create_table "sentinel_model_completions", force: :cascade do |t|
+    t.string "type", null: false
     t.string "source_type"
     t.bigint "source_id"
     t.string "llm_model_key", null: false
+    t.string "model_api_name", null: false
     t.jsonb "messages", default: [], null: false
     t.text "system_prompt"
     t.integer "response_format", default: 0, null: false
+    t.decimal "temperature", precision: 5, scale: 3
+    t.integer "max_completion_tokens"
     t.integer "completion_tokens"
     t.integer "prompt_tokens"
     t.text "raw_response"

@@ -120,9 +120,10 @@ RSpec.describe "Admin::AgentInvocations", type: :feature do
     end
 
     let!(:model_completion) do
-      Raif::ModelCompletion.create!(
+      Raif::ModelCompletions::OpenAi.create!(
         source: agent_invocation,
         llm_model_key: "open_ai_gpt_4o",
+        model_api_name: "gpt-4o",
         response_format: "text",
         raw_response: "<thought>I need to determine the capital of France.</thought>\n<answer>The capital of France is Paris.</answer>",
         total_tokens: 150
