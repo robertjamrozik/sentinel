@@ -39,7 +39,7 @@ module Raif
       end
 
       unless Raif.config.llm_api_requests_enabled
-        Raif.logger.warn("LLM API requests are disabled. Skipping request to #{api_adapter.model_api_name}.")
+        Raif.logger.warn("LLM API requests are disabled. Skipping request to #{api_name}.")
         return
       end
 

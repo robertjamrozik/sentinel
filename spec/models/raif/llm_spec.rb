@@ -8,7 +8,7 @@ RSpec.describe Raif::Llm, type: :model do
     let(:system_prompt) { "You are a helpful assistant." }
 
     let(:test_llm) do
-      described_class.new(key: :sentinel_test_llm, api_name: "test_api", api_adapter: Raif::ApiAdapters::Test)
+      described_class.new(key: :sentinel_test_llm, api_name: "test_api", model_completion_type: Raif::ModelCompletions::Test)
     end
 
     context "when llm_api_requests_enabled is false" do
@@ -16,8 +16,8 @@ RSpec.describe Raif::Llm, type: :model do
         allow(Raif.config).to receive(:llm_api_requests_enabled).and_return(false)
       end
 
-      it "doesn't call the api_adapter" do
-        expect(test_llm.api_adapter).not_to receive(:chat)
+      it "does not create a ModelCompletion" do
+        expect(Raif::ModelCompletions::Test).to_not receive(:new)
         result = test_llm.chat(messages: messages)
         expect(result).to be_nil
       end
@@ -28,11 +28,11 @@ RSpec.describe Raif::Llm, type: :model do
         allow(Raif.config).to receive(:llm_api_requests_enabled).and_return(true)
 
         stub_sentinel_llm(test_llm) do |messages|
-          "This is a test response for: #{messages.first[:content]}"
+          "This is a test response for: #{messages.first["content"]}"
         end
       end
 
-      it "calls the api_adapter and returns a model response" do
+      it "creates a ModelCompletion" do
         result = test_llm.chat(messages: messages, system_prompt: system_prompt)
 
         expect(result).to be_a(Raif::ModelCompletion)

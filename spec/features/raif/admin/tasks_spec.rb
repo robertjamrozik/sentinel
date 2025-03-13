@@ -90,9 +90,10 @@ RSpec.describe "Admin::Tasks", type: :feature do
     context "with model_completion" do
       let!(:model_completion) do
         FB.create(
-          :sentinel_model_completion,
+          :sentinel_test_model_completion,
           source: task,
           llm_model_key: task.llm_model_key,
+          model_api_name: Raif.llm(task.llm_model_key.to_sym).api_name,
           raw_response: "Test model response",
           prompt_tokens: 1000,
           completion_tokens: 20,
