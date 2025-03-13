@@ -119,8 +119,8 @@ RSpec.describe "Admin::AgentInvocations", type: :feature do
       )
     end
 
-    let!(:model_response) do
-      Raif::ModelResponse.create!(
+    let!(:model_completion) do
+      Raif::ModelCompletion.create!(
         source: agent_invocation,
         llm_model_key: "open_ai_gpt_4o",
         response_format: "text",
@@ -161,10 +161,10 @@ RSpec.describe "Admin::AgentInvocations", type: :feature do
       expect(page).to have_content("I need to determine the capital of France.")
       expect(page).to have_content("The capital of France is Paris.")
 
-      # Check model responses section
-      expect(page).to have_content(I18n.t("sentinel.admin.common.model_responses"))
-      expect(page).to have_link("##{model_response.id}", href: sentinel.admin_model_response_path(model_response))
-      expect(page).to have_content(model_response.created_at.rfc822)
+      # Check model completions section
+      expect(page).to have_content(I18n.t("sentinel.admin.common.model_completions"))
+      expect(page).to have_link("##{model_completion.id}", href: sentinel.admin_model_completion_path(model_completion))
+      expect(page).to have_content(model_completion.created_at.rfc822)
       expect(page).to have_content("open_ai_gpt_4o")
       expect(page).to have_content("150")
       expect(page).to have_content("<thought>I need to determine the capital of France.</thought>")

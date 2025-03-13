@@ -22,7 +22,7 @@ module Raif
         params[:system] = system_prompt if system_prompt
         resp = ::Anthropic.messages.create(**params)
 
-        Raif::ModelResponse.new(
+        Raif::ModelCompletion.new(
           messages: messages,
           system_prompt: system_prompt,
           raw_response: resp.body&.dig(:content)&.first&.dig(:text),

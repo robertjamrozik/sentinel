@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :sentinel_completion, class: "Raif::Completion" do
+  factory :sentinel_task, class: "Raif::Task" do
     sequence(:prompt){|i| "prompt #{i} #{SecureRandom.hex(3)}" }
     llm_model_key { Raif.available_llm_keys.sample.to_s }
 
@@ -19,7 +19,7 @@ FactoryBot.define do
     end
   end
 
-  factory :sentinel_test_completion, parent: :sentinel_completion, class: "Raif::TestCompletion" do
-    type { "Raif::TestCompletion" }
+  factory :sentinel_test_task, parent: :sentinel_task, class: "Raif::TestTask" do
+    type { "Raif::TestTask" }
   end
 end

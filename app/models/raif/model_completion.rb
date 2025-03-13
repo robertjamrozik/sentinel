@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Raif::ModelResponse < Raif::ApplicationRecord
+class Raif::ModelCompletion < Raif::ApplicationRecord
   belongs_to :source, polymorphic: true, optional: true
 
   enum :response_format, Raif::Llm.valid_response_formats, prefix: true

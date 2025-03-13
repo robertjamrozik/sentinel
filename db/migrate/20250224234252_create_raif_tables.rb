@@ -2,7 +2,7 @@
 
 class CreateRaifTables < ActiveRecord::Migration[8.0]
   def change
-    create_table :sentinel_completions do |t|
+    create_table :sentinel_tasks do |t|
       t.string :type, null: false, index: true
       t.text :prompt
       t.text :response
@@ -80,7 +80,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    create_table :sentinel_model_responses do |t|
+    create_table :sentinel_model_completions do |t|
       t.references :source, polymorphic: true, index: true
       t.string :llm_model_key, null: false
       t.jsonb :messages, default: [], null: false

@@ -12,10 +12,10 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
     foreign_key: :sentinel_conversation_entry_id,
     inverse_of: :sentinel_conversation_entry
 
-  has_one :sentinel_model_response, as: :source, dependent: :destroy, class_name: "Raif::ModelResponse"
+  has_one :sentinel_model_completion, as: :source, dependent: :destroy, class_name: "Raif::ModelCompletion"
 
   delegate :available_model_tools, to: :sentinel_conversation
-  delegate :system_prompt, :llm_model_key, to: :sentinel_model_response, allow_nil: true
+  delegate :system_prompt, :llm_model_key, to: :sentinel_model_completion, allow_nil: true
 
   accepts_nested_attributes_for :sentinel_user_tool_invocation
 
@@ -40,8 +40,8 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   end
 
   def process_entry!
-    model_response = sentinel_conversation.prompt_model_for_entry_response(entry: self)
-    self.model_raw_response = model_response.raw_response
+    model_completion = sentinel_conversation.prompt_model_for_entry_response(entry: self)
+    self.model_raw_response = model_completion.raw_response
 
     if model_raw_response.present?
       extract_message_and_invoke_tools!

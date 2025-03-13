@@ -12,9 +12,9 @@ Raif::Engine.routes.draw do
   end
 
   namespace :admin do
-    resources :completions, only: [:index, :show]
+    resources :tasks, only: [:index, :show]
     resources :conversations, only: [:index, :show]
-    resources :model_responses, only: [:index, :show]
+    resources :model_completions, only: [:index, :show]
     resources :agent_invocations, only: [:index, :show]
   end
 end

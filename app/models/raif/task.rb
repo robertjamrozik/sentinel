@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
 module Raif
-  class Completion < Raif::ApplicationRecord
+  class Task < Raif::ApplicationRecord
     include Raif::Concerns::HasLlm
     include Raif::Concerns::HasRequestedLanguage
     include Raif::Concerns::InvokesModelTools
 
     belongs_to :creator, polymorphic: true
 
-    has_one :sentinel_model_response, as: :source, dependent: :destroy, class_name: "Raif::ModelResponse"
+    has_one :sentinel_model_completion, as: :source, dependent: :destroy, class_name: "Raif::ModelCompletion"
 
     enum :response_format, Raif::Llm.valid_response_formats, prefix: true
 
@@ -20,7 +20,7 @@ module Raif
 
     normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
 
-    delegate :parsed_response, to: :sentinel_model_response, allow_nil: true
+    delegate :parsed_response, to: :sentinel_model_completion, allow_nil: true
 
     def self.llm_response_format(format)
       raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
@@ -39,9 +39,9 @@ module Raif
 
       populate_prompts
       messages = [{ "role" => "user", "content" => prompt }]
-      self.sentinel_model_response = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
+      self.sentinel_model_completion = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
 
-      update(response: sentinel_model_response.raw_response)
+      update(response: sentinel_model_completion.raw_response)
 
       process_model_tool_invocations
       completed!
@@ -49,19 +49,19 @@ module Raif
     end
 
     def self.run(creator:, available_model_tools: nil, llm_model_key: nil, **args)
-      completion = new(creator:, llm_model_key:, available_model_tools:, started_at: Time.current, **args)
-      completion.save!
-      completion.run
-      completion
+      task = new(creator:, llm_model_key:, available_model_tools:, started_at: Time.current, **args)
+      task.save!
+      task.run
+      task
     rescue StandardError => e
-      completion&.failed!
+      task&.failed!
 
       logger.error e.message
       logger.error e.backtrace.join("\n")
 
       if defined?(Airbrake)
         notice = Airbrake.build_notice(e)
-        notice[:context][:component] = "sentinel_completion"
+        notice[:context][:component] = "sentinel_task"
         notice[:context][:action] = name
 
         Airbrake.notify(notice)
@@ -75,7 +75,7 @@ module Raif
     end
 
     def build_prompt
-      raise NotImplementedError, "Completion subclasses must implement #build_prompt"
+      raise NotImplementedError, "Raif::Task subclasses must implement #build_prompt"
     end
 
     def self.system_prompt(creator:, **args)
@@ -83,7 +83,7 @@ module Raif
     end
 
     def build_system_prompt
-      sp = Raif.config.completion_system_prompt_intro
+      sp = Raif.config.task_system_prompt_intro
       sp += system_prompt_language_preference if requested_language_key.present?
       sp
     end

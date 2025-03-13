@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center my-4">
-  <h1><%= t(".title", id: @completion.id) %></h1>
-  <%= link_to t(".back_to_completions"), sentinel.admin_completions_path, class: "btn btn-outline-secondary" %>
+  <h1><%= t(".title", id: @task.id) %></h1>
+  <%= link_to t(".back_to_tasks"), sentinel.admin_tasks_path, class: "btn btn-outline-secondary" %>
 </div>
 
 <div class="card mb-4">
@@ -10,98 +10,98 @@
   <div class="card-body">
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.id") %>:</strong></div>
-      <div class="col-md-9"><%= @completion.id %></div>
+      <div class="col-md-9"><%= @task.id %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.creator") %>:</strong></div>
-      <div class="col-md-9"><%= @completion.creator_type %> #<%= @completion.creator_id %></div>
+      <div class="col-md-9"><%= @task.creator_type %> #<%= @task.creator_id %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.model") %>:</strong></div>
-      <div class="col-md-9"><%= @completion.llm_model_key %></div>
+      <div class="col-md-9"><%= @task.llm_model_key %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.response_format") %>:</strong></div>
-      <div class="col-md-9"><%= @completion.response_format %></div>
+      <div class="col-md-9"><%= @task.response_format %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.created_at") %>:</strong></div>
-      <div class="col-md-9"><%= @completion.created_at.rfc822 %></div>
+      <div class="col-md-9"><%= @task.created_at.rfc822 %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.started_at") %>:</strong></div>
       <div class="col-md-9">
-        <% if @completion.started_at? %>
-          <%= @completion.started_at.rfc822 %>
+        <% if @task.started_at? %>
+          <%= @task.started_at.rfc822 %>
         <% end %>
       </div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.completed_at") %>:</strong></div>
       <div class="col-md-9">
-        <% if @completion.completed_at? %>
-          <%= @completion.completed_at.rfc822 %>
+        <% if @task.completed_at? %>
+          <%= @task.completed_at.rfc822 %>
         <% end %>
       </div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.failed_at") %>:</strong></div>
       <div class="col-md-9">
-        <% if @completion.failed_at? %>
-          <%= @completion.failed_at.rfc822 %>
+        <% if @task.failed_at? %>
+          <%= @task.failed_at.rfc822 %>
         <% end %>
       </div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.status") %>:</strong></div>
       <div class="col-md-9">
-        <% if @completion.completed_at? %>
+        <% if @task.completed_at? %>
           <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span>
-        <% elsif @completion.failed_at? %>
+        <% elsif @task.failed_at? %>
           <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span>
-        <% elsif @completion.started_at? %>
+        <% elsif @task.started_at? %>
           <span class="badge bg-warning text-dark"><%= t("sentinel.admin.common.in_progress") %></span>
         <% else %>
           <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
         <% end %>
       </div>
     </div>
-    <% if @completion.requested_language_key.present? %>
+    <% if @task.requested_language_key.present? %>
       <div class="row mb-3">
         <div class="col-md-3"><strong><%= t("sentinel.admin.common.requested_language") %>:</strong></div>
-        <div class="col-md-9"><%= @completion.requested_language_key %></div>
+        <div class="col-md-9"><%= @task.requested_language_key %></div>
       </div>
     <% end %>
   </div>
 </div>
 
-<% if @completion.sentinel_model_response.present? %>
+<% if @task.sentinel_model_completion.present? %>
 <div class="card mb-4">
   <div class="card-header">
-    <h5 class="mb-0"><%= t("sentinel.admin.common.model_response") %></h5>
+    <h5 class="mb-0"><%= t("sentinel.admin.common.model_completion") %></h5>
   </div>
   <div class="card-body">
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.id") %>:</strong></div>
       <div class="col-md-9">
-        <%= link_to "##{@completion.sentinel_model_response.id}", sentinel.admin_model_response_path(@completion.sentinel_model_response) %>
+        <%= link_to "##{@task.sentinel_model_completion.id}", sentinel.admin_model_completion_path(@task.sentinel_model_completion) %>
       </div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.created_at") %>:</strong></div>
-      <div class="col-md-9"><%= @completion.sentinel_model_response.created_at.rfc822 %></div>
+      <div class="col-md-9"><%= @task.sentinel_model_completion.created_at.rfc822 %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.prompt_tokens") %>:</strong></div>
-      <div class="col-md-9"><%= @completion.sentinel_model_response.prompt_tokens ? number_with_delimiter(@completion.sentinel_model_response.prompt_tokens) : "-" %></div>
+      <div class="col-md-9"><%= @task.sentinel_model_completion.prompt_tokens ? number_with_delimiter(@task.sentinel_model_completion.prompt_tokens) : "-" %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.completion_tokens") %>:</strong></div>
-      <div class="col-md-9"><%= @completion.sentinel_model_response.completion_tokens ? number_with_delimiter(@completion.sentinel_model_response.completion_tokens) : "-" %></div>
+      <div class="col-md-9"><%= @task.sentinel_model_completion.completion_tokens ? number_with_delimiter(@task.sentinel_model_completion.completion_tokens) : "-" %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.total_tokens") %>:</strong></div>
-      <div class="col-md-9"><%= @completion.sentinel_model_response.total_tokens ? number_with_delimiter(@completion.sentinel_model_response.total_tokens) : "-" %></div>
+      <div class="col-md-9"><%= @task.sentinel_model_completion.total_tokens ? number_with_delimiter(@task.sentinel_model_completion.total_tokens) : "-" %></div>
     </div>
   </div>
 </div>
@@ -112,7 +112,7 @@
     <h5 class="mb-0"><%= t("sentinel.admin.common.system_prompt") %></h5>
   </div>
   <div class="card-body">
-    <pre class="pre-wrap"><%= @completion.system_prompt %></pre>
+    <pre class="pre-wrap"><%= @task.system_prompt %></pre>
   </div>
 </div>
 
@@ -121,40 +121,40 @@
     <h5 class="mb-0"><%= t("sentinel.admin.common.prompt") %></h5>
   </div>
   <div class="card-body">
-    <pre class="pre-wrap"><%= @completion.prompt %></pre>
+    <pre class="pre-wrap"><%= @task.prompt %></pre>
   </div>
 </div>
 
 <div class="card mb-4">
   <div class="card-header">
-    <h5 class="mb-0"><%= t("sentinel.admin.common.response") %> (<%= @completion.response_format %>)</h5>
+    <h5 class="mb-0"><%= t("sentinel.admin.common.response") %> (<%= @task.response_format %>)</h5>
   </div>
   <div class="card-body">
 
-    <% if @completion.response_format_json? %>
+    <% if @task.response_format_json? %>
       <h5 class="mb-0"><%= t("sentinel.admin.common.raw") %></h5>
-      <pre class="pre-wrap"><%= @completion.response %></pre>
+      <pre class="pre-wrap"><%= @task.response %></pre>
 
       <h5 class="mb-0 mt-4"><%= t("sentinel.admin.common.prettified") %></h5>
       <% begin %>
-        <pre class="pre-wrap"><%= JSON.pretty_generate(@completion.parsed_response) %></pre>
+        <pre class="pre-wrap"><%= JSON.pretty_generate(@task.parsed_response) %></pre>
         <% rescue StandardError %>
         <%= t("sentinel.admin.common.invalid_json") %>
       <% end %>
     <% else %>
-      <pre class="pre-wrap"><%= @completion.response %></pre>
+      <pre class="pre-wrap"><%= @task.response %></pre>
     <% end %>
   </div>
 </div>
 
-<% if @completion.sentinel_model_tool_invocations.any? %>
+<% if @task.sentinel_model_tool_invocations.any? %>
   <div class="card mb-4">
     <div class="card-header">
       <h5 class="mb-0"><%= t("sentinel.admin.common.tool_invocations") %></h5>
     </div>
     <div class="card-body">
       <div class="list-group">
-        <% @completion.sentinel_model_tool_invocations.each do |invocation| %>
+        <% @task.sentinel_model_tool_invocations.each do |invocation| %>
           <div class="list-group-item">
             <div class="d-flex w-100 justify-content-between">
               <h5 class="mb-1"><%= invocation.tool_name %></h5>

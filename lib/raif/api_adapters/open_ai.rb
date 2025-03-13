@@ -22,7 +22,7 @@ module Raif
           }
         )
 
-        Raif::ModelResponse.new(
+        Raif::ModelCompletion.new(
           messages: messages,
           system_prompt: system_prompt,
           raw_response: resp.dig("choices", 0, "message", "content"),

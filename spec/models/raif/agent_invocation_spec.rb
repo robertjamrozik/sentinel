@@ -57,11 +57,11 @@ RSpec.describe Raif::AgentInvocation, type: :model do
     end
 
     let(:llm) { instance_double(Raif::Llm) }
-    let(:model_response) { Raif::ModelResponse.new(raw_response: "<thought>I know this.</thought>\n<answer>Paris</answer>") }
+    let(:model_completion) { Raif::ModelCompletion.new(raw_response: "<thought>I know this.</thought>\n<answer>Paris</answer>") }
 
     before do
       allow(invocation).to receive(:llm).and_return(llm)
-      allow(llm).to receive(:chat).and_return(model_response)
+      allow(llm).to receive(:chat).and_return(model_completion)
       allow(invocation).to receive(:save!).and_return(true)
       allow(invocation).to receive(:update_columns).and_return(true)
       allow(invocation).to receive(:completed!).and_return(true)
@@ -114,11 +114,11 @@ RSpec.describe Raif::AgentInvocation, type: :model do
     context "with multiple iterations" do
       let(:first_response) do
         instance_double(
-          Raif::ModelResponse,
+          Raif::ModelCompletion,
           raw_response: "<thought>I need to search.</thought>\n<action>{\"tool\": \"search\", \"arguments\": {\"query\": \"capital of France\"}}</action>" # rubocop:disable Layout/LineLength
         )
       end
-      let(:second_response) { instance_double(Raif::ModelResponse, raw_response: "<thought>Now I know.</thought>\n<answer>Paris</answer>") }
+      let(:second_response) { instance_double(Raif::ModelCompletion, raw_response: "<thought>Now I know.</thought>\n<answer>Paris</answer>") }
 
       before do
         allow(llm).to receive(:chat).and_return(first_response, second_response)
