@@ -46,6 +46,7 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
     if model_raw_response.present?
       extract_message_and_invoke_tools!
     else
+      logger.error "Error processing conversation entry ##{id}. No model response found."
       failed!
     end
 
@@ -67,6 +68,7 @@ private
       parsed_response = JSON.parse(model_raw_response)
 
       if parsed_response["message"].blank?
+        logger.error "Error extracting message from conversation entry ##{id}. No model response message found."
         failed!
         return
       end
@@ -81,7 +83,9 @@ private
       end
 
       completed!
-    rescue JSON::ParserError
+    rescue JSON::ParserError => e
+      logger.error "Error parsing JSON response for conversation entry ##{id}. Error: #{e.message}"
+      logger.error e.backtrace.join("\n")
       failed!
       return
     end
