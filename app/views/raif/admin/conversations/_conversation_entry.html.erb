@@ -13,6 +13,8 @@
       <% end %>
     </div>
 
+    <span><%= entry.llm_model_key %></span>
+
     <small class="text-muted"><%= entry.created_at.rfc822 %></small>
 
     <% if entry.sentinel_model_response.present? %>

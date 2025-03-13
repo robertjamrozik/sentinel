@@ -21,34 +21,50 @@ class Raif::Conversation < Raif::ApplicationRecord
 
     <<~PROMPT
 
-      # Tool Usage
-      You may also optionally include a <tool> tag with a JSON object containing the name of the tool you want to use and the arguments for that tool. An example response that invokes a tool:
-      <message>I suggest we add a new scenario.</message>
-      <tool>{"tool": "add_scenarios", "arguments": [{"title": "A new scenario", "description": "A description of the new scenario."}]}</tool>
-
-      An example response that invokes no tools:
-      <message>Could you clarify what you mean by that?</message>
-
       # Available Tools
       You have access to the following tools:
       #{available_model_tools.map(&:description_for_llm).join("\n---\n")}
-
+      # Tool Usage
+      To utilize a tool, include a tool object in your JSON response with the name of the tool you want to use and the arguments for that tool. An example response that invokes a tool:
+      {
+        "message": "I suggest we add a new scenario.",
+        "tool": {
+          "name": "tool_name",
+          "arguments": {"arg_name": "Example arg"}
+        }
+      }
     PROMPT
   end
 
   def system_prompt
     <<~PROMPT
-      You are a helpful assistant who is collaborating with a teammate.
+      #{system_prompt_intro}
 
       # Your Responses
-      Your responses should always begin with a <message> tag with your response to your collaborator. For example:
-      <message>Your response message</message>
+      Your responses should always be in JSON format with a "message" field containing your response to your collaborator. For example:
+      {
+        "message": "Your response message"
+      }
       #{tool_usage_system_prompt}
-      # Other rules/reminders
-      - Only use tools if you think they are useful for the conversation.
-      - **Never** include the likelihood text in the scenario title (ie. don't suggest things like "A new scenario - low likelihood").
-      - **Never** respond with any text outside the <message> and <tool> tags.
+      #{system_prompt_reminders}
       #{system_prompt_language_preference}
+    PROMPT
+  end
+
+  def system_prompt_intro
+    Raif.config.conversation_system_prompt_intro
+  end
+
+  def system_prompt_tools_reminder
+    return if available_model_tools.empty?
+
+    "- Use tools if you think they are useful for the conversation.\n"
+  end
+
+  def system_prompt_reminders
+    <<~PROMPT.strip
+      # Other rules/reminders
+      #{system_prompt_tools_reminder}- **Always** respond with a single, valid JSON object containing at minimum a "message" field, and optionally a "tool" field.
     PROMPT
   end
 

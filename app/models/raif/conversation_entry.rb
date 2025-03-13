@@ -15,6 +15,7 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   has_one :sentinel_model_response, as: :source, dependent: :destroy, class_name: "Raif::ModelResponse"
 
   delegate :available_model_tools, to: :sentinel_conversation
+  delegate :system_prompt, :llm_model_key, to: :sentinel_model_response, allow_nil: true
 
   accepts_nested_attributes_for :sentinel_user_tool_invocation
 
@@ -45,6 +46,7 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
     if model_raw_response.present?
       extract_message_and_invoke_tools!
     else
+      logger.error "Error processing conversation entry ##{id}. No model response found."
       failed!
     end
 
@@ -53,30 +55,39 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
 
 private
 
-  # We expect the the model to respond with something like (tool being optional):
-  # <message>The message to display to the user</message>
-  # <tool>{ "name": "tool_name", "arguments": { "argument_name": "argument_value" } }</tool>
+  # We expect the the model to respond with JSON like:
+  # {
+  #   "message": "The message to display to the user",
+  #   "tool": {
+  #     "name": "tool_name",
+  #     "arguments": { "argument_name": "argument_value" }
+  #   }
+  # }
   def extract_message_and_invoke_tools!
     transaction do
-      message_match = model_raw_response.match(%r{<message>(.*?)</message>}m)
+      parsed_response = JSON.parse(model_raw_response)
 
-      if message_match.blank?
+      if parsed_response["message"].blank?
+        logger.error "Error extracting message from conversation entry ##{id}. No model response message found."
         failed!
         return
       end
 
-      self.model_response_message = message_match[1].strip
+      self.model_response_message = parsed_response["message"].strip
       save!
 
-      tool_match = model_raw_response.match(%r{<tool>(.*?)</tool>}m)
-      if tool_match.present?
-        tool_json = tool_match[1].strip
-        tool_call = JSON.parse(tool_json) if tool_json.present?
+      if parsed_response["tool"].present?
+        tool_call = parsed_response["tool"]
         tool_klass = available_model_tools_map[tool_call["name"]]
         tool_klass&.invoke_tool(tool_arguments: tool_call["arguments"], source: self)
       end
 
       completed!
+    rescue JSON::ParserError => e
+      logger.error "Error parsing JSON response for conversation entry ##{id}. Error: #{e.message}"
+      logger.error e.backtrace.join("\n")
+      failed!
+      return
     end
   end
 

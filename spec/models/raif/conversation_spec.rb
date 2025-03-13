@@ -29,4 +29,115 @@ RSpec.describe Raif::Conversation, type: :model do
     conversation.type = "Raif::TestConversation"
     expect(conversation).to be_valid
   end
+
+  describe "#system_prompt" do
+    let(:conversation) { FB.build(:sentinel_conversation, creator: creator) }
+    let(:test_conversation) { FB.build(:sentinel_test_conversation, creator: creator) }
+
+    it "includes language preference if specified" do
+      conversation.requested_language_key = "es"
+      expect(conversation.system_prompt.strip).to end_with("You're collaborating with teammate who speaks Spanish. Please respond in Spanish.")
+    end
+
+    context "when no tools are available" do
+      it "does not include tool usage instructions" do
+        prompt = <<~PROMPT.strip
+          You are a helpful assistant who is collaborating with a teammate.
+
+          # Your Responses
+          Your responses should always be in JSON format with a "message" field containing your response to your collaborator. For example:
+          {
+            "message": "Your response message"
+          }
+
+          # Other rules/reminders
+          - **Always** respond with a single, valid JSON object containing at minimum a "message" field, and optionally a "tool" field.
+        PROMPT
+
+        expect(conversation.system_prompt.strip).to eq(prompt)
+      end
+    end
+
+    context "when tools are available" do
+      it "includes tool usage instructions" do
+        prompt = <<~PROMPT.strip
+          You are a helpful assistant who is collaborating with a teammate.
+
+          # Your Responses
+          Your responses should always be in JSON format with a "message" field containing your response to your collaborator. For example:
+          {
+            "message": "Your response message"
+          }
+
+          # Available Tools
+          You have access to the following tools:
+          Name: test_model
+          Description: Mock Tool Description
+          Arguments Schema:
+          {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "description"
+              ]
+            }
+          }
+          Example Usage:
+          {
+            "name": "test_tool",
+            "arguments": [
+              {
+                "title": "foo",
+                "description": "bar"
+              }
+            ]
+          }
+
+          ---
+          Name: wikipedia_search
+          Description: Search Wikipedia for information
+          Arguments Schema:
+          {
+            "query": {
+              "type": "string",
+              "description": "The query to search Wikipedia for"
+            }
+          }
+          Example Usage:
+          {
+            "name": "wikipedia_search",
+            "arguments": {
+              "query": "Jimmy Buffett"
+            }
+          }
+
+          # Tool Usage
+          To utilize a tool, include a tool object in your JSON response with the name of the tool you want to use and the arguments for that tool. An example response that invokes a tool:
+          {
+            "message": "I suggest we add a new scenario.",
+            "tool": {
+              "name": "tool_name",
+              "arguments": {"arg_name": "Example arg"}
+            }
+          }
+
+          # Other rules/reminders
+          - Use tools if you think they are useful for the conversation.
+          - **Always** respond with a single, valid JSON object containing at minimum a "message" field, and optionally a "tool" field.
+        PROMPT
+
+        expect(test_conversation.system_prompt.strip).to eq(prompt)
+      end
+    end
+  end
 end

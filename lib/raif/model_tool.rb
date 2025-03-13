@@ -10,10 +10,10 @@ class Raif::ModelTool
     <<~DESCRIPTION
       Name: #{tool_name}
       Description: #{tool_description}
-      Arguments:
-      #{tool_arguments_schema.to_json}
+      Arguments Schema:
+      #{JSON.pretty_generate(tool_arguments_schema)}
       Example Usage:
-      #{example_model_invocation.to_json}
+      #{JSON.pretty_generate(example_model_invocation)}
     DESCRIPTION
   end
 

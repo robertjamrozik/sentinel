@@ -31,6 +31,15 @@
   </div>
 </div>
 
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t("sentinel.admin.common.system_prompt") %></h5>
+  </div>
+  <div class="card-body">
+    <pre><%= @conversation.entries.last&.system_prompt %></pre>
+  </div>
+</div>
+
 <% if @conversation.entries.any? %>
   <div class="card mb-4">
     <div class="card-header">

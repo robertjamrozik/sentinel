@@ -35,18 +35,53 @@ RSpec.describe Raif::Agent, type: :model do
           You have access to the following tools:
           Name: test_model
           Description: Mock Tool Description
-          Arguments:
-          {"type":"array","items":{"type":"object","properties":{"title":{"type":"string"},"description":{"type":"string"}},"required":["title","description"]}}
+          Arguments Schema:
+          {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "title",
+                "description"
+              ]
+            }
+          }
           Example Usage:
-          {"name":"test_tool","arguments":[{"title":"foo","description":"bar"}]}
+          {
+            "name": "test_tool",
+            "arguments": [
+              {
+                "title": "foo",
+                "description": "bar"
+              }
+            ]
+          }
 
           ---
           Name: wikipedia_search
           Description: Search Wikipedia for information
-          Arguments:
-          {"query":{"type":"string","description":"The query to search Wikipedia for"}}
+          Arguments Schema:
+          {
+            "query": {
+              "type": "string",
+              "description": "The query to search Wikipedia for"
+            }
+          }
           Example Usage:
-          {"name":"wikipedia_search","arguments":{"query":"Jimmy Buffett"}}
+          {
+            "name": "wikipedia_search",
+            "arguments": {
+              "query": "Jimmy Buffett"
+            }
+          }
         PROMPT
 
         expect(agent.system_prompt).to include(tool_descriptions)

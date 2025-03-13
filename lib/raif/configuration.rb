@@ -2,34 +2,36 @@
 
 module Raif
   class Configuration
-    attr_accessor :authorize_controller_action,
-      :authorize_admin_controller_action,
-      :anthropic_api_key,
+    attr_accessor :anthropic_api_key,
       :anthropic_bedrock_models_enabled,
       :anthropic_models_enabled,
+      :authorize_admin_controller_action,
+      :authorize_controller_action,
       :aws_bedrock_region,
-      :base_system_prompt,
+      :completion_system_prompt_intro,
       :conversation_entries_controller,
-      :open_ai_api_key,
-      :open_ai_models_enabled,
+      :conversation_system_prompt_intro,
       :conversation_types,
       :conversations_controller,
       :current_user_method,
       :default_llm_model_key,
       :llm_api_requests_enabled,
       :model_superclass,
+      :open_ai_api_key,
+      :open_ai_models_enabled,
       :user_tool_types
 
     def initialize
       # Set default config
-      @aws_bedrock_region = "us-east-1"
       @anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
       @anthropic_bedrock_models_enabled = true
       @anthropic_models_enabled = true
-      @authorize_controller_action = ->{ false }
       @authorize_admin_controller_action = ->{ false }
-      @base_system_prompt = "You are a friendly assistant."
+      @authorize_controller_action = ->{ false }
+      @aws_bedrock_region = "us-east-1"
+      @completion_system_prompt_intro = "You are a helpful assistant."
       @conversation_entries_controller = "Raif::ConversationEntriesController"
+      @conversation_system_prompt_intro = "You are a helpful assistant who is collaborating with a teammate."
       @conversation_types = ["Raif::Conversation"]
       @conversations_controller = "Raif::ConversationsController"
       @current_user_method = :current_user
