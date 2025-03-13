@@ -43,6 +43,17 @@
   </div>
 </div>
 
+<% if @model_completion.system_prompt.present? %>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t("sentinel.admin.common.system_prompt") %></h5>
+  </div>
+  <div class="card-body">
+    <pre class="pre-wrap"><%= @model_completion.system_prompt %></pre>
+  </div>
+</div>
+<% end %>
+
 <div class="card mb-4">
   <div class="card-header">
     <h5 class="mb-0"><%= t("sentinel.admin.common.response") %> (<%= @model_completion.response_format %>)</h5>
