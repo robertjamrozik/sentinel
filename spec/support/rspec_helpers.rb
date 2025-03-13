@@ -4,16 +4,20 @@ module Raif
   module RspecHelpers
 
     def stub_sentinel_task(task_class, &block)
-      test_llm = Raif.llm(model_key: :sentinel_test_adapter)
-      test_llm.api_adapter.chat_handler = block
+      test_llm = Raif.llm(:sentinel_test_llm)
+      allow(test_llm).to receive(:before_model_completion_prompt_hook) do |model_completion|
+        model_completion.chat_handler = block
+      end
 
       allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
       allow_any_instance_of(task_class).to receive(:llm){ test_llm }
     end
 
     def stub_sentinel_conversation(conversation, &block)
-      test_llm = Raif.llm(model_key: :sentinel_test_adapter)
-      test_llm.api_adapter.chat_handler = block
+      test_llm = Raif.llm(:sentinel_test_llm)
+      allow(test_llm).to receive(:before_model_completion_prompt_hook) do |model_completion|
+        model_completion.chat_handler = block
+      end
 
       allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
 
@@ -25,7 +29,9 @@ module Raif
     end
 
     def stub_sentinel_llm(llm, &block)
-      llm.api_adapter.chat_handler = block
+      allow(test_llm).to receive(:before_model_completion_prompt_hook) do |model_completion|
+        model_completion.chat_handler = block
+      end
 
       allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
 

@@ -7,6 +7,12 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
 
   validates :response_format, presence: true, inclusion: { in: response_formats.keys }
   validates :llm_model_key, presence: true, inclusion: { in: ->{ Raif.available_llm_keys.map(&:to_s) } }
+  validates :model_api_name, presence: true
+  validates :type, presence: true
+
+  def prompt_model_for_response!
+    raise NotImplementedError, "Raif::ModelCompletion subclasses must implement #prompt_model_for_response!"
+  end
 
   def parsed_response
     @parsed_response ||= if response_format_json?

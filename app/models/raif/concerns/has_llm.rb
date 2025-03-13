@@ -10,10 +10,10 @@ module Raif::Concerns::HasLlm
   end
 
   def default_llm_model_key
-    Rails.env.test? ? :sentinel_test_adapter : Raif.config.default_llm_model_key
+    Rails.env.test? ? :sentinel_test_llm : Raif.config.default_llm_model_key
   end
 
   def llm
-    @llm ||= Raif.llm(model_key: llm_model_key.to_sym)
+    @llm ||= Raif.llm(llm_model_key.to_sym)
   end
 end

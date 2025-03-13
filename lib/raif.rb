@@ -6,7 +6,6 @@ require "sentinel/engine"
 require "sentinel/configuration"
 require "sentinel/errors"
 require "sentinel/llm"
-require "sentinel/api_adapters/base"
 require "sentinel/model_tool"
 require "sentinel/utils"
 
@@ -46,7 +45,7 @@ module Raif
     @llm_registry[llm.key] = llm_config
   end
 
-  def self.llm(model_key:)
+  def self.llm(model_key)
     Raif::Llm.new(**llm_registry[model_key])
   end
 

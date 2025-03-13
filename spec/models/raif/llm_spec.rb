@@ -8,7 +8,7 @@ RSpec.describe Raif::Llm, type: :model do
     let(:system_prompt) { "You are a helpful assistant." }
 
     let(:test_llm) do
-      described_class.new(key: :sentinel_test_adapter, api_name: "test_api", api_adapter: Raif::ApiAdapters::Test)
+      described_class.new(key: :sentinel_test_llm, api_name: "test_api", api_adapter: Raif::ApiAdapters::Test)
     end
 
     context "when llm_api_requests_enabled is false" do
@@ -37,7 +37,7 @@ RSpec.describe Raif::Llm, type: :model do
 
         expect(result).to be_a(Raif::ModelCompletion)
         expect(result).to be_persisted
-        expect(result.llm_model_key).to eq("sentinel_test_adapter")
+        expect(result.llm_model_key).to eq("sentinel_test_llm")
         expect(result.response_format).to eq("text")
         expect(result.raw_response).to eq("This is a test response for: Hello")
         expect(result.source).to eq(nil)
@@ -54,7 +54,7 @@ RSpec.describe Raif::Llm, type: :model do
 
         expect(result).to be_a(Raif::ModelCompletion)
         expect(result).to be_persisted
-        expect(result.llm_model_key).to eq("sentinel_test_adapter")
+        expect(result.llm_model_key).to eq("sentinel_test_llm")
         expect(result.response_format).to eq("text")
         expect(result.raw_response).to eq("This is a test response for: Hello")
         expect(result.source).to eq(user)
