@@ -13,7 +13,7 @@ RSpec.describe Raif::ModelToolInvocation, type: :model do
     it "validates tool_arguments against schema" do
       # Valid arguments
       invocation = described_class.new(
-        source: FB.build(:sentinel_test_completion),
+        source: FB.build(:sentinel_test_task),
         tool_type: "Raif::TestModelTool",
         tool_arguments: [{ title: "foo", description: "bar" }]
       )

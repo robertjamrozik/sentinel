@@ -2,26 +2,26 @@
 
 require "rails_helper"
 
-RSpec.describe "Admin::ModelResponses", type: :feature do
+RSpec.describe "Admin::ModelCompletions", type: :feature do
   let(:user) { FB.create(:sentinel_test_user) }
-  let(:completion) { FB.create(:sentinel_test_completion, creator: user) }
-  let(:completion2) { FB.create(:sentinel_test_completion, creator: user) }
-  let(:completion3) { FB.create(:sentinel_test_completion, creator: user) }
+  let(:task) { FB.create(:sentinel_test_task, creator: user) }
+  let(:task2) { FB.create(:sentinel_test_task, creator: user) }
+  let(:task3) { FB.create(:sentinel_test_task, creator: user) }
   let(:conversation) { FB.create(:sentinel_test_conversation, creator: user) }
   let(:conversation_entry) { FB.create(:sentinel_conversation_entry, sentinel_conversation: conversation, creator: user) }
   let(:agent_invocation) { FB.create(:sentinel_agent_invocation, creator: user) }
 
   describe "index page" do
-    let!(:model_responses) do
+    let!(:model_completions) do
       [
-        Raif::ModelResponse.create!(
+        Raif::ModelCompletion.create!(
           source: agent_invocation,
           llm_model_key: "open_ai_gpt_4o_mini",
           response_format: "text",
           raw_response: "Test response 1",
           total_tokens: 1000
         ),
-        Raif::ModelResponse.create!(
+        Raif::ModelCompletion.create!(
           source: conversation_entry,
           llm_model_key: "open_ai_gpt_4o",
           response_format: "text",
@@ -31,9 +31,9 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
       ]
     end
 
-    let!(:json_response) do
-      Raif::ModelResponse.create!(
-        source: completion,
+    let!(:json_completion) do
+      Raif::ModelCompletion.create!(
+        source: task,
         llm_model_key: "open_ai_gpt_4o",
         response_format: "json",
         raw_response: '{"key": "value"}',
@@ -43,9 +43,9 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
       )
     end
 
-    let!(:html_response) do
-      Raif::ModelResponse.create!(
-        source: completion2,
+    let!(:html_completion) do
+      Raif::ModelCompletion.create!(
+        source: task2,
         llm_model_key: "bedrock_claude_3_5_sonnet",
         response_format: "html",
         raw_response: "<div>Test HTML</div>",
@@ -55,9 +55,9 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
       )
     end
 
-    let!(:long_response) do
-      Raif::ModelResponse.create!(
-        source: completion3,
+    let!(:long_completion) do
+      Raif::ModelCompletion.create!(
+        source: task3,
         llm_model_key: "open_ai_gpt_4o_mini",
         response_format: "text",
         raw_response: "a" * 200,
@@ -65,11 +65,11 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
       )
     end
 
-    it "displays model responses with all details and handles edge cases" do
-      visit sentinel.admin_model_responses_path
+    it "displays model completions with all details and handles edge cases" do
+      visit sentinel.admin_model_completions_path
 
       # Check page title and table headers
-      expect(page).to have_content(I18n.t("sentinel.admin.common.model_responses"))
+      expect(page).to have_content(I18n.t("sentinel.admin.common.model_completions"))
       expect(page).to have_content(I18n.t("sentinel.admin.common.id"))
       expect(page).to have_content(I18n.t("sentinel.admin.common.created_at"))
       expect(page).to have_content(I18n.t("sentinel.admin.common.source"))
@@ -78,8 +78,8 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
       expect(page).to have_content(I18n.t("sentinel.admin.common.total_tokens"))
       expect(page).to have_content(I18n.t("sentinel.admin.common.response"))
 
-      # Check model responses count and formats
-      expect(page).to have_css("tr.sentinel-model-response", count: 5) # Total number of model responses
+      # Check model completions count and formats
+      expect(page).to have_css("tr.sentinel-model-completion", count: 5) # Total number of model completions
       expect(page).to have_content("text")
       expect(page).to have_content("json")
       expect(page).to have_content("html")
@@ -98,16 +98,16 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
       expect(page).to have_content("a" * 97 + "...")
 
       # Test empty state
-      Raif::ModelResponse.delete_all
-      visit sentinel.admin_model_responses_path
-      expect(page).to have_content(I18n.t("sentinel.admin.common.no_model_responses"))
+      Raif::ModelCompletion.delete_all
+      visit sentinel.admin_model_completions_path
+      expect(page).to have_content(I18n.t("sentinel.admin.common.no_model_completions"))
     end
   end
 
   describe "show page" do
-    let!(:text_response) do
-      Raif::ModelResponse.create!(
-        source: completion,
+    let!(:text_completion) do
+      Raif::ModelCompletion.create!(
+        source: task,
         llm_model_key: "open_ai_gpt_4o_mini",
         response_format: "text",
         raw_response: "This is a test response",
@@ -118,19 +118,19 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
     end
 
     it "displays the model response details and has a back link to the index" do
-      visit sentinel.admin_model_response_path(text_response)
+      visit sentinel.admin_model_completion_path(text_completion)
 
-      expect(page).to have_content(I18n.t("sentinel.admin.model_responses.show.title", id: text_response.id))
+      expect(page).to have_content(I18n.t("sentinel.admin.model_completions.show.title", id: text_completion.id))
 
       # Check basic details
-      expect(page).to have_content(text_response.id.to_s)
-      expect(page).to have_content(text_response.source_type)
-      expect(page).to have_content(text_response.source_id.to_s)
+      expect(page).to have_content(text_completion.id.to_s)
+      expect(page).to have_content(text_completion.source_type)
+      expect(page).to have_content(text_completion.source_id.to_s)
       expect(page).to have_content("open_ai_gpt_4o_mini")
       expect(page).to have_content("text")
 
       # Check timestamps
-      expect(page).to have_content(text_response.created_at.rfc822)
+      expect(page).to have_content(text_completion.created_at.rfc822)
 
       # Check token counts
       expect(page).to have_content("25") # prompt_tokens
@@ -141,16 +141,16 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
       expect(page).to have_content("This is a test response")
 
       # Check back link functionality
-      expect(page).to have_link(I18n.t("sentinel.admin.model_responses.show.back_to_model_responses"), href: sentinel.admin_model_responses_path)
+      expect(page).to have_link(I18n.t("sentinel.admin.model_completions.show.back_to_model_completions"), href: sentinel.admin_model_completions_path)
 
-      click_link I18n.t("sentinel.admin.model_responses.show.back_to_model_responses")
-      expect(page).to have_current_path(sentinel.admin_model_responses_path)
+      click_link I18n.t("sentinel.admin.model_completions.show.back_to_model_completions")
+      expect(page).to have_current_path(sentinel.admin_model_completions_path)
     end
 
     context "with JSON response format" do
-      let!(:json_response) do
-        Raif::ModelResponse.create!(
-          source: completion,
+      let!(:json_completion) do
+        Raif::ModelCompletion.create!(
+          source: task,
           llm_model_key: "open_ai_gpt_4o",
           response_format: "json",
           raw_response: '{"key": "value", "nested": {"data": "test"}}',
@@ -159,7 +159,7 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
       end
 
       it "displays both raw and prettified JSON" do
-        visit sentinel.admin_model_response_path(json_response)
+        visit sentinel.admin_model_completion_path(json_completion)
 
         expect(page).to have_content(I18n.t("sentinel.admin.common.raw"))
         expect(page).to have_content('{"key": "value", "nested": {"data": "test"}}')
@@ -173,9 +173,9 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
     end
 
     context "with HTML response format" do
-      let!(:html_response) do
-        Raif::ModelResponse.create!(
-          source: completion2,
+      let!(:html_completion) do
+        Raif::ModelCompletion.create!(
+          source: task2,
           llm_model_key: "bedrock_claude_3_5_sonnet",
           response_format: "html",
           raw_response: "<div><h1>Test</h1><p>HTML content</p></div>",
@@ -184,7 +184,7 @@ RSpec.describe "Admin::ModelResponses", type: :feature do
       end
 
       it "displays both raw and rendered HTML" do
-        visit sentinel.admin_model_response_path(html_response)
+        visit sentinel.admin_model_completion_path(html_completion)
 
         expect(page).to have_content(I18n.t("sentinel.admin.common.raw"))
         expect(page).to have_content("<div><h1>Test</h1><p>HTML content</p></div>")

@@ -18,7 +18,6 @@ en:
         completed: Completed
         completed_at: Completed At
         completion_tokens: Completion Tokens
-        completions: Completions
         conversation_entries: Conversation Entries
         conversation_history: Conversation History
         conversations: Conversations
@@ -37,12 +36,13 @@ en:
         iterations: Iterations
         language: Language
         model: Model
+        model_completion: Model Completion
+        model_completions: Model Completions
         model_response: Model Response
-        model_responses: Model Responses
         no_agent_invocations: No agent invocations found.
-        no_completions: No completions found.
         no_conversations: No conversations found.
-        no_model_responses: No model responses found.
+        no_model_completions: No model completions found.
+        no_tasks: No tasks found.
         pending: Pending
         prettified: Prettified
         prompt: Prompt
@@ -59,14 +59,11 @@ en:
         status: Status
         system_prompt: System Prompt
         task: Task
+        tasks: Tasks
         tool_invocations: Tool Invocations
         total_tokens: Total Tokens
         type: Type
         user_message: User Message
-      completions:
-        show:
-          back_to_completions: Back to Completions
-          title: 'Completion #%{id}'
       conversations:
         show:
           back_to_conversations: Back to Conversations
@@ -74,7 +71,11 @@ en:
       layouts:
         admin:
           title: Raif Admin
-      model_responses:
+      model_completions:
         show:
-          back_to_model_responses: Back to Model Responses
-          title: 'Model Response #%{id}'
+          back_to_model_completions: Back to Model Completions
+          title: 'Model Completion #%{id}'
+      tasks:
+        show:
+          back_to_tasks: Back to Tasks
+          title: 'Task #%{id}'

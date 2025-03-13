@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :sentinel_model_response, class: "Raif::ModelResponse" do
+  factory :sentinel_model_completion, class: "Raif::ModelCompletion" do
     llm_model_key { Raif.available_llm_keys.sample.to_s }
     response_format { Raif::Llm.valid_response_formats.sample.to_s }
     sequence(:raw_response) { |i| "Model response #{i} #{SecureRandom.hex(4)}" }

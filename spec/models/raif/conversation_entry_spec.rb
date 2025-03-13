@@ -28,7 +28,7 @@ RSpec.describe Raif::ConversationEntry, type: :model do
             }
           }
         JSON
-        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelResponse.new(raw_response: resp))
+        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelCompletion.new(raw_response: resp))
       end
 
       it "processes the entry" do
@@ -49,7 +49,7 @@ RSpec.describe Raif::ConversationEntry, type: :model do
           }
         JSON
 
-        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelResponse.new(raw_response: resp))
+        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelCompletion.new(raw_response: resp))
       end
 
       it "processes the entry" do
@@ -63,7 +63,7 @@ RSpec.describe Raif::ConversationEntry, type: :model do
     context "when the response contains malformed JSON" do
       before do
         resp = "This is not valid JSON"
-        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelResponse.new(raw_response: resp))
+        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelCompletion.new(raw_response: resp))
       end
 
       it "marks the entry as failed" do
@@ -76,7 +76,7 @@ RSpec.describe Raif::ConversationEntry, type: :model do
 
     context "when the response is empty" do
       before do
-        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelResponse.new(raw_response: nil))
+        allow(conversation).to receive(:prompt_model_for_entry_response).and_return(Raif::ModelCompletion.new(raw_response: nil))
       end
 
       it "marks the entry as failed" do

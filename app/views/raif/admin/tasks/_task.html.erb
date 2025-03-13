@@ -1,0 +1,19 @@
+<tr id="<%= dom_id(task) %>" class="sentinel-task">
+  <td><%= link_to "##{task.id}", sentinel.admin_task_path(task) %></td>
+  <td><%= task.type %></td>
+  <td><small class="text-muted"><%= task.created_at.rfc822 %></small></td>
+  <td><%= task.creator_type %> #<%= task.creator_id %></td>
+  <td><%= task.llm_model_key %></td>
+  <td>
+    <% if task.completed_at? %>
+      <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span>
+    <% elsif task.failed_at? %>
+      <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span>
+    <% elsif task.started_at? %>
+      <span class="badge bg-warning text-dark"><%= t("sentinel.admin.common.in_progress") %></span>
+    <% else %>
+      <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
+    <% end %>
+  </td>
+  <td><small class="text-muted"><%= truncate(task.prompt, length: 100) %></small></td>
+</tr>

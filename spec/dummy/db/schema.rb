@@ -35,26 +35,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.index ["creator_type", "creator_id"], name: "index_sentinel_agent_invocations_on_creator"
   end
 
-  create_table "sentinel_completions", force: :cascade do |t|
-    t.string "type", null: false
-    t.text "prompt"
-    t.text "response"
-    t.string "creator_type", null: false
-    t.bigint "creator_id", null: false
-    t.text "system_prompt"
-    t.string "requested_language_key"
-    t.integer "response_format", default: 0, null: false
-    t.datetime "started_at"
-    t.datetime "completed_at"
-    t.datetime "failed_at"
-    t.jsonb "available_model_tools"
-    t.string "llm_model_key", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["creator_type", "creator_id"], name: "index_sentinel_completions_on_creator"
-    t.index ["type"], name: "index_sentinel_completions_on_type"
-  end
-
   create_table "sentinel_conversation_entries", force: :cascade do |t|
     t.bigint "sentinel_conversation_id", null: false
     t.string "creator_type", null: false
@@ -83,7 +63,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.index ["creator_type", "creator_id"], name: "index_sentinel_conversations_on_creator"
   end
 
-  create_table "sentinel_model_responses", force: :cascade do |t|
+  create_table "sentinel_model_completions", force: :cascade do |t|
     t.string "source_type"
     t.bigint "source_id"
     t.string "llm_model_key", null: false
@@ -96,7 +76,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.integer "total_tokens"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["source_type", "source_id"], name: "index_sentinel_model_responses_on_source"
+    t.index ["source_type", "source_id"], name: "index_sentinel_model_completions_on_source"
   end
 
   create_table "sentinel_model_tool_invocations", force: :cascade do |t|
@@ -110,6 +90,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["source_type", "source_id"], name: "index_sentinel_model_tool_invocations_on_source"
+  end
+
+  create_table "sentinel_tasks", force: :cascade do |t|
+    t.string "type", null: false
+    t.text "prompt"
+    t.text "response"
+    t.string "creator_type", null: false
+    t.bigint "creator_id", null: false
+    t.text "system_prompt"
+    t.string "requested_language_key"
+    t.integer "response_format", default: 0, null: false
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "failed_at"
+    t.jsonb "available_model_tools"
+    t.string "llm_model_key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["creator_type", "creator_id"], name: "index_sentinel_tasks_on_creator"
+    t.index ["type"], name: "index_sentinel_tasks_on_type"
   end
 
   create_table "sentinel_test_users", force: :cascade do |t|

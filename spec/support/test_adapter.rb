@@ -4,7 +4,7 @@ class Raif::ApiAdapters::Test < Raif::ApiAdapters::Base
   attr_accessor :chat_handler
 
   def chat(messages:, system_prompt: nil)
-    Raif::ModelResponse.new(
+    Raif::ModelCompletion.new(
       messages: messages,
       system_prompt: system_prompt,
       raw_response: chat_handler.call(messages),

@@ -17,8 +17,8 @@
 
     <small class="text-muted"><%= entry.created_at.rfc822 %></small>
 
-    <% if entry.sentinel_model_response.present? %>
-      <%= link_to t("sentinel.admin.common.model_response"), sentinel.admin_model_response_path(entry.sentinel_model_response) %>
+    <% if entry.sentinel_model_completion.present? %>
+      <%= link_to t("sentinel.admin.common.model_completion"), sentinel.admin_model_completion_path(entry.sentinel_model_completion) %>
     <% end %>
   </div>
   <div class="mb-3">

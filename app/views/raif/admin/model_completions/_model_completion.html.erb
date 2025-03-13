@@ -1,0 +1,9 @@
+<tr id="<%= dom_id(model_completion) %>" class="sentinel-model-completion">
+  <td><%= link_to "##{model_completion.id}", sentinel.admin_model_completion_path(model_completion) %></td>
+  <td><small class="text-muted"><%= model_completion.created_at.rfc822 %></small></td>
+  <td><%= model_completion.source_type %> #<%= model_completion.source_id %></td>
+  <td><%= model_completion.llm_model_key %></td>
+  <td><%= model_completion.response_format %></td>
+  <td><%= model_completion.total_tokens ? number_with_delimiter(model_completion.total_tokens) : "-" %></td>
+  <td><small class="text-muted"><%= truncate(model_completion.raw_response, length: 100) %></small></td>
+</tr>

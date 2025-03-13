@@ -37,12 +37,12 @@ module Raif
         return
       end
 
-      model_response = api_adapter.chat(messages: messages, system_prompt: system_prompt)
-      model_response.llm_model_key = key.to_s
-      model_response.response_format = response_format
-      model_response.source = source
-      model_response.save!
-      model_response
+      model_completion = api_adapter.chat(messages: messages, system_prompt: system_prompt)
+      model_completion.llm_model_key = key.to_s
+      model_completion.response_format = response_format
+      model_completion.source = source
+      model_completion.save!
+      model_completion
     end
 
     def self.valid_response_formats

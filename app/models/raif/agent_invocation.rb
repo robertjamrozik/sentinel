@@ -8,7 +8,7 @@ module Raif
 
     belongs_to :creator, polymorphic: true
 
-    has_many :sentinel_model_responses, as: :source, dependent: :destroy, class_name: "Raif::ModelResponse"
+    has_many :sentinel_model_completions, as: :source, dependent: :destroy, class_name: "Raif::ModelCompletion"
 
     boolean_timestamp :started_at
     boolean_timestamp :completed_at
@@ -48,8 +48,8 @@ module Raif
           DEBUG
         end
 
-        model_response = llm.chat(messages: conversation_history, source: self, system_prompt: system_prompt)
-        agent_step = Raif::AgentStep.new(model_response_text: model_response.raw_response)
+        model_completion = llm.chat(messages: conversation_history, source: self, system_prompt: system_prompt)
+        agent_step = Raif::AgentStep.new(model_response_text: model_completion.raw_response)
         logger.debug <<~DEBUG
           --------------------------------
           Agent iteration #{iteration_count}
@@ -57,7 +57,7 @@ module Raif
           #{JSON.pretty_generate(conversation_history)}
 
           Response:
-          #{model_response.raw_response}
+          #{model_completion.raw_response}
           --------------------------------
         DEBUG
 

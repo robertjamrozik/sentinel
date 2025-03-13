@@ -8,7 +8,7 @@ module Raif
       :authorize_admin_controller_action,
       :authorize_controller_action,
       :aws_bedrock_region,
-      :completion_system_prompt_intro,
+      :task_system_prompt_intro,
       :conversation_entries_controller,
       :conversation_system_prompt_intro,
       :conversation_types,
@@ -29,7 +29,7 @@ module Raif
       @authorize_admin_controller_action = ->{ false }
       @authorize_controller_action = ->{ false }
       @aws_bedrock_region = "us-east-1"
-      @completion_system_prompt_intro = "You are a helpful assistant."
+      @task_system_prompt_intro = "You are a helpful assistant."
       @conversation_entries_controller = "Raif::ConversationEntriesController"
       @conversation_system_prompt_intro = "You are a helpful assistant who is collaborating with a teammate."
       @conversation_types = ["Raif::Conversation"]

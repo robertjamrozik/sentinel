@@ -35,7 +35,7 @@ RSpec.describe Raif::Llm, type: :model do
       it "calls the api_adapter and returns a model response" do
         result = test_llm.chat(messages: messages, system_prompt: system_prompt)
 
-        expect(result).to be_a(Raif::ModelResponse)
+        expect(result).to be_a(Raif::ModelCompletion)
         expect(result).to be_persisted
         expect(result.llm_model_key).to eq("sentinel_test_adapter")
         expect(result.response_format).to eq("text")
@@ -52,7 +52,7 @@ RSpec.describe Raif::Llm, type: :model do
         user = FB.create(:sentinel_test_user)
         result = test_llm.chat(messages: messages, system_prompt: system_prompt, source: user)
 
-        expect(result).to be_a(Raif::ModelResponse)
+        expect(result).to be_a(Raif::ModelCompletion)
         expect(result).to be_persisted
         expect(result.llm_model_key).to eq("sentinel_test_adapter")
         expect(result.response_format).to eq("text")
