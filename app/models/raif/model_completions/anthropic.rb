@@ -4,12 +4,11 @@ class Raif::ModelCompletions::Anthropic < Raif::ModelCompletion
 
   def prompt_model_for_response!
     self.temperature ||= 0.7
-    self.max_completion_tokens ||= 8192
 
     params = {
       model: model_api_name,
       messages: messages,
-      temperature: temperature,
+      temperature: temperature.to_f,
       max_tokens: max_completion_tokens
     }
 
