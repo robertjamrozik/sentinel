@@ -28,7 +28,7 @@ module Raif
       I18n.t("sentinel.model_names.#{key}")
     end
 
-    def chat(messages:, response_format: :text, source: nil, system_prompt: nil, temperature: nil, max_completion_tokens: nil)
+    def chat(message: nil, messages: nil, response_format: :text, source: nil, system_prompt: nil, temperature: nil, max_completion_tokens: nil)
       unless response_format.is_a?(Symbol)
         raise ArgumentError,
           "Raif::Llm#chat - Invalid response format: #{response_format}. Must be a symbol (you passed #{response_format.class}) and be one of: #{VALID_RESPONSE_FORMATS.join(", ")}" # rubocop:disable Layout/LineLength
@@ -38,10 +38,20 @@ module Raif
         raise ArgumentError, "Raif::Llm#chat - Invalid response format: #{response_format}. Must be one of: #{VALID_RESPONSE_FORMATS.join(", ")}"
       end
 
+      unless message.present? || messages.present?
+        raise ArgumentError, "Raif::Llm#chat - You must provide either a message: or messages: argument"
+      end
+
+      if message.present? && messages.present?
+        raise ArgumentError, "Raif::Llm#chat - You must provide either a message: or messages: argument, not both"
+      end
+
       unless Raif.config.llm_api_requests_enabled
         Raif.logger.warn("LLM API requests are disabled. Skipping request to #{api_name}.")
         return
       end
+
+      messages = [{ role: "user", content: message }] if message.present?
 
       temperature ||= default_temperature
       max_completion_tokens ||= default_max_completion_tokens
