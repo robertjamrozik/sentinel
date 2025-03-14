@@ -3,11 +3,6 @@ en:
   sentinel:
     admin:
       agent_invocations:
-        agent_invocation:
-          completed: Completed
-          failed: Failed
-          pending: Pending
-          running: Running
         show:
           back_to_agent_invocations: Back to Agent Invocations
           title: 'Agent Invocation #%{id}'
@@ -39,9 +34,11 @@ en:
         model_completion: Model Completion
         model_completions: Model Completions
         model_response: Model Response
+        model_tool_invocations: Model Tool Invocations
         no_agent_invocations: No agent invocations found.
         no_conversations: No conversations found.
         no_model_completions: No model completions found.
+        no_model_tool_invocations: No model tool invocations found.
         no_tasks: No tasks found.
         pending: Pending
         prettified: Prettified
@@ -52,15 +49,19 @@ en:
         requested_language: Requested Language
         response: Response
         response_format: Response Format
+        result: Result
         running: Running
-        since: since
+        since: Since
         source: Source
         started_at: Started At
         status: Status
         system_prompt: System Prompt
         task: Task
         tasks: Tasks
+        tool_arguments: Tool Arguments
         tool_invocations: Tool Invocations
+        tool_name: Tool Name
+        tool_type: Tool Type
         total_tokens: Total Tokens
         type: Type
         user_message: User Message
@@ -75,6 +76,10 @@ en:
         show:
           back_to_model_completions: Back to Model Completions
           title: 'Model Completion #%{id}'
+      model_tool_invocations:
+        show:
+          back_to_model_tool_invocations: Back to Model Tool Invocations
+          title: 'Model Tool Invocation #%{id}'
       tasks:
         show:
           back_to_tasks: Back to Tasks

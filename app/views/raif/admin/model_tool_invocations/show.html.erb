@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-between align-items-center my-4">
+  <h1><%= t(".title", id: @model_tool_invocation.id) %></h1>
+  <%= link_to t(".back_to_model_tool_invocations"), sentinel.admin_model_tool_invocations_path, class: "btn btn-outline-secondary" %>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t("sentinel.admin.common.details") %></h5>
+  </div>
+  <div class="card-body">
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.id") %>:</strong></div>
+      <div class="col-md-9"><%= @model_tool_invocation.id %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.source") %>:</strong></div>
+      <div class="col-md-9"><%= @model_tool_invocation.source_type %> #<%= @model_tool_invocation.source_id %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.tool_type") %>:</strong></div>
+      <div class="col-md-9"><%= @model_tool_invocation.tool_type %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.tool_name") %>:</strong></div>
+      <div class="col-md-9"><%= @model_tool_invocation.tool_name %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.created_at") %>:</strong></div>
+      <div class="col-md-9"><%= @model_tool_invocation.created_at.rfc822 %></div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.status") %>:</strong></div>
+      <div class="col-md-9">
+        <% if @model_tool_invocation.completed? %>
+          <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span>
+          <small class="text-muted ms-2"><%= @model_tool_invocation.completed_at.rfc822 %></small>
+        <% elsif @model_tool_invocation.failed? %>
+          <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span>
+          <small class="text-muted ms-2"><%= @model_tool_invocation.failed_at.rfc822 %></small>
+        <% else %>
+          <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t("sentinel.admin.common.tool_arguments") %></h5>
+  </div>
+  <div class="card-body">
+    <pre class="pre-wrap"><%= JSON.pretty_generate(@model_tool_invocation.tool_arguments) %></pre>
+  </div>
+</div>
+
+<% if @model_tool_invocation.result.present? %>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t("sentinel.admin.common.result") %></h5>
+  </div>
+  <div class="card-body">
+    <pre class="pre-wrap"><%= JSON.pretty_generate(@model_tool_invocation.result) %></pre>
+  </div>
+</div>
+<% end %>
