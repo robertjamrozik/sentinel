@@ -39,9 +39,11 @@ en:
         model_completion: Model Completion
         model_completions: Model Completions
         model_response: Model Response
+        model_tool_invocations: Model Tool Invocations
         no_agent_invocations: No agent invocations found.
         no_conversations: No conversations found.
         no_model_completions: No model completions found.
+        no_model_tool_invocations: No model tool invocations found.
         no_tasks: No tasks found.
         pending: Pending
         prettified: Prettified
@@ -49,18 +51,20 @@ en:
         prompt_tokens: Prompt Tokens
         raw: Raw
         rendered: Rendered
-        requested_language: Requested Language
+        rendered_view: Rendered View
         response: Response
         response_format: Response Format
-        running: Running
-        since: since
+        result: Result
+        requested_language: Requested Language
         source: Source
         started_at: Started At
         status: Status
         system_prompt: System Prompt
         task: Task
         tasks: Tasks
-        tool_invocations: Tool Invocations
+        tool_arguments: Tool Arguments
+        tool_name: Tool Name
+        tool_type: Tool Type
         total_tokens: Total Tokens
         type: Type
         user_message: User Message
@@ -75,6 +79,10 @@ en:
         show:
           back_to_model_completions: Back to Model Completions
           title: 'Model Completion #%{id}'
+      model_tool_invocations:
+        show:
+          back_to_model_tool_invocations: Back to Model Tool Invocations
+          title: 'Model Tool Invocation #%{id}'
       tasks:
         show:
           back_to_tasks: Back to Tasks

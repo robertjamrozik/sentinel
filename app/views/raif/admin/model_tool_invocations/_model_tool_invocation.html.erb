@@ -1,0 +1,16 @@
+<tr id="<%= dom_id(model_tool_invocation) %>" class="sentinel-model-tool-invocation">
+  <td><%= link_to "##{model_tool_invocation.id}", sentinel.admin_model_tool_invocation_path(model_tool_invocation) %></td>
+  <td><small class="text-muted"><%= model_tool_invocation.created_at.rfc822 %></small></td>
+  <td><%= model_tool_invocation.source_type %> #<%= model_tool_invocation.source_id %></td>
+  <td><%= model_tool_invocation.tool_type.demodulize %></td>
+  <td>
+    <% if model_tool_invocation.completed_at? %>
+      <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span>
+    <% elsif model_tool_invocation.failed_at? %>
+      <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span>
+    <% else %>
+      <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
+    <% end %>
+  </td>
+  <td><small class="text-muted"><%= truncate(model_tool_invocation.tool_arguments.to_json, length: 100) %></small></td>
+</tr> 
