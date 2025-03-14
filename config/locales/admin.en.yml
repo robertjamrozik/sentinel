@@ -51,6 +51,7 @@ en:
         response_format: Response Format
         result: Result
         running: Running
+        since: Since
         source: Source
         started_at: Started At
         status: Status
@@ -58,6 +59,7 @@ en:
         task: Task
         tasks: Tasks
         tool_arguments: Tool Arguments
+        tool_invocations: Tool Invocations
         tool_name: Tool Name
         tool_type: Tool Type
         total_tokens: Total Tokens
