@@ -31,10 +31,10 @@
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.status") %>:</strong></div>
       <div class="col-md-9">
-        <% if @model_tool_invocation.completed_at? %>
+        <% if @model_tool_invocation.completed? %>
           <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span>
           <small class="text-muted ms-2"><%= @model_tool_invocation.completed_at.rfc822 %></small>
-        <% elsif @model_tool_invocation.failed_at? %>
+        <% elsif @model_tool_invocation.failed? %>
           <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span>
           <small class="text-muted ms-2"><%= @model_tool_invocation.failed_at.rfc822 %></small>
         <% else %>
