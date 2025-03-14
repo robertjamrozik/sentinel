@@ -4,14 +4,18 @@ class Raif::ModelCompletions::OpenAi < Raif::ModelCompletion
   def prompt_model_for_response!
     self.temperature ||= 0.7
 
-    messages_with_system = [{ role: "system", content: system_prompt }] + messages if system_prompt
+    messages_with_system = if system_prompt
+      [{ role: "system", content: system_prompt }] + messages
+    else
+      messages
+    end
 
     client = OpenAI::Client.new
     resp = client.chat(
       parameters: {
         model: model_api_name,
         messages: messages_with_system,
-        temperature: temperature,
+        temperature: temperature.to_f,
       }
     )
 

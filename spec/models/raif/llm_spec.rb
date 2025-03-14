@@ -80,4 +80,11 @@ RSpec.describe Raif::Llm, type: :model do
       end
     end
   end
+
+  it "has model names for all built in LLMs" do
+    Raif.default_llms.values.flatten.each do |llm_config|
+      llm = Raif.llm(llm_config[:key])
+      expect(llm.name).to_not include("Translation missing")
+    end
+  end
 end
