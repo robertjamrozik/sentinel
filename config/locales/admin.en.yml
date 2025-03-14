@@ -3,11 +3,6 @@ en:
   sentinel:
     admin:
       agent_invocations:
-        agent_invocation:
-          completed: Completed
-          failed: Failed
-          pending: Pending
-          running: Running
         show:
           back_to_agent_invocations: Back to Agent Invocations
           title: 'Agent Invocation #%{id}'
@@ -51,11 +46,11 @@ en:
         prompt_tokens: Prompt Tokens
         raw: Raw
         rendered: Rendered
-        rendered_view: Rendered View
+        requested_language: Requested Language
         response: Response
         response_format: Response Format
         result: Result
-        requested_language: Requested Language
+        running: Running
         source: Source
         started_at: Started At
         status: Status
