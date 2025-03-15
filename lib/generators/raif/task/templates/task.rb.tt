@@ -2,7 +2,7 @@
 
 module Raif
   module Tasks
-    class <%= task_class_name %> < Raif::Task
+    class <%= task_class_name %> < Raif::ApplicationTask
       # Set the response format for the task. Options are :html, :text, or :json.
       llm_response_format :<%= options[:response_format] %>
 

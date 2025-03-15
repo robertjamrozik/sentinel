@@ -10,6 +10,10 @@ module Raif
         default: "text",
         desc: "Response format for the task (text, html, or json)"
 
+      def create_application_task
+        template "application_task.rb.tt", "app/models/sentinel/application_task.rb" unless File.exist?("app/models/sentinel/application_task.rb")
+      end
+
       def create_task_file
         template "task.rb.tt", File.join("app/models/sentinel/tasks", class_path, "#{file_name}_task.rb")
       end
