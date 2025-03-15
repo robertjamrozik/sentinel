@@ -8,7 +8,7 @@ module Raif
       class_option :response_format,
         type: :string,
         default: "text",
-        desc: "Response format for the task (json or text)"
+        desc: "Response format for the task (text, html, or json)"
 
       def create_task_file
         template "task.rb.tt", File.join("app/models/sentinel/tasks", class_path, "#{file_name}_task.rb")
