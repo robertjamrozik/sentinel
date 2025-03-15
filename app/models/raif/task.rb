@@ -48,6 +48,13 @@ module Raif
       self
     end
 
+    # Runs the task with the given parameters. It will hit the LLM with the task's prompt and system prompt and return a Raif::Task object.
+    #
+    # @param creator [Object] The creator of the task (polymorphic association)
+    # @param available_model_tools [Array<Class>] Optional array of model tool classes that will be provided to the LLM for it to invoke.
+    # @param llm_model_key [Symbol, String] Optional key for the LLM model to use. If blank, Raif.config.default_llm_model_key will be used.
+    # @param args [Hash] Additional arguments to pass to the instance of the task that is created.
+    # @return [Raif::Task, nil] The task instance that was created and run.
     def self.run(creator:, available_model_tools: nil, llm_model_key: nil, **args)
       task = new(creator:, llm_model_key:, available_model_tools:, started_at: Time.current, **args)
       task.save!
@@ -67,7 +74,7 @@ module Raif
         Airbrake.notify(notice)
       end
 
-      nil
+      task
     end
 
     def self.prompt(creator:, **args)
