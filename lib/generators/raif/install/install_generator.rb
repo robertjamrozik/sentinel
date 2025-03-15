@@ -22,6 +22,10 @@ module Raif
       def install_migrations
         rake "sentinel:install:migrations"
       end
+
+      def add_engine_route
+        route 'mount Raif::Engine => "/sentinel"'
+      end
     end
   end
 end
