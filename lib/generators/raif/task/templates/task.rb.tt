@@ -6,8 +6,8 @@ module Raif
       # Set the response format for the task. Options are :html, :text, or :json.
       llm_response_format :<%= options[:response_format] %>
 
-      # Define any attributes that are needed for the task. 
-      # You can then pass them when running the task and they will be available in build_prompt: 
+      # Define any attributes that are needed for the task.
+      # You can then pass them when running the task and they will be available in build_prompt:
       # Raif::Tasks::<%= task_class_name %>.run(your_attribute: "some value")
       # attr_accessor :your_attribute
 
@@ -24,4 +24,4 @@ module Raif
       # end
     end
   end
-end 
+end

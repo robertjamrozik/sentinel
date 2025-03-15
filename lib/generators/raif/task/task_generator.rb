@@ -21,7 +21,7 @@ module Raif
     private
 
       def task_class_name
-        "#{class_name}Task"
+        class_name
       end
     end
   end
