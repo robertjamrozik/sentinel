@@ -28,7 +28,8 @@ module Raif
       after_initialize -> { self.response_format = format }, if: :new_record?
     end
 
-    # Runs the task with the given parameters. It will hit the LLM with the task's prompt and system prompt and return a Raif::Task object.
+    # The primary interface for running a task. It will hit the LLM with the task's prompt and system prompt and return a Raif::Task object.
+    # It will also create a new Raif::ModelCompletion record.
     #
     # @param creator [Object] The creator of the task (polymorphic association)
     # @param available_model_tools [Array<Class>] Optional array of model tool classes that will be provided to the LLM for it to invoke.
