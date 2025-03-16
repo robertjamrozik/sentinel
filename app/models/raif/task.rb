@@ -28,27 +28,8 @@ module Raif
       after_initialize -> { self.response_format = format }, if: :new_record?
     end
 
-    def populate_prompts
-      self.requested_language_key ||= creator.preferred_language_key if creator.respond_to?(:preferred_language_key)
-      self.prompt = build_prompt
-      self.system_prompt = build_system_prompt
-    end
-
-    def run
-      update_columns(started_at: Time.current) if started_at.nil?
-
-      populate_prompts
-      messages = [{ "role" => "user", "content" => prompt }]
-      self.sentinel_model_completion = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
-
-      update(response: sentinel_model_completion.raw_response)
-
-      process_model_tool_invocations
-      completed!
-      self
-    end
-
-    # Runs the task with the given parameters. It will hit the LLM with the task's prompt and system prompt and return a Raif::Task object.
+    # The primary interface for running a task. It will hit the LLM with the task's prompt and system prompt and return a Raif::Task object.
+    # It will also create a new Raif::ModelCompletion record.
     #
     # @param creator [Object] The creator of the task (polymorphic association)
     # @param available_model_tools [Array<Class>] Optional array of model tool classes that will be provided to the LLM for it to invoke.
@@ -77,22 +58,54 @@ module Raif
       task
     end
 
+    def run
+      update_columns(started_at: Time.current) if started_at.nil?
+
+      populate_prompts
+      messages = [{ "role" => "user", "content" => prompt }]
+      self.sentinel_model_completion = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
+
+      update(response: sentinel_model_completion.raw_response)
+
+      process_model_tool_invocations
+      completed!
+      self
+    end
+
+    # Returns the LLM prompt for the task.
+    #
+    # @param creator [Object] The creator of the task (polymorphic association)
+    # @param args [Hash] Additional arguments to pass to the instance of the task that is created.
+    # @return [String] The LLM prompt for the task.
     def self.prompt(creator:, **args)
       new(creator:, **args).prompt
     end
 
-    def build_prompt
-      raise NotImplementedError, "Raif::Task subclasses must implement #build_prompt"
-    end
-
+    # Returns the LLM system prompt for the task.
+    #
+    # @param creator [Object] The creator of the task (polymorphic association)
+    # @param args [Hash] Additional arguments to pass to the instance of the task that is created.
+    # @return [String] The LLM system prompt for the task.
     def self.system_prompt(creator:, **args)
       new(creator:, **args).system_prompt
+    end
+
+  private
+
+    def build_prompt
+      raise NotImplementedError, "Raif::Task subclasses must implement #build_prompt"
     end
 
     def build_system_prompt
       sp = Raif.config.task_system_prompt_intro
       sp += system_prompt_language_preference if requested_language_key.present?
       sp
+    end
+
+    def populate_prompts
+      self.requested_language_key ||= creator.preferred_language_key if creator.respond_to?(:preferred_language_key)
+      self.prompt = build_prompt
+      self.system_prompt = build_system_prompt
     end
 
     def process_model_tool_invocations
