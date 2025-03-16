@@ -38,7 +38,7 @@ RSpec.describe Raif::Task, type: :model do
           expect(task.prompt).to eq("Tell me a joke")
           expect(task.system_prompt).to eq("You are a helpful assistant.\nYou are also good at telling jokes.")
           expect(task.response_format).to eq("text")
-          expect(task.response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.")
+          expect(task.response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
           expect(task.parsed_response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
           expect(task.requested_language_key).to be_nil
 
@@ -58,7 +58,7 @@ RSpec.describe Raif::Task, type: :model do
           expect(task.prompt).to eq("Tell me a joke")
           expect(task.system_prompt).to eq("You are a helpful assistant.\nYou're collaborating with teammate who speaks Spanish. Please respond in Spanish.\nYou are also good at telling jokes.") # rubocop:disable Layout/LineLength
           expect(task.response_format).to eq("text")
-          expect(task.response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.")
+          expect(task.response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
           expect(task.parsed_response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
           expect(task.requested_language_key).to eq("es")
 
