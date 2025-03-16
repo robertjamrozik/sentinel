@@ -58,6 +58,20 @@ module Raif
       task
     end
 
+    def run
+      update_columns(started_at: Time.current) if started_at.nil?
+
+      populate_prompts
+      messages = [{ "role" => "user", "content" => prompt }]
+      self.sentinel_model_completion = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
+
+      update(response: sentinel_model_completion.raw_response)
+
+      process_model_tool_invocations
+      completed!
+      self
+    end
+
     # Returns the LLM prompt for the task.
     #
     # @param creator [Object] The creator of the task (polymorphic association)
@@ -77,20 +91,6 @@ module Raif
     end
 
   private
-
-    def run
-      update_columns(started_at: Time.current) if started_at.nil?
-
-      populate_prompts
-      messages = [{ "role" => "user", "content" => prompt }]
-      self.sentinel_model_completion = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
-
-      update(response: sentinel_model_completion.raw_response)
-
-      process_model_tool_invocations
-      completed!
-      self
-    end
 
     def build_prompt
       raise NotImplementedError, "Raif::Task subclasses must implement #build_prompt"
