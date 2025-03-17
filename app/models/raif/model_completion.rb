@@ -10,10 +10,14 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
   validates :model_api_name, presence: true
   validates :type, presence: true
 
+  # Triggers the call to the LLM to get the response. Must be implemented by llm provider-specific subclasses.
   def prompt_model_for_response!
     raise NotImplementedError, "Raif::ModelCompletion subclasses must implement #prompt_model_for_response!"
   end
 
+  # Parses the response from the LLM into a structured format, based on the response_format.
+  #
+  # @return [Object] The parsed response.
   def parsed_response
     @parsed_response ||= if response_format_json?
       json = raw_response.gsub("```json", "").gsub("```", "")
