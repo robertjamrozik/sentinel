@@ -40,6 +40,8 @@ Layout/AccessModifierIndentation:
 
 Layout/LineLength:
   Max: 150
+  Exclude:
+    - 'lib/generators/sentinel/install/templates/initializer.rb'
 
 Lint/RequireRangeParentheses: 
   # new in 1.32 
