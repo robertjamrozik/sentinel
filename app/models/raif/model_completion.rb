@@ -20,8 +20,6 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
   # @return [Object] The parsed response.
   def parsed_response
     @parsed_response ||= if response_format_json?
-  def parsed_response
-    @parsed_response ||= if response_format_json?
       json = raw_response.gsub("```json", "").gsub("```", "")
       JSON.parse(json)
     elsif response_format_html?
