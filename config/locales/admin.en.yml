@@ -35,6 +35,7 @@ en:
         model_completions: Model Completions
         model_response: Model Response
         model_tool_invocations: Model Tool Invocations
+        messages: Messages
         no_agent_invocations: No agent invocations found.
         no_conversations: No conversations found.
         no_model_completions: No model completions found.
