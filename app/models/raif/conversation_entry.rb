@@ -41,9 +41,9 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
 
   def process_entry!
     model_completion = sentinel_conversation.prompt_model_for_entry_response(entry: self)
-    self.model_raw_response = model_completion.raw_response
+    self.raw_response = model_completion.raw_response
 
-    if model_raw_response.present?
+    if raw_response.present?
       extract_message_and_invoke_tools!
     else
       logger.error "Error processing conversation entry ##{id}. No model response found."
@@ -65,7 +65,7 @@ private
   # }
   def extract_message_and_invoke_tools!
     transaction do
-      parsed_response = JSON.parse(model_raw_response)
+      parsed_response = JSON.parse(raw_response)
 
       if parsed_response["message"].blank?
         logger.error "Error extracting message from conversation entry ##{id}. No model response message found."

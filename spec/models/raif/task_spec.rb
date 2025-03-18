@@ -38,7 +38,7 @@ RSpec.describe Raif::Task, type: :model do
           expect(task.prompt).to eq("Tell me a joke")
           expect(task.system_prompt).to eq("You are a helpful assistant.\nYou are also good at telling jokes.")
           expect(task.response_format).to eq("text")
-          expect(task.response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
+          expect(task.raw_response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
           expect(task.parsed_response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
           expect(task.requested_language_key).to be_nil
 
@@ -58,7 +58,7 @@ RSpec.describe Raif::Task, type: :model do
           expect(task.prompt).to eq("Tell me a joke")
           expect(task.system_prompt).to eq("You are a helpful assistant.\nYou're collaborating with teammate who speaks Spanish. Please respond in Spanish.\nYou are also good at telling jokes.") # rubocop:disable Layout/LineLength
           expect(task.response_format).to eq("text")
-          expect(task.response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
+          expect(task.raw_response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
           expect(task.parsed_response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
           expect(task.requested_language_key).to eq("es")
 
@@ -79,7 +79,7 @@ RSpec.describe Raif::Task, type: :model do
           expect(task.prompt).to eq("Tell me a joke")
           expect(task.system_prompt).to eq("You are a helpful assistant.\nYou're collaborating with teammate who speaks German. Please respond in German.\nYou are also good at telling jokes.") # rubocop:disable Layout/LineLength
           expect(task.response_format).to eq("text")
-          expect(task.response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
+          expect(task.raw_response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
           expect(task.parsed_response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
           expect(task.requested_language_key).to eq("de")
 
@@ -109,7 +109,7 @@ RSpec.describe Raif::Task, type: :model do
         expect(task.prompt).to eq("Tell me a joke")
         expect(task.system_prompt).to eq("You are a helpful assistant.\nYou are also good at telling jokes. Your response should be a JSON object with the following keys: joke, answer.") # rubocop:disable Layout/LineLength
         expect(task.response_format).to eq("json")
-        expect(task.response).to eq("{\"joke\":\"Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.\",\"answer\":\"R\"}") # rubocop:disable Layout/LineLength
+        expect(task.raw_response).to eq("{\"joke\":\"Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.\",\"answer\":\"R\"}") # rubocop:disable Layout/LineLength
 
         expect(task.sentinel_model_completion).to be_persisted
         expect(task.sentinel_model_completion.source).to eq(task)
@@ -133,7 +133,7 @@ RSpec.describe Raif::Task, type: :model do
         expect(task.prompt).to eq("Tell me a joke")
         expect(task.system_prompt).to eq("You are a helpful assistant.\nYou are also good at telling jokes. Your response should be an HTML snippet that is formatted with basic HTML tags.") # rubocop:disable Layout/LineLength
         expect(task.response_format).to eq("html")
-        expect(task.response).to eq("<p>Why is a pirate's favorite letter 'R'?</p><p>Because, if you think about it, <strong>'R'</strong> is the only letter that makes sense.</p>") # rubocop:disable Layout/LineLength
+        expect(task.raw_response).to eq("<p>Why is a pirate's favorite letter 'R'?</p><p>Because, if you think about it, <strong>'R'</strong> is the only letter that makes sense.</p>") # rubocop:disable Layout/LineLength
 
         expect(task.sentinel_model_completion).to be_persisted
         expect(task.sentinel_model_completion.source).to eq(task)

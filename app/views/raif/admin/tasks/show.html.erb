@@ -133,7 +133,7 @@
 
     <% if @task.response_format_json? %>
       <h5 class="mb-0"><%= t("sentinel.admin.common.raw") %></h5>
-      <pre class="pre-wrap"><%= @task.response %></pre>
+      <pre class="pre-wrap"><%= @task.raw_response %></pre>
 
       <h5 class="mb-0 mt-4"><%= t("sentinel.admin.common.prettified") %></h5>
       <% begin %>
@@ -142,7 +142,7 @@
         <%= t("sentinel.admin.common.invalid_json") %>
       <% end %>
     <% else %>
-      <pre class="pre-wrap"><%= @task.response %></pre>
+      <pre class="pre-wrap"><%= @task.raw_response %></pre>
     <% end %>
   </div>
 </div>

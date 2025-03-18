@@ -50,7 +50,7 @@ RSpec.describe "Admin::Tasks", type: :feature do
         :completed,
         creator: creator,
         prompt: "Test prompt",
-        response: "Test response",
+        raw_response: "Test response",
         system_prompt: "You are a test assistant",
         llm_model_key: "open_ai_gpt_4o_mini"
       )
