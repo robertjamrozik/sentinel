@@ -36,7 +36,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.datetime :completed_at
       t.datetime :failed_at
       t.text :user_message
-      t.text :model_raw_response
+      t.text :raw_response
       t.text :model_response_message
 
       t.timestamps
