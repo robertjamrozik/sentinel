@@ -30,12 +30,12 @@ en:
         invalid_json: Invalid JSON
         iterations: Iterations
         language: Language
+        messages: Messages
         model: Model
         model_completion: Model Completion
         model_completions: Model Completions
         model_response: Model Response
         model_tool_invocations: Model Tool Invocations
-        messages: Messages
         no_agent_invocations: No agent invocations found.
         no_conversations: No conversations found.
         no_model_completions: No model completions found.
