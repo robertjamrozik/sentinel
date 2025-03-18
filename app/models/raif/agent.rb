@@ -35,7 +35,7 @@ class Raif::Agent
 
   def system_prompt
     <<~PROMPT
-      You are an intelligent assistant that follows the ReAct (Reasoning + Acting) framework to complete tasks step by step using tool calls.
+      #{Raif.config.agent_system_prompt_intro}
 
       # Available Tools
       You have access to the following tools:
