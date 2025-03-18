@@ -12,9 +12,13 @@ module Raif::Concerns::LlmResponseParsing
   end
 
   # Parses the response from the LLM into a structured format, based on the response_format.
+  # If the response format is JSON, it will be parsed using JSON.parse.
+  # If the response format is HTML, it will be sanitized via ActionController::Base.helpers.sanitize.
   #
   # @return [Object] The parsed response.
   def parsed_response
+    return if raw_response.blank?
+
     @parsed_response ||= if response_format_json?
       json = raw_response.gsub("```json", "").gsub("```", "")
       JSON.parse(json)
