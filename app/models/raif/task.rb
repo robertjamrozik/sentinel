@@ -5,22 +5,17 @@ module Raif
     include Raif::Concerns::HasLlm
     include Raif::Concerns::HasRequestedLanguage
     include Raif::Concerns::InvokesModelTools
+    include Raif::Concerns::LlmResponseParsing
 
     belongs_to :creator, polymorphic: true
 
     has_one :sentinel_model_completion, as: :source, dependent: :destroy, class_name: "Raif::ModelCompletion"
 
-    enum :response_format, Raif::Llm.valid_response_formats, prefix: true
-
     boolean_timestamp :started_at
     boolean_timestamp :completed_at
     boolean_timestamp :failed_at
 
-    validates :response_format, presence: true, inclusion: { in: response_formats.keys }
-
-    normalizes :prompt, :raw_response, :system_prompt, with: ->(text){ text&.strip }
-
-    delegate :parsed_response, to: :sentinel_model_completion, allow_nil: true
+    normalizes :prompt, :system_prompt, with: ->(text){ text&.strip }
 
     def self.llm_response_format(format)
       raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
