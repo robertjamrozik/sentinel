@@ -6,7 +6,7 @@ FactoryBot.define do
     llm_model_key { Raif.available_llm_keys.sample.to_s }
 
     trait :completed do
-      sequence(:response){|i| "response #{i} #{SecureRandom.hex(3)}" }
+      sequence(:raw_response){|i| "response #{i} #{SecureRandom.hex(3)}" }
       created_at { 1.minute.ago }
       started_at { 1.minute.ago }
       completed_at { 30.seconds.ago }

@@ -18,7 +18,7 @@ module Raif
 
     validates :response_format, presence: true, inclusion: { in: response_formats.keys }
 
-    normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
+    normalizes :prompt, :raw_response, :system_prompt, with: ->(text){ text&.strip }
 
     delegate :parsed_response, to: :sentinel_model_completion, allow_nil: true
 
@@ -65,7 +65,7 @@ module Raif
       messages = [{ "role" => "user", "content" => prompt }]
       self.sentinel_model_completion = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
 
-      update(response: sentinel_model_completion.raw_response)
+      update(raw_response: sentinel_model_completion.raw_response)
 
       process_model_tool_invocations
       completed!

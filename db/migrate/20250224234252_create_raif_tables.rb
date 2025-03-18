@@ -5,7 +5,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
     create_table :sentinel_tasks do |t|
       t.string :type, null: false, index: true
       t.text :prompt
-      t.text :response
+      t.text :raw_response
       t.references :creator, polymorphic: true, null: false, index: true
       t.text :system_prompt
       t.string :requested_language_key
