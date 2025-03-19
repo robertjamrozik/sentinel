@@ -1,6 +1,6 @@
 <%= turbo_stream_from conversation %>
 
-<div id="<%= dom_id(conversation, :entries) %>" class="flex-grow-1 me-4 overflow-auto" data-controller="sentinel--conversations">
+<div id="<%= dom_id(conversation, :entries) %>" class="flex-grow-1 overflow-auto" data-controller="sentinel--conversations">
   <%= render "sentinel/conversation_entries/message",
         content: conversation.initial_chat_message,
         message_type: :model_response %>

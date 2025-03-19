@@ -21,6 +21,12 @@ module Raif
     end
 
     config.after_initialize do
+      ActiveSupport.on_load(:action_view) do
+        include Raif::Shared::ConversationsHelper
+      end
+    end
+
+    config.after_initialize do
       next unless Raif.config.open_ai_models_enabled
 
       require "openai"
