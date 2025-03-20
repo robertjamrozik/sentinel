@@ -1,5 +1,6 @@
-<%= form_with model: conversation_entry, 
-      url: sentinel.conversation_entries_path(conversation), local: true do |f| %>
+<%= form_with model: conversation_entry,
+      url: sentinel.conversation_entries_path(conversation),
+      local: true do |f| %>
 
   <% if conversation_entry.sentinel_user_tool_invocation %>
     <%= hidden_field_tag :user_tool_type, conversation_entry.sentinel_user_tool_invocation.class.name %>

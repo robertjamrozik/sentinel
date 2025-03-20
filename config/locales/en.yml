@@ -7,7 +7,7 @@ en:
       tools: Tools
       type_your_message: Type your message...
     conversation:
-      initial_chat_message: "Hello, how can I help you today?"
+      initial_chat_message: Hello, how can I help you today?
     languages:
       ar: Arabic
       da: Danish
