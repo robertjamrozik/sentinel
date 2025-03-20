@@ -18,9 +18,9 @@ class Raif::ModelTool
   end
 
   # The name of the tool as it will be provided to the model & used in the model invocation.
-  # Default for something like Raif::ModelTools::WikipediaSearchTool would be "wikipedia_search"
+  # Default for something like Raif::ModelTools::WikipediaSearch would be "wikipedia_search"
   def self.tool_name
-    name.split("::").last.underscore.chomp("_tool")
+    name.split("::").last.underscore
   end
 
   def self.tool_description

@@ -67,7 +67,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
         task: "What is the capital of France?",
         system_prompt: "You are a helpful assistant.",
         max_iterations: 3,
-        available_model_tools: [Raif::ModelTools::WikipediaSearchTool, Raif::ModelTools::FetchUrlTool],
+        available_model_tools: [Raif::ModelTools::WikipediaSearch, Raif::ModelTools::FetchUrl],
         llm_model_key: "open_ai_gpt_4o"
       )
     end
@@ -145,7 +145,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
         expect(invocation.sentinel_model_tool_invocations.length).to eq(1)
         mti = invocation.sentinel_model_tool_invocations.first
         expect(mti.tool_name).to eq("wikipedia_search")
-        expect(mti.tool_type).to eq("Raif::ModelTools::WikipediaSearchTool")
+        expect(mti.tool_type).to eq("Raif::ModelTools::WikipediaSearch")
         expect(mti.tool_arguments).to eq({ "query" => "capital of France" })
 
         expect(mti.result).to eq({
@@ -226,7 +226,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
 
   describe "#build_system_prompt" do
     let(:task) { "What is the capital of France?" }
-    let(:tools) { [Raif::TestModelTool, Raif::ModelTools::WikipediaSearchTool] }
+    let(:tools) { [Raif::TestModelTool, Raif::ModelTools::WikipediaSearch] }
     let(:agent_invocation) { described_class.new(task: task, available_model_tools: tools, creator: creator) }
     let(:system_prompt) { agent_invocation.build_system_prompt }
 
