@@ -18,6 +18,24 @@ class Raif::Agent
     @max_iterations = max_iterations
   end
 
+  # Runs the agent and returns a Raif::AgentInvocation.
+  # If a block is given, it will be called each time a new entry is added to the agent's conversation history.
+  # The block will receive the Raif::AgentInvocation and the new entry as arguments:
+  # agent = Raif::Agent.new(task: task, tools: [Raif::ModelTools::WikipediaSearchTool, Raif::ModelTools::FetchUrlTool], creator: creator)
+  # agent.run! do |agent_invocation, conversation_history_entry|
+  #   Turbo::StreamsChannel.broadcast_append_to(
+  #     :my_agent_channel,
+  #     target: "agent-progress",
+  #     partial: "my_partial_displaying_agent_progress",
+  #     locals: { agent_invocation: agent_invocation, conversation_history_entry: conversation_history_entry }
+  #   )
+  # end
+  #
+  # The conversation_history_entry will be a hash with "role" and "content" keys:
+  # { "role" => "assistant", "content" => "a message here" }
+  #
+  # @param block [Proc] Optional block to be called each time a new entry to the agent's conversation history is generated
+  # @return [Raif::AgentInvocation] The agent invocation that was created and run
   def run!
     agent_invocation = Raif::AgentInvocation.new(
       task: task,
@@ -29,7 +47,10 @@ class Raif::Agent
       max_iterations: max_iterations
     )
 
-    agent_invocation.run!
+    agent_invocation.run! do |agent_invocation, entry|
+      yield agent_invocation, entry if block_given?
+    end
+
     agent_invocation
   end
 
