@@ -1,6 +1,6 @@
-<%= turbo_stream_from :agent_runs %>
+<%= turbo_stream_from :agent_invocations %>
 
-<%= form_with url: agent_runs_path, method: :post do |form| %>
+<%= form_with url: agent_invocations_path, method: :post do |form| %>
   <%= form.text_field :task, placeholder: "Enter a task", class: "form-control" %>
   <%= form.submit "Run Agent" %>
 <% end %>
