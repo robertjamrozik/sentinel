@@ -24,7 +24,7 @@ RSpec.describe Raif::ConversationEntry, type: :model do
             {
               "message" : "Hello",
               "tool" : {
-                "name": "test_model",
+                "name": "test_model_tool",
                 "arguments": [{ "title": "foo", "description": "bar" }]
               }
             }
@@ -37,7 +37,7 @@ RSpec.describe Raif::ConversationEntry, type: :model do
         expect(entry.reload).to be_completed
         expect(entry.model_response_message).to eq("Hello")
         expect(entry.sentinel_model_tool_invocations.count).to eq(1)
-        expect(entry.sentinel_model_tool_invocations.first.tool_name).to eq("test_model")
+        expect(entry.sentinel_model_tool_invocations.first.tool_name).to eq("test_model_tool")
         expect(entry.sentinel_model_tool_invocations.first.tool_arguments).to eq([{ "title" => "foo", "description" => "bar" }])
       end
     end

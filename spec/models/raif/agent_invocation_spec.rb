@@ -199,7 +199,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
 
     it "processes a valid action with an available tool" do
       action = {
-        "tool" => "test_model",
+        "tool" => "test_model_tool",
         "arguments" => [{ "title" => "foo", "description" => "bar" }]
       }
 
@@ -219,7 +219,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
       invocation.process_action(action)
 
       expect(invocation.conversation_history).to include(
-        { "role" => "user", "content" => include("Error: Tool 'unavailable_tool' not found. Available tools: test_model") }
+        { "role" => "user", "content" => include("Error: Tool 'unavailable_tool' not found. Available tools: test_model_tool") }
       )
     end
   end
@@ -236,7 +236,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
 
         # Available Tools
         You have access to the following tools:
-        Name: test_model
+        Name: test_model_tool
         Description: Mock Tool Description
         Arguments Schema:
         {
@@ -259,7 +259,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
         }
         Example Usage:
         {
-          "name": "test_model",
+          "name": "test_model_tool",
           "arguments": [
             {
               "title": "foo",
@@ -326,7 +326,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
 
           # Available Tools
           You have access to the following tools:
-          Name: test_model
+          Name: test_model_tool
           Description: Mock Tool Description
           Arguments Schema:
           {
@@ -349,7 +349,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
           }
           Example Usage:
           {
-            "name": "test_model",
+            "name": "test_model_tool",
             "arguments": [
               {
                 "title": "foo",
