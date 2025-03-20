@@ -1,10 +1,10 @@
-<%= simple_form_for conversation_entry,
-      url: sentinel.conversation_entries_path(conversation) do |f| %>
+<%= form_with model: conversation_entry, 
+      url: sentinel.conversation_entries_path(conversation), local: true do |f| %>
 
   <% if conversation_entry.sentinel_user_tool_invocation %>
     <%= hidden_field_tag :user_tool_type, conversation_entry.sentinel_user_tool_invocation.class.name %>
 
-    <%= f.simple_fields_for :sentinel_user_tool_invocation do |builder| %>
+    <%= fields_for :sentinel_user_tool_invocation, conversation_entry.sentinel_user_tool_invocation do |builder| %>
       <%= render "sentinel/user_tool_invocations/form/#{conversation_entry.sentinel_user_tool_invocation.tool_key}_fields", f: builder %>
     <% end %>
   <% end %>
@@ -17,7 +17,7 @@
 
     <div class="d-flex justify-content-end align-items-end">
       <%= button_tag type: "submit", class: "btn btn-primary d-flex align-items-center" do %>
-        <%= fa_icon("paper-plane", classes: "me-2") %> <%= t("sentinel.common.send") %>
+        <%= t("sentinel.common.send") %>
       <% end %>
     </div>
   </div>
