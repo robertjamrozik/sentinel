@@ -16,8 +16,7 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
 
   def parsed_response
     @parsed_response ||= if response_format_json?
-      json = raw_response.gsub("```json", "").gsub("```", "")
-      JSON.parse(json)
+      parse_json_response
     elsif response_format_html?
       html = raw_response.strip.gsub("```html", "").chomp("```")
       clean_html_fragment(html)
@@ -27,6 +26,15 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
   end
 
 private
+
+  def parse_json_response
+    # Try to parse the full response first
+    JSON.parse(raw_response)
+  rescue JSON::ParserError
+    # If that fails, try to extract JSON from markdown code blocks
+    json = raw_response.gsub("```json", "").gsub("```", "").strip
+    JSON.parse(json)
+  end
 
   def clean_html_fragment(html)
     fragment = Nokogiri::HTML.fragment(html)
