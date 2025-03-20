@@ -72,6 +72,7 @@ class Raif::Conversation < Raif::ApplicationRecord
     []
   end
 
+  # i18n-tasks-use t('sentinel.conversation.initial_chat_message')
   def initial_chat_message
     I18n.t("#{self.class.name.underscore.gsub("/", ".")}.initial_chat_message")
   end

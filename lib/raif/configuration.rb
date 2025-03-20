@@ -34,7 +34,7 @@ module Raif
       @task_system_prompt_intro = "You are a helpful assistant."
       @conversation_entries_controller = "Raif::ConversationEntriesController"
       @conversation_system_prompt_intro = "You are a helpful assistant who is collaborating with a teammate."
-      @conversation_types = ["Raif::Conversation"]
+      @conversation_types = Set.new(["Raif::Conversation"])
       @conversations_controller = "Raif::ConversationsController"
       @current_user_method = :current_user
       @default_llm_model_key = "open_ai_gpt_4o"

@@ -11,6 +11,7 @@ require "faraday"
 require "loofah"
 require "pagy"
 require "reverse_markdown"
+require "turbo-rails"
 
 module Raif
   class << self

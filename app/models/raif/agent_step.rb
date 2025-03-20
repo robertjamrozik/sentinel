@@ -15,6 +15,14 @@ class Raif::AgentStep
     @action ||= extract_tag_content("action")
   end
 
+  def parsed_action
+    @parsed_action ||= begin
+      JSON.parse(action)
+    rescue JSON::ParserError
+      nil
+    end
+  end
+
   def answer
     @answer ||= extract_tag_content("answer")
   end

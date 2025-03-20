@@ -74,13 +74,13 @@ RSpec.describe Raif::AgentInvocation, type: :model do
     it "adds the task to conversation history" do
       invocation.run!
       expect(invocation.conversation_history).to include(
-        { role: "user", content: "What is the capital of France?" }
+        { "role" => "user", "content" => "What is the capital of France?" }
       )
     end
 
     it "calls the LLM with the correct parameters" do
       expect(llm).to receive(:chat).with(
-        messages: [{ role: "user", content: "What is the capital of France?" }],
+        messages: [{ "role" => "user", "content" => "What is the capital of France?" }],
         source: invocation,
         system_prompt: "You are a helpful assistant."
       )
@@ -90,10 +90,10 @@ RSpec.describe Raif::AgentInvocation, type: :model do
     it "extracts thought and answer from the model response" do
       invocation.run!
       expect(invocation.conversation_history).to include(
-        { role: "assistant", content: "<thought>I know this.</thought>" }
+        { "role" => "assistant", "content" => "<thought>I know this.</thought>" }
       )
       expect(invocation.conversation_history).to include(
-        { role: "assistant", content: "<answer>Paris</answer>" }
+        { "role" => "assistant", "content" => "<answer>Paris</answer>" }
       )
     end
 
@@ -154,7 +154,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
       invocation.process_action(action)
 
       expect(invocation.conversation_history).to include(
-        { role: "user", content: "<observation>Mock Observation</observation>" }
+        { "role" => "user", "content" => "<observation>Mock Observation</observation>" }
       )
     end
 
@@ -167,7 +167,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
       invocation.process_action(action)
 
       expect(invocation.conversation_history).to include(
-        { role: "user", content: include("Error: Tool 'unavailable_tool' not found. Available tools: test_model") }
+        { "role" => "user", "content" => include("Error: Tool 'unavailable_tool' not found. Available tools: test_model") }
       )
     end
   end
