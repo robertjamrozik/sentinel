@@ -2,8 +2,10 @@
 
 # Be sure to restart your server when you modify this file.
 
-# Version of your assets, change this if you want to expire all your assets.
-# Rails.application.config.assets.version = "1.0"
+# Rails 8 uses propshaft for the asset pipeline
 
-# Add additional assets to the asset load path.
-# Rails.application.config.assets.paths << Emoji.images_path
+# Add additional assets to the asset load path if needed
+# Rails.application.config.assets.paths << Rails.root.join("node_modules")
+
+# Set an explicit assets prefix if needed (defaults to "/assets")
+# Rails.application.config.assets.prefix = "/assets"
