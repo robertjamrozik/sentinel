@@ -24,6 +24,8 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.references :creator, polymorphic: true, null: false, index: true
       t.string :requested_language_key
       t.string :type, null: false
+      t.jsonb :available_model_tools
+      t.jsonb :available_user_tools
       t.integer :conversation_entries_count, default: 0, null: false
 
       t.timestamps

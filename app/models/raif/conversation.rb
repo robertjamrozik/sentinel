@@ -12,10 +12,6 @@ class Raif::Conversation < Raif::ApplicationRecord
 
   before_validation ->{ self.type ||= "Raif::Conversation" }, on: :create
 
-  def available_model_tools
-    []
-  end
-
   def tool_usage_system_prompt
     return if available_model_tools.empty?
 
@@ -66,10 +62,6 @@ class Raif::Conversation < Raif::ApplicationRecord
       # Other rules/reminders
       #{system_prompt_tools_reminder}- **Always** respond with a single, valid JSON object containing at minimum a "message" field, and optionally a "tool" field.
     PROMPT
-  end
-
-  def available_user_tools
-    []
   end
 
   # i18n-tasks-use t('sentinel.conversation.initial_chat_message')
