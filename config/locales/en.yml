@@ -1,6 +1,10 @@
 ---
 en:
   sentinel:
+    agent_invocations:
+      errors:
+        available_model_tools:
+          too_short: must have at least 1 tool
     common:
       send: Send
       there_was_an_error_generating_this_response: There was an error generating this response

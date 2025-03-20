@@ -94,7 +94,7 @@ RSpec.describe Raif::Conversation, type: :model do
           }
           Example Usage:
           {
-            "name": "test_tool",
+            "name": "test_model",
             "arguments": [
               {
                 "title": "foo",

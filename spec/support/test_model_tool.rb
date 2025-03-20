@@ -10,7 +10,7 @@ class Raif::TestModelTool < Raif::ModelTool
 
   def self.example_model_invocation
     {
-      "name": "test_tool",
+      "name": "test_model",
       "arguments": [{ "title": "foo", "description": "bar" }]
     }
   end
