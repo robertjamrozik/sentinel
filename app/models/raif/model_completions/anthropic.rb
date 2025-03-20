@@ -25,20 +25,11 @@ class Raif::ModelCompletions::Anthropic < Raif::ModelCompletion
     resp = ::Anthropic.messages.create(**params)
 
     # Process the response based on format
-    if response_format_json?
+    self.raw_response = if response_format_json?
       # Extract the JSON content from the tool response
-      tool_name = "json_response"
-      tool_response = resp.body&.dig(:content)&.find do |content|
-        content[:type] == "tool_use" && content[:name] == tool_name
-      end
-
-      self.raw_response = if tool_response
-        JSON.generate(tool_response[:input])
-      else
-        extract_text_response(resp)
-      end
+      extract_json_response(resp)
     else
-      self.raw_response = extract_text_response(resp)
+      extract_text_response(resp)
     end
 
     self.completion_tokens = resp.body&.dig(:usage, :output_tokens)
@@ -81,5 +72,21 @@ private
 
   def extract_text_response(resp)
     resp.body&.dig(:content)&.first&.dig(:text)
+  end
+
+  def extract_json_response(resp)
+    return extract_text_response(resp) if resp.body&.dig(:content).nil?
+
+    # Look for tool_use blocks in the content array
+    tool_name = "json_response"
+    tool_response = resp.body&.dig(:content)&.find do |content|
+      content[:type] == "tool_use" && content[:name] == tool_name
+    end
+
+    if tool_response
+      JSON.generate(tool_response[:input])
+    else
+      extract_text_response(resp)
+    end
   end
 end
