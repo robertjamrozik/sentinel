@@ -15,6 +15,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   enable_extension "pg_catalog.plpgsql"
 
   create_table "sentinel_agent_invocations", force: :cascade do |t|
+    t.string "type", null: false
     t.string "llm_model_key", null: false
     t.text "task"
     t.text "system_prompt"
