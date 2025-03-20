@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe "Conversation interface", type: :feature do
   let(:creator) { FB.create(:sentinel_test_user) }
 
-  fit "displays the conversation interface", js: true do
+  it "displays the conversation interface", js: true do
     stub_sentinel_conversation(Raif::Conversation) do |_messages|
       {
         message: "I'm great how are you?"
