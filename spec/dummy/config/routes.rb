@@ -14,6 +14,8 @@ Rails.application.routes.draw do
   # Chat routes
   get "chat" => "chat#index", as: :chat
 
+  resources :agent_runs, only: [:create, :index]
+
   # Mount the Raif engine
   mount Raif::Engine, at: "/sentinel"
 end

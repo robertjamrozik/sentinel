@@ -123,9 +123,9 @@ module Raif
     end
 
     def add_conversation_history_entry(entry)
-      conversation_history << entry.stringify_keys
-
-      on_conversation_history_entry.call(self, entry) if on_conversation_history_entry.present?
+      entry_stringified = entry.stringify_keys
+      conversation_history << entry_stringified
+      on_conversation_history_entry.call(self, entry_stringified) if on_conversation_history_entry.present?
     end
 
   end
