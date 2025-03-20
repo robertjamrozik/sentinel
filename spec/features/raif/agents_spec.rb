@@ -70,22 +70,19 @@ RSpec.describe "Agent features", type: :feature do
           "url" => "https://en.wikipedia.org/wiki/Jimmy_Buffett",
           "title" => "Jimmy Buffett",
           "page_id" => 166768,
-          "snippet" =>
-               "Wikiquote Official website <span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett</span> at AllMusic <span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett</span> discography at Discogs <span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett</span> at IMDb &quot;<span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett</span>&quot; entry at the Encyclopedia"
+          "snippet" => "Wikiquote Official website <span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett</span> at AllMusic <span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett</span> discography at Discogs <span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett</span> at IMDb &quot;<span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett</span>&quot; entry at the Encyclopedia" # rubocop:disable Layout/LineLength
         },
         {
           "url" => "https://en.wikipedia.org/wiki/Jimmy_Buffett_discography",
           "title" => "Jimmy Buffett discography",
           "page_id" => 11593393,
-          "snippet" =>
-          "singer-songwriter <span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett</span> consists of 32 studio albums, 11 compilations albums, 14 live albums, one soundtrack album, and 67 singles. <span class=\"searchmatch\">Buffett</span> was known"
+          "snippet" => "singer-songwriter <span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett</span> consists of 32 studio albums, 11 compilations albums, 14 live albums, one soundtrack album, and 67 singles. <span class=\"searchmatch\">Buffett</span> was known" # rubocop:disable Layout/LineLength
         },
         {
           "url" => "https://en.wikipedia.org/wiki/Jimmy_Buffett's_Margaritaville",
           "title" => "Jimmy Buffett's Margaritaville",
           "page_id" => 2342489,
-          "snippet" =>
-          "<span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett&#039;s</span> Margaritaville is a United States–based hospitality company that manages and franchises a casual dining American restaurant chain, retail" # rubocop:disable Layout/LineLength
+          "snippet" => "<span class=\"searchmatch\">Jimmy</span> <span class=\"searchmatch\">Buffett&#039;s</span> Margaritaville is a United States–based hospitality company that manages and franchises a casual dining American restaurant chain, retail" # rubocop:disable Layout/LineLength
         },
         {
           "url" => "https://en.wikipedia.org/wiki/Volcano_(Jimmy_Buffett_album)",

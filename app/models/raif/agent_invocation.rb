@@ -20,7 +20,7 @@ module Raif
     validates :max_iterations, presence: true, numericality: { greater_than: 0 }
     validates :available_model_tools, length: {
       minimum: 1,
-      message: ->(object, data) {
+      message: ->(_object, _data) {
         I18n.t("sentinel.agent_invocations.errors.available_model_tools.too_short")
       }
     }
