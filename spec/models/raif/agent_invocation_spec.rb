@@ -24,6 +24,8 @@ RSpec.describe Raif::AgentInvocation, type: :model do
         max_iterations: 5,
         available_model_tools: [Raif::TestModelTool]
       )
+
+      allow(invocation).to receive(:build_system_prompt).and_return(nil)
       expect(invocation).not_to be_valid
       expect(invocation.errors[:system_prompt]).to include("can't be blank")
     end
@@ -257,7 +259,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
         }
         Example Usage:
         {
-          "name": "test_tool",
+          "name": "test_model",
           "arguments": [
             {
               "title": "foo",
@@ -347,7 +349,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
           }
           Example Usage:
           {
-            "name": "test_tool",
+            "name": "test_model",
             "arguments": [
               {
                 "title": "foo",

@@ -25,6 +25,7 @@ module Raif
       }
     }
 
+    before_validation -> { self.system_prompt ||= build_system_prompt }, on: :create
     before_validation ->{ self.type ||= "Raif::AgentInvocation" }, on: :create
 
     attr_accessor :on_conversation_history_entry
@@ -50,7 +51,6 @@ module Raif
     def run!(&block)
       self.on_conversation_history_entry = block_given? ? block : nil
       self.started_at = Time.current
-      self.system_prompt = build_system_prompt
       save!
 
       add_conversation_history_entry({ role: "user", content: task })
