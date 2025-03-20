@@ -16,9 +16,9 @@ module Raif
         say "\nYou can now implement your model tool in:"
         say "  app/models/sentinel/model_tools/#{file_name}.rb"
         say "\nImportant methods to implement:"
-        say "  - example_model_invocation: Example of how to invoke this tool"
-        say "  - tool_arguments_schema: JSON schema for the tool's arguments"
-        say "  - tool_description: A brief description of what the tool does"
+        say "  - example_model_invocation: An example of how to invoke the tool, to be provided to the LLM"
+        say "  - tool_arguments_schema: JSON schema for validating arguments when the tool is invoked"
+        say "  - tool_description: A brief description of what the tool does, to be provided to the LLM"
         say "  - process_invocation: The main method that executes the tool's functionality"
       end
 
