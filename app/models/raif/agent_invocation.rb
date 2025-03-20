@@ -33,8 +33,8 @@ module Raif
     # Runs the agent and returns a Raif::AgentInvocation.
     # If a block is given, it will be called each time a new entry is added to the agent's conversation history.
     # The block will receive the Raif::AgentInvocation and the new entry as arguments:
-    # agent = Raif::AgentInvocation.new(task: task, tools: [Raif::ModelTools::WikipediaSearchTool, Raif::ModelTools::FetchUrlTool], creator: creator)
-    # agent.run! do |agent_invocation, conversation_history_entry|
+    # agent_invocation = Raif::AgentInvocation.new(task: task, tools: [Raif::ModelTools::WikipediaSearchTool, Raif::ModelTools::FetchUrlTool], creator: creator)
+    # agent_invocation.run! do |conversation_history_entry|
     #   Turbo::StreamsChannel.broadcast_append_to(
     #     :my_agent_channel,
     #     target: "agent-progress",
@@ -142,7 +142,7 @@ module Raif
     def add_conversation_history_entry(entry)
       entry_stringified = entry.stringify_keys
       conversation_history << entry_stringified
-      on_conversation_history_entry.call(self, entry_stringified) if on_conversation_history_entry.present?
+      on_conversation_history_entry.call(entry_stringified) if on_conversation_history_entry.present?
     end
 
     def build_system_prompt

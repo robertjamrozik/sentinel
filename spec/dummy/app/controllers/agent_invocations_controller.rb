@@ -6,13 +6,13 @@ class AgentInvocationsController < ApplicationController
   end
 
   def create
-    agent = Raif::AgentInvocation.new(
+    agent_invocation = Raif::AgentInvocation.new(
       task: params[:task],
       available_model_tools: [Raif::ModelTools::WikipediaSearchTool, Raif::ModelTools::FetchUrlTool],
       creator: current_user
     )
 
-    agent.run! do |agent_invocation, conversation_history_entry|
+    agent_invocation.run! do |conversation_history_entry|
       Turbo::StreamsChannel.broadcast_append_to(
         :agent_invocations,
         target: "agent-progress",
