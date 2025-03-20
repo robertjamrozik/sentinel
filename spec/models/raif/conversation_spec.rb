@@ -71,7 +71,7 @@ RSpec.describe Raif::Conversation, type: :model do
 
           # Available Tools
           You have access to the following tools:
-          Name: test_model
+          Name: test_model_tool
           Description: Mock Tool Description
           Arguments Schema:
           {
@@ -94,7 +94,7 @@ RSpec.describe Raif::Conversation, type: :model do
           }
           Example Usage:
           {
-            "name": "test_model",
+            "name": "test_model_tool",
             "arguments": [
               {
                 "title": "foo",

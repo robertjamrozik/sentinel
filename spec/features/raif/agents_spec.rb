@@ -56,13 +56,12 @@ RSpec.describe "Agent features", type: :feature do
     expect(ai.failed_at).to be_nil
     expect(ai.failure_reason).to be_nil
     expect(ai.final_answer).to eq("Jimmy Buffett was born on December 25, 1946.")
-    expect(ai.available_model_tools).to eq(["Raif::ModelTools::WikipediaSearchTool", "Raif::ModelTools::FetchUrlTool"])
+    expect(ai.available_model_tools).to eq(["Raif::ModelTools::WikipediaSearch", "Raif::ModelTools::FetchUrl"])
     expect(ai.iteration_count).to eq(4)
 
     expect(ai.sentinel_model_tool_invocations.length).to eq(2)
-    mti = ai.sentinel_model_tool_invocations.first
+    mti = ai.sentinel_model_tool_invocations.find_by(tool_type: "Raif::ModelTools::WikipediaSearch")
     expect(mti.tool_name).to eq("wikipedia_search")
-    expect(mti.tool_type).to eq("Raif::ModelTools::WikipediaSearchTool")
     expect(mti.tool_arguments).to eq({ "query" => "Jimmy Buffett" })
     expect(mti.result).to eq({
       "results" => [
@@ -101,9 +100,8 @@ RSpec.describe "Agent features", type: :feature do
       ]
     })
 
-    mti2 = ai.sentinel_model_tool_invocations.second
+    mti2 = ai.sentinel_model_tool_invocations.find_by(tool_type: "Raif::ModelTools::FetchUrl")
     expect(mti2.tool_name).to eq("fetch_url")
-    expect(mti2.tool_type).to eq("Raif::ModelTools::FetchUrlTool")
     expect(mti2.tool_arguments).to eq({ "url" => "https://en.wikipedia.org/wiki/Jimmy_Buffett" })
     expect(mti2.result["status"]).to eq(200)
 

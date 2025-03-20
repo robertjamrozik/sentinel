@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class Raif::ModelTools::WikipediaSearchTool < Raif::ModelTool
+class Raif::ModelTools::WikipediaSearch < Raif::ModelTool
 
   def self.example_model_invocation
     {
-      "name": "wikipedia_search",
+      "name": tool_name,
       "arguments": { "query": "Jimmy Buffett" }
     }
   end

@@ -67,7 +67,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
         task: "What is the capital of France?",
         system_prompt: "You are a helpful assistant.",
         max_iterations: 3,
-        available_model_tools: [Raif::ModelTools::WikipediaSearchTool, Raif::ModelTools::FetchUrlTool],
+        available_model_tools: [Raif::ModelTools::WikipediaSearch, Raif::ModelTools::FetchUrl],
         llm_model_key: "open_ai_gpt_4o"
       )
     end
@@ -145,7 +145,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
         expect(invocation.sentinel_model_tool_invocations.length).to eq(1)
         mti = invocation.sentinel_model_tool_invocations.first
         expect(mti.tool_name).to eq("wikipedia_search")
-        expect(mti.tool_type).to eq("Raif::ModelTools::WikipediaSearchTool")
+        expect(mti.tool_type).to eq("Raif::ModelTools::WikipediaSearch")
         expect(mti.tool_arguments).to eq({ "query" => "capital of France" })
 
         expect(mti.result).to eq({
@@ -199,7 +199,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
 
     it "processes a valid action with an available tool" do
       action = {
-        "tool" => "test_model",
+        "tool" => "test_model_tool",
         "arguments" => [{ "title" => "foo", "description" => "bar" }]
       }
 
@@ -219,14 +219,14 @@ RSpec.describe Raif::AgentInvocation, type: :model do
       invocation.process_action(action)
 
       expect(invocation.conversation_history).to include(
-        { "role" => "user", "content" => include("Error: Tool 'unavailable_tool' not found. Available tools: test_model") }
+        { "role" => "user", "content" => include("Error: Tool 'unavailable_tool' not found. Available tools: test_model_tool") }
       )
     end
   end
 
   describe "#build_system_prompt" do
     let(:task) { "What is the capital of France?" }
-    let(:tools) { [Raif::TestModelTool, Raif::ModelTools::WikipediaSearchTool] }
+    let(:tools) { [Raif::TestModelTool, Raif::ModelTools::WikipediaSearch] }
     let(:agent_invocation) { described_class.new(task: task, available_model_tools: tools, creator: creator) }
     let(:system_prompt) { agent_invocation.build_system_prompt }
 
@@ -236,7 +236,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
 
         # Available Tools
         You have access to the following tools:
-        Name: test_model
+        Name: test_model_tool
         Description: Mock Tool Description
         Arguments Schema:
         {
@@ -259,7 +259,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
         }
         Example Usage:
         {
-          "name": "test_model",
+          "name": "test_model_tool",
           "arguments": [
             {
               "title": "foo",
@@ -326,7 +326,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
 
           # Available Tools
           You have access to the following tools:
-          Name: test_model
+          Name: test_model_tool
           Description: Mock Tool Description
           Arguments Schema:
           {
@@ -349,7 +349,7 @@ RSpec.describe Raif::AgentInvocation, type: :model do
           }
           Example Usage:
           {
-            "name": "test_model",
+            "name": "test_model_tool",
             "arguments": [
               {
                 "title": "foo",
