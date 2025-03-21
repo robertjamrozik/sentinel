@@ -7,6 +7,7 @@ class Raif::ModelCompletions::OpenAi < Raif::ModelCompletion
     parameters = build_chat_parameters
 
     client = OpenAI::Client.new
+
     resp = client.chat(parameters: parameters)
 
     self.raw_response = resp.dig("choices", 0, "message", "content")
@@ -20,8 +21,21 @@ class Raif::ModelCompletions::OpenAi < Raif::ModelCompletion
 private
 
   def build_chat_parameters
-    messages_with_system = if system_prompt
-      [{ "role" => "system", "content" => system_prompt }] + messages
+    formatted_system_prompt = system_prompt.to_s.strip
+
+    # Ensure system prompt ends with a period if not empty
+    unless formatted_system_prompt.empty? || formatted_system_prompt.end_with?(".", "?", "!")
+      formatted_system_prompt += "."
+    end
+
+    # If the response format is JSON, we need to include "as json" in the system prompt.
+    # OpenAI requires this and will throw an error if it's not included.
+    if response_format_json? && !formatted_system_prompt.empty?
+      formatted_system_prompt += " Return your response as json."
+    end
+
+    messages_with_system = if !formatted_system_prompt.empty?
+      [{ "role" => "system", "content" => formatted_system_prompt }] + messages
     else
       messages
     end
@@ -29,7 +43,7 @@ private
     parameters = {
       model: model_api_name,
       messages: messages_with_system,
-      temperature: temperature.to_f,
+      temperature: temperature.to_f
     }
 
     # Add response format if needed
@@ -43,22 +57,44 @@ private
     # Only configure response format for JSON outputs
     return unless response_format_json?
 
-    # Use json_schema when we have a schema available
-    if source&.respond_to?(:json_response_schema) && supports_structured_outputs?
-      # We have a schema available - use json_schema
+    schema = if source&.respond_to?(:json_response_schema)
+      # Use the source's schema if available
+      source.json_response_schema
+    else
       {
-        type: "json_schema",
-        json_schema: source.json_response_schema
+        type: "object",
+        properties: {
+          response: {
+            type: "string",
+            description: "The complete response text"
+          }
+        },
+        required: ["response"],
+        additionalProperties: false,
+        description: "Return a single text response containing your complete answer"
+      }
+    end
+
+    if supports_structured_outputs?
+      {
+        "type" => "json_schema",
+        "json_schema" =>
+      {
+        name: "json_response",
+        schema: schema,
+        strict: true
+      }
       }
     else
-      # Default JSON mode for all OpenAI models
-      { type: "json_object" }
+      # Default JSON mode for OpenAI models that don't support structured outputs
+      { "type" => "json_object" }
     end
   end
 
   def supports_structured_outputs?
     # Not all OpenAI models support structured outputs:
     # https://platform.openai.com/docs/guides/structured-outputs?api-mode=chat#supported-models
-    true
+    # Structured Outputs with response_format: {type: "json_schema", ...} is only supported with the gpt-4o-mini, gpt-4o-mini-2024-07-18, and gpt-4o-2024-08-06 model snapshots and later. # rubocop:disable Layout/LineLength
+    %w[gpt-4o-mini gpt-4o-mini-2024-07-18 gpt-4o gpt-4o-2024-08-06 gpt-4o-2024-11-20].include?(model_api_name)
   end
 end

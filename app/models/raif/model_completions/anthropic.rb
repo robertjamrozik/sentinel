@@ -48,7 +48,6 @@ private
       # Use the source's schema if available
       source.json_response_schema
     else
-      # Improved default schema with a single response property
       {
         type: "object",
         properties: {
