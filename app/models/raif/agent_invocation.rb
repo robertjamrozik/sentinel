@@ -10,6 +10,9 @@ module Raif
 
     has_many :sentinel_model_completions, as: :source, dependent: :destroy, class_name: "Raif::ModelCompletion"
 
+    after_initialize -> { self.available_model_tools ||= [] }
+    after_initialize -> { self.conversation_history ||= [] }
+
     boolean_timestamp :started_at
     boolean_timestamp :completed_at
     boolean_timestamp :failed_at

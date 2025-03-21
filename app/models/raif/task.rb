@@ -17,6 +17,8 @@ module Raif
 
     normalizes :prompt, :system_prompt, with: ->(text){ text&.strip }
 
+    after_initialize -> { self.available_model_tools ||= [] }
+
     def self.llm_response_format(format)
       raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
 

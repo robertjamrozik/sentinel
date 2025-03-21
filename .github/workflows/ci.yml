@@ -24,9 +24,8 @@ jobs:
       - name: Erb Lint
         run: bundle exec erb_lint --lint-all
 
-  test:
+  test-postgres:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:16
@@ -64,6 +63,63 @@ jobs:
 
       - name: Set up database
         run: bin/rails app:db:prepare
+
+      - name: Run tests
+        run: bundle exec rspec
+
+  test-mysql:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: mysql2://127.0.0.1:3306
+
+    steps:
+      - name: Install packages
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential default-libmysqlclient-dev git libyaml-dev pkg-config google-chrome-stable
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby-3.4.2
+          bundler-cache: true
+
+      - name: Update database.yml for MySQL
+        run: |
+          cat > spec/dummy/config/database.yml << EOL
+          default: &default
+            adapter: mysql2
+            encoding: utf8mb4
+            pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+            username: root
+            password:
+            socket: /tmp/mysql.sock
+
+          development:
+            <<: *default
+            database: sentinel_dummy_development
+
+          test:
+            <<: *default
+            database: sentinel_dummy_test
+          EOL
+
+      - name: Create database
+        run: bin/rails app:db:create 
+
+      - name: Run Migrations 
+        run: bin/rails app:db:migrate:reset
 
       - name: Run tests
         run: bundle exec rspec
