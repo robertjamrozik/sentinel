@@ -116,7 +116,7 @@ jobs:
           EOL
 
       - name: Set up database
-        run: bin/rails app:db:prepare
+        run: bin/rails app:db:create app:db:migrate:reset
 
       - name: Run tests
         run: bundle exec rspec
