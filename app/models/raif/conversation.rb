@@ -3,6 +3,7 @@
 class Raif::Conversation < Raif::ApplicationRecord
   include Raif::Concerns::HasLlm
   include Raif::Concerns::HasRequestedLanguage
+  include Raif::Concerns::InvokesModelTools
 
   belongs_to :creator, polymorphic: true
 
@@ -19,7 +20,7 @@ class Raif::Conversation < Raif::ApplicationRecord
 
       # Available Tools
       You have access to the following tools:
-      #{available_model_tools.map(&:description_for_llm).join("\n---\n")}
+      #{available_model_tools_map.values.map(&:description_for_llm).join("\n---\n")}
       # Tool Usage
       To utilize a tool, include a tool object in your JSON response with the name of the tool you want to use and the arguments for that tool. An example response that invokes a tool:
       {
