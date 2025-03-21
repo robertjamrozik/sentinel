@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class Raif::ModelCompletions::Anthropic < Raif::ModelCompletion
-  def prompt_model_for_response!
-    self.temperature ||= 0.7
+class Raif::ModelCompletions::Anthropic < Raif::ModelCompletions::AnthropicBase
+protected
 
+  def build_api_parameters
     params = {
       model: model_api_name,
       messages: messages,
@@ -16,57 +16,22 @@ class Raif::ModelCompletions::Anthropic < Raif::ModelCompletion
     # Handle JSON response formats
     if response_format_json?
       # Create a tool for structured JSON output
-      json_tool = create_json_tool
-
+      json_tool = format_json_tool(create_json_tool)
       params[:tools] = [json_tool]
       # params[:tool_choice] = { type: "tool", name: json_tool[:name] }
     end
 
-    resp = ::Anthropic.messages.create(**params)
+    params
+  end
 
-    # Process the response based on format
-    self.raw_response = if response_format_json?
-      # Extract the JSON content from the tool response
-      extract_json_response(resp)
-    else
-      extract_text_response(resp)
-    end
+  def make_api_call(params)
+    ::Anthropic.messages.create(**params)
+  end
 
+  def extract_token_usage(resp)
     self.completion_tokens = resp.body&.dig(:usage, :output_tokens)
     self.prompt_tokens = resp.body&.dig(:usage, :input_tokens)
     self.total_tokens = completion_tokens.present? && prompt_tokens.present? ? completion_tokens + prompt_tokens : nil
-
-    save!
-  end
-
-private
-
-  def create_json_tool
-    tool_name = "json_response"
-
-    schema = if source&.respond_to?(:json_response_schema)
-      # Use the source's schema if available
-      source.json_response_schema
-    else
-      {
-        type: "object",
-        properties: {
-          response: {
-            type: "string",
-            description: "The complete response text"
-          }
-        },
-        required: ["response"],
-        additionalProperties: false,
-        description: "Return a single text response containing your complete answer"
-      }
-    end
-
-    {
-      name: tool_name,
-      description: "Generate a structured JSON response based on the provided schema.",
-      input_schema: schema
-    }
   end
 
   def extract_text_response(resp)
@@ -87,5 +52,15 @@ private
     else
       extract_text_response(resp)
     end
+  end
+
+private
+
+  def format_json_tool(tool_base)
+    {
+      name: tool_base[:name],
+      description: tool_base[:description],
+      input_schema: tool_base[:schema]
+    }
   end
 end

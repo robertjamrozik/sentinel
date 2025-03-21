@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-class Raif::ModelCompletions::BedrockClaude < Raif::ModelCompletion
-
+class Raif::ModelCompletions::BedrockClaude < Raif::ModelCompletions::AnthropicBase
   def formatted_messages
     messages.map(&:symbolize_keys).map do |message|
       {
@@ -11,77 +10,57 @@ class Raif::ModelCompletions::BedrockClaude < Raif::ModelCompletion
     end
   end
 
-  def prompt_model_for_response!
-    self.temperature ||= 0.7
-    self.max_completion_tokens ||= 8192
+protected
 
-    converse_params = {
+  def build_api_parameters
+    params = {
       model_id: model_api_name,
-      inference_config: { max_tokens: max_completion_tokens },
+      inference_config: { max_tokens: max_completion_tokens || 8192 },
       messages: formatted_messages
     }
-    converse_params[:system] = [{ text: system_prompt }] if system_prompt.present?
+
+    params[:system] = [{ text: system_prompt }] if system_prompt.present?
 
     # Handle JSON response formats
     if response_format_json?
-      json_tool = create_json_tool
-      converse_params[:tool_config] = {
+      json_tool = format_json_tool(create_json_tool)
+      params[:tool_config] = {
         tools: [{ tool_spec: json_tool }],
         tool_choice: { tool: { name: json_tool[:name] } }
       }
     end
 
+    params
+  end
+
+  def make_api_call(params)
     client = Aws::BedrockRuntime::Client.new(region: Raif.config.aws_bedrock_region)
-    resp = client.converse(converse_params)
+    client.converse(params)
+  end
 
-    message = resp.output.message
-
-    # Process the response based on format
-    self.raw_response = if response_format_json?
-      extract_json_response(message)
-    else
-      extract_text_response(message)
-    end
-
+  def extract_token_usage(resp)
     self.completion_tokens = resp.usage.output_tokens
     self.prompt_tokens = resp.usage.input_tokens
     self.total_tokens = resp.usage.total_tokens
-
-    save!
   end
 
-private
+  def extract_text_response(resp)
+    # Get the message from the response object
+    message = resp.output.message
 
-  def create_json_tool
-    tool_name = "json_response"
-
-    schema = if source&.respond_to?(:json_response_schema)
-      # Use the source's schema if available
-      source.json_response_schema
-    else
-      {
-        type: "object",
-        properties: {
-          response: {
-            type: "string",
-            description: "The complete response text"
-          }
-        },
-        required: ["response"],
-        additionalProperties: false,
-        description: "Return a single text response containing your complete answer"
-      }
+    # Find the first text content block
+    text_block = message.content&.find do |content|
+      content.respond_to?(:text) && content.text.present?
     end
 
-    {
-      name: tool_name,
-      description: "Generate a structured JSON response based on the provided schema.",
-      input_schema: { json: schema }
-    }
+    text_block&.text
   end
 
-  def extract_json_response(message)
-    return extract_text_response(message) if message.content.nil?
+  def extract_json_response(resp)
+    # Get the message from the response object
+    message = resp.output.message
+
+    return extract_text_response(resp) if message.content.nil?
 
     # Look for tool_use blocks in the content array
     tool_response = message.content.find do |content|
@@ -91,16 +70,17 @@ private
     if tool_response&.tool_use
       JSON.generate(tool_response.tool_use.input)
     else
-      extract_text_response(message)
+      extract_text_response(resp)
     end
   end
 
-  def extract_text_response(message)
-    # Find the first text content block
-    text_block = message.content&.find do |content|
-      content.respond_to?(:text) && content.text.present?
-    end
+private
 
-    text_block&.text
+  def format_json_tool(tool_base)
+    {
+      name: tool_base[:name],
+      description: tool_base[:description],
+      input_schema: { json: tool_base[:schema] }
+    }
   end
 end

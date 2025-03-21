@@ -191,7 +191,7 @@ RSpec.describe Raif::ModelCompletions::Anthropic, type: :model do
       end
 
       it "creates a tool with default schema" do
-        tool = model_completion.send(:create_json_tool)
+        tool = model_completion.send(:format_json_tool, model_completion.send(:create_json_tool))
 
         expect(tool[:name]).to eq("json_response")
         expect(tool[:description]).to eq("Generate a structured JSON response based on the provided schema.")
@@ -236,7 +236,7 @@ RSpec.describe Raif::ModelCompletions::Anthropic, type: :model do
       end
 
       it "creates a tool with schema from source" do
-        tool = model_completion.send(:create_json_tool)
+        tool = model_completion.send(:format_json_tool, model_completion.send(:create_json_tool))
 
         expect(tool[:name]).to eq("json_response")
         expect(tool[:description]).to eq("Generate a structured JSON response based on the provided schema.")

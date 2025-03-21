@@ -255,7 +255,7 @@ RSpec.describe Raif::ModelCompletions::BedrockClaude, type: :model do
       end
 
       it "creates a tool with default schema" do
-        tool = model_completion.send(:create_json_tool)
+        tool = model_completion.send(:format_json_tool, model_completion.send(:create_json_tool))
 
         expect(tool[:name]).to eq("json_response")
         expect(tool[:description]).to eq("Generate a structured JSON response based on the provided schema.")
@@ -302,7 +302,7 @@ RSpec.describe Raif::ModelCompletions::BedrockClaude, type: :model do
       end
 
       it "creates a tool with schema from source" do
-        tool = model_completion.send(:create_json_tool)
+        tool = model_completion.send(:format_json_tool, model_completion.send(:create_json_tool))
 
         expect(tool[:name]).to eq("json_response")
         expect(tool[:description]).to eq("Generate a structured JSON response based on the provided schema.")
@@ -321,36 +321,60 @@ RSpec.describe Raif::ModelCompletions::BedrockClaude, type: :model do
     end
 
     context "with valid text response" do
-      let(:message) do
+      let(:response_obj) do
         text_content_block = instance_double("Aws::BedrockRuntime::Types::ContentBlock")
         allow(text_content_block).to receive(:respond_to?).with(:text).and_return(true)
         allow(text_content_block).to receive(:text).and_return("Sample text")
 
-        instance_double(
+        message = instance_double(
           "Aws::BedrockRuntime::Types::Message",
           content: [text_content_block]
+        )
+
+        instance_double(
+          "Aws::BedrockRuntime::Types::ConverseResponse",
+          output: instance_double(
+            "Aws::BedrockRuntime::Types::ConverseOutput",
+            message: message
+          )
         )
       end
 
       it "extracts text from response" do
-        result = model_completion.send(:extract_text_response, message)
+        result = model_completion.send(:extract_text_response, response_obj)
         expect(result).to eq("Sample text")
       end
     end
 
     context "with nil or invalid response" do
-      let(:empty_message) do
-        instance_double("Aws::BedrockRuntime::Types::Message", content: [])
+      let(:empty_response) do
+        empty_message = instance_double("Aws::BedrockRuntime::Types::Message", content: [])
+
+        instance_double(
+          "Aws::BedrockRuntime::Types::ConverseResponse",
+          output: instance_double(
+            "Aws::BedrockRuntime::Types::ConverseOutput",
+            message: empty_message
+          )
+        )
       end
 
       it "returns nil for empty content" do
-        result = model_completion.send(:extract_text_response, empty_message)
+        result = model_completion.send(:extract_text_response, empty_response)
         expect(result).to be_nil
       end
 
       it "returns nil for nil content" do
         nil_message = instance_double("Aws::BedrockRuntime::Types::Message", content: nil)
-        result = model_completion.send(:extract_text_response, nil_message)
+        nil_response = instance_double(
+          "Aws::BedrockRuntime::Types::ConverseResponse",
+          output: instance_double(
+            "Aws::BedrockRuntime::Types::ConverseOutput",
+            message: nil_message
+          )
+        )
+
+        result = model_completion.send(:extract_text_response, nil_response)
         expect(result).to be_nil
       end
     end
@@ -364,7 +388,7 @@ RSpec.describe Raif::ModelCompletions::BedrockClaude, type: :model do
     end
 
     context "with valid tool_use response" do
-      let(:message) do
+      let(:response_obj) do
         tool_use_block = instance_double(
           "Aws::BedrockRuntime::Types::ToolUseBlock",
           tool_use_id: "tooluse_123",
@@ -377,21 +401,29 @@ RSpec.describe Raif::ModelCompletions::BedrockClaude, type: :model do
         allow(tool_content_block).to receive(:tool_use).and_return(tool_use_block)
         allow(tool_content_block).to receive(:respond_to?).with(:text).and_return(false)
 
-        instance_double(
+        message = instance_double(
           "Aws::BedrockRuntime::Types::Message",
           content: [tool_content_block]
+        )
+
+        instance_double(
+          "Aws::BedrockRuntime::Types::ConverseResponse",
+          output: instance_double(
+            "Aws::BedrockRuntime::Types::ConverseOutput",
+            message: message
+          )
         )
       end
 
       it "extracts and formats JSON from tool_use response" do
-        result = model_completion.send(:extract_json_response, message)
+        result = model_completion.send(:extract_json_response, response_obj)
         parsed_result = JSON.parse(result)
         expect(parsed_result).to eq({ "data" => { "value" => 42, "status" => "success" } })
       end
     end
 
     context "with tool_use response having incorrect name" do
-      let(:message) do
+      let(:response_obj) do
         tool_use_block = instance_double(
           "Aws::BedrockRuntime::Types::ToolUseBlock",
           tool_use_id: "tooluse_456",
@@ -402,78 +434,105 @@ RSpec.describe Raif::ModelCompletions::BedrockClaude, type: :model do
         tool_content_block = instance_double("Aws::BedrockRuntime::Types::ContentBlock::ToolUse")
         allow(tool_content_block).to receive(:respond_to?).with(:tool_use).and_return(true)
         allow(tool_content_block).to receive(:tool_use).and_return(tool_use_block)
+        allow(tool_content_block).to receive(:respond_to?).with(:text).and_return(false)
 
         text_content_block = instance_double("Aws::BedrockRuntime::Types::ContentBlock")
         allow(text_content_block).to receive(:respond_to?).with(:tool_use).and_return(false)
         allow(text_content_block).to receive(:respond_to?).with(:text).and_return(true)
         allow(text_content_block).to receive(:text).and_return("Fallback text")
 
-        instance_double(
+        message = instance_double(
           "Aws::BedrockRuntime::Types::Message",
           content: [tool_content_block, text_content_block]
+        )
+
+        instance_double(
+          "Aws::BedrockRuntime::Types::ConverseResponse",
+          output: instance_double(
+            "Aws::BedrockRuntime::Types::ConverseOutput",
+            message: message
+          )
         )
       end
 
       it "falls back to text extraction when tool name doesn't match" do
-        allow(model_completion).to receive(:extract_text_response).and_return("Fallback text")
-
-        result = model_completion.send(:extract_json_response, message)
+        result = model_completion.send(:extract_json_response, response_obj)
         expect(result).to eq("Fallback text")
-        expect(model_completion).to have_received(:extract_text_response)
       end
     end
 
     context "with no tool_use response" do
-      let(:message) do
+      let(:response_obj) do
         text_content_block = instance_double("Aws::BedrockRuntime::Types::ContentBlock")
         allow(text_content_block).to receive(:respond_to?).with(:tool_use).and_return(false)
         allow(text_content_block).to receive(:respond_to?).with(:text).and_return(true)
         allow(text_content_block).to receive(:text).and_return("Just regular text")
 
-        instance_double(
+        message = instance_double(
           "Aws::BedrockRuntime::Types::Message",
           content: [text_content_block]
+        )
+
+        instance_double(
+          "Aws::BedrockRuntime::Types::ConverseResponse",
+          output: instance_double(
+            "Aws::BedrockRuntime::Types::ConverseOutput",
+            message: message
+          )
         )
       end
 
       it "falls back to text extraction when no tool_use is present" do
-        allow(model_completion).to receive(:extract_text_response).and_return("Just regular text")
-
-        result = model_completion.send(:extract_json_response, message)
+        result = model_completion.send(:extract_json_response, response_obj)
         expect(result).to eq("Just regular text")
-        expect(model_completion).to have_received(:extract_text_response)
       end
     end
 
     context "with empty content array" do
-      let(:message) do
-        instance_double(
+      let(:response_obj) do
+        message = instance_double(
           "Aws::BedrockRuntime::Types::Message",
           content: []
+        )
+
+        instance_double(
+          "Aws::BedrockRuntime::Types::ConverseResponse",
+          output: instance_double(
+            "Aws::BedrockRuntime::Types::ConverseOutput",
+            message: message
+          )
         )
       end
 
       it "falls back to text extraction with empty content" do
         allow(model_completion).to receive(:extract_text_response).and_return(nil)
 
-        result = model_completion.send(:extract_json_response, message)
+        result = model_completion.send(:extract_json_response, response_obj)
         expect(result).to be_nil
         expect(model_completion).to have_received(:extract_text_response)
       end
     end
 
     context "with nil content" do
-      let(:message) do
-        instance_double(
+      let(:response_obj) do
+        message = instance_double(
           "Aws::BedrockRuntime::Types::Message",
           content: nil
+        )
+
+        instance_double(
+          "Aws::BedrockRuntime::Types::ConverseResponse",
+          output: instance_double(
+            "Aws::BedrockRuntime::Types::ConverseOutput",
+            message: message
+          )
         )
       end
 
       it "falls back to text extraction with nil content" do
         allow(model_completion).to receive(:extract_text_response).and_return(nil)
 
-        result = model_completion.send(:extract_json_response, message)
+        result = model_completion.send(:extract_json_response, response_obj)
         expect(result).to be_nil
         expect(model_completion).to have_received(:extract_text_response)
       end

@@ -2,12 +2,10 @@
 
 class Raif::ModelCompletions::OpenAi < Raif::ModelCompletion
   def prompt_model_for_response!
-    self.temperature ||= 0.7
+    self.temperature ||= default_temperature
 
     parameters = build_chat_parameters
-
     client = OpenAI::Client.new
-
     resp = client.chat(parameters: parameters)
 
     self.raw_response = resp.dig("choices", 0, "message", "content")
@@ -61,29 +59,18 @@ private
       # Use the source's schema if available
       source.json_response_schema
     else
-      {
-        type: "object",
-        properties: {
-          response: {
-            type: "string",
-            description: "The complete response text"
-          }
-        },
-        required: ["response"],
-        additionalProperties: false,
-        description: "Return a single text response containing your complete answer"
-      }
+      default_json_response_schema
     end
 
     if supports_structured_outputs?
       {
         "type" => "json_schema",
         "json_schema" =>
-      {
-        name: "json_response",
-        schema: schema,
-        strict: true
-      }
+        {
+          name: "json_response",
+          schema: schema,
+          strict: true
+        }
       }
     else
       # Default JSON mode for OpenAI models that don't support structured outputs
@@ -94,7 +81,6 @@ private
   def supports_structured_outputs?
     # Not all OpenAI models support structured outputs:
     # https://platform.openai.com/docs/guides/structured-outputs?api-mode=chat#supported-models
-    # Structured Outputs with response_format: {type: "json_schema", ...} is only supported with the gpt-4o-mini, gpt-4o-mini-2024-07-18, and gpt-4o-2024-08-06 model snapshots and later. # rubocop:disable Layout/LineLength
     %w[gpt-4o-mini gpt-4o-mini-2024-07-18 gpt-4o gpt-4o-2024-08-06 gpt-4o-2024-11-20].include?(model_api_name)
   end
 end
