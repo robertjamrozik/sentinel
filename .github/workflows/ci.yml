@@ -102,8 +102,8 @@ jobs:
             encoding: utf8mb4
             pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
             username: root
-            password: password
-            host: localhost
+            password:
+            socket: /tmp/mysql.sock
 
           development:
             <<: *default
