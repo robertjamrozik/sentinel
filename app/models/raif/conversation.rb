@@ -77,7 +77,7 @@ class Raif::Conversation < Raif::ApplicationRecord
   def llm_messages
     messages = []
 
-    entries.each do |entry|
+    entries.oldest_first.each do |entry|
       messages << { "role" => "user", "content" => entry.user_message }
       messages << { "role" => "assistant", "content" => entry.model_response_message } if entry.completed?
     end
