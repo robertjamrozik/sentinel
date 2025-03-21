@@ -14,7 +14,7 @@ class Raif::ModelToolInvocation < Raif::ApplicationRecord
   boolean_timestamp :failed_at
 
   def tool
-    @tool ||= tool_type.constantize.new
+    @tool ||= tool_type.constantize
   end
 
   def to_partial_path

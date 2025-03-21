@@ -35,8 +35,8 @@ class Raif::ModelTool
     raise NotImplementedError, "#{self.class.name}#process_invocation is not implemented"
   end
 
-  def invocation_partial_name
-    self.class.name.gsub("Raif::ModelTools::", "").underscore
+  def self.invocation_partial_name
+    name.gsub("Raif::ModelTools::", "").underscore
   end
 
   def self.clean_tool_arguments(tool_arguments)
@@ -48,7 +48,7 @@ class Raif::ModelTool
     raise NotImplementedError, "#{self.class.name}#tool_arguments_schema is not implemented"
   end
 
-  def renderable?
+  def self.renderable?
     true
   end
 
