@@ -115,8 +115,11 @@ jobs:
             database: sentinel_dummy_test
           EOL
 
-      - name: Set up database
-        run: bin/rails app:db:create app:db:migrate:reset
+      - name: Create database
+        run: bin/rails app:db:create 
+
+      - name: Run Migrations 
+        run: bin/rails app:db:migrate:reset
 
       - name: Run tests
         run: bundle exec rspec
