@@ -28,7 +28,7 @@ class Raif::ModelTools::WikipediaSearch < Raif::ModelTool
     JSON.pretty_generate(tool_invocation.result)
   end
 
-  def process_invocation(tool_invocation)
+  def self.process_invocation(tool_invocation)
     query = tool_invocation.tool_arguments["query"]
 
     conn = Faraday.new(url: "https://en.wikipedia.org/w/api.php")

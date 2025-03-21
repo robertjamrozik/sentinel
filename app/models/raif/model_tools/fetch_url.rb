@@ -32,7 +32,7 @@ class Raif::ModelTools::FetchUrl < Raif::ModelTool
     OBSERVATION
   end
 
-  def process_invocation(tool_invocation)
+  def self.process_invocation(tool_invocation)
     url = tool_invocation.tool_arguments["url"]
     response = Faraday.get(url)
 

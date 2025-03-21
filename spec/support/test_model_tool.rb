@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Raif::TestModelTool < Raif::ModelTool
-  def process_invocation(tool_arguments)
+  def self.process_invocation(tool_arguments)
   end
 
   def self.tool_description
@@ -33,7 +33,7 @@ class Raif::TestModelTool < Raif::ModelTool
     "Mock Observation"
   end
 
-  def clean_tool_arguments(tool_arguments)
+  def self.clean_tool_arguments(tool_arguments)
     return unless tool_arguments.is_a?(Array)
 
     tool_arguments.map do |arg|

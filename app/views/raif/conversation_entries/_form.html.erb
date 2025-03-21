@@ -5,7 +5,7 @@
   <% if conversation_entry.sentinel_user_tool_invocation %>
     <%= hidden_field_tag :user_tool_type, conversation_entry.sentinel_user_tool_invocation.class.name %>
 
-    <%= fields_for :sentinel_user_tool_invocation, conversation_entry.sentinel_user_tool_invocation do |builder| %>
+    <%= f.fields_for :sentinel_user_tool_invocation, conversation_entry.sentinel_user_tool_invocation do |builder| %>
       <%= render "sentinel/user_tool_invocations/form/#{conversation_entry.sentinel_user_tool_invocation.tool_key}_fields", f: builder %>
     <% end %>
   <% end %>

@@ -85,4 +85,8 @@ class Raif::Conversation < Raif::ApplicationRecord
     messages
   end
 
+  def available_user_tool_classes
+    available_user_tools.map(&:constantize)
+  end
+
 end

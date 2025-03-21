@@ -46,17 +46,17 @@ class Raif::ModelTools::<%= class_name %> < Raif::ModelTool
 
   # This method will be called with the arguments provided by the LLM when it 
   # invokes your tool. You can use it to remove invalid keys/values. 
-  # def clean_tool_arguments(tool_arguments)
+  # def self.clean_tool_arguments(tool_arguments)
   #  # Optional: Clean or validate the tool arguments before processing
   #  # By default, we return them as-is
   #  tool_arguments
-  #end
+  # end
 
   # When the LLM invokes your tool, this method will be called with a `Raif::ModelToolInvocation` record as an argument.
   # It should handle the actual execution of the tool. 
   # For example, if you are implementing a GoogleSearch tool, this method should run the actual search
   # and store the results on the tool_invocation record.
-  def process_invocation(tool_invocation)
+  def self.process_invocation(tool_invocation)
     # Extract arguments from tool_invocation.tool_arguments
     # query = tool_invocation.tool_arguments["query"]
     #
