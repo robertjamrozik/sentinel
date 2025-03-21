@@ -10,3 +10,16 @@ development:
 test:
   <<: *default
   database: sentinel_dummy_test
+
+development_mysql: &mysql
+  adapter: mysql2
+  encoding: utf8mb4
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: root
+  password: 
+  host: localhost
+  database: sentinel_dummy_development_mysql
+  
+test_mysql:
+  <<: *mysql
+  database: sentinel_dummy_test_mysql
