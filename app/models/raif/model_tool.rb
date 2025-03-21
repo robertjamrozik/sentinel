@@ -31,15 +31,15 @@ class Raif::ModelTool
     raise NotImplementedError, "#{self.class.name}#example_model_invocation is not implemented"
   end
 
-  def process_invocation(invocation)
+  def self.process_invocation(invocation)
     raise NotImplementedError, "#{self.class.name}#process_invocation is not implemented"
   end
 
-  def invocation_partial_name
-    self.class.name.gsub("Raif::ModelTools::", "").underscore
+  def self.invocation_partial_name
+    name.gsub("Raif::ModelTools::", "").underscore
   end
 
-  def clean_tool_arguments(tool_arguments)
+  def self.clean_tool_arguments(tool_arguments)
     # By default, we do nothing to the tool arguments. Subclasses can override to clean as desired.
     tool_arguments
   end
@@ -48,13 +48,12 @@ class Raif::ModelTool
     raise NotImplementedError, "#{self.class.name}#tool_arguments_schema is not implemented"
   end
 
-  def renderable?
+  def self.renderable?
     true
   end
 
   def self.invoke_tool(tool_arguments:, source:)
-    tool_instance = new
-    tool_arguments = tool_instance.clean_tool_arguments(tool_arguments)
+    tool_arguments = clean_tool_arguments(tool_arguments)
 
     tool_invocation = Raif::ModelToolInvocation.new(
       source: source,
@@ -64,7 +63,7 @@ class Raif::ModelTool
 
     ActiveRecord::Base.transaction do
       tool_invocation.save!
-      tool_instance.process_invocation(tool_invocation)
+      process_invocation(tool_invocation)
       tool_invocation.completed!
     end
 

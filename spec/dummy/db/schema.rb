@@ -22,7 +22,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.text "final_answer"
     t.integer "max_iterations", default: 10, null: false
     t.integer "iteration_count", default: 0, null: false
-    t.jsonb "available_model_tools"
+    t.jsonb "available_model_tools", default: [], null: false
     t.string "creator_type", null: false
     t.bigint "creator_id", null: false
     t.string "requested_language_key"
@@ -58,6 +58,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.bigint "creator_id", null: false
     t.string "requested_language_key"
     t.string "type", null: false
+    t.jsonb "available_model_tools", default: [], null: false
+    t.jsonb "available_user_tools", default: [], null: false
     t.integer "conversation_entries_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -109,7 +111,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.datetime "started_at"
     t.datetime "completed_at"
     t.datetime "failed_at"
-    t.jsonb "available_model_tools"
+    t.jsonb "available_model_tools", default: [], null: false
     t.string "llm_model_key", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -31,7 +31,7 @@ module Raif
     # @param llm_model_key [Symbol, String] Optional key for the LLM model to use. If blank, Raif.config.default_llm_model_key will be used.
     # @param args [Hash] Additional arguments to pass to the instance of the task that is created.
     # @return [Raif::Task, nil] The task instance that was created and run.
-    def self.run(creator:, available_model_tools: nil, llm_model_key: nil, **args)
+    def self.run(creator:, available_model_tools: [], llm_model_key: nil, **args)
       task = new(creator:, llm_model_key:, available_model_tools:, started_at: Time.current, **args)
       task.save!
       task.run
