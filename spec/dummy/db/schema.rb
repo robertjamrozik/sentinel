@@ -58,6 +58,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.bigint "creator_id", null: false
     t.string "requested_language_key"
     t.string "type", null: false
+    t.text "system_prompt"
     t.jsonb "available_model_tools", default: [], null: false
     t.jsonb "available_user_tools", default: [], null: false
     t.integer "conversation_entries_count", default: 0, null: false
