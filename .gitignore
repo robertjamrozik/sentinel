@@ -1,5 +1,4 @@
 /.bundle/
-/doc/
 /log/*.log
 /pkg/
 /tmp/
@@ -8,3 +7,5 @@
 /spec/dummy/tmp/
 /spec/examples.txt
 /node_modules/
+/.yardoc/
+/doc/
