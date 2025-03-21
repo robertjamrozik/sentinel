@@ -15,7 +15,7 @@ module Raif
       end
 
       def create_task_file
-        template "task.rb.tt", File.join("app/models/sentinel/tasks", class_path, "#{file_name}_task.rb")
+        template "task.rb.tt", File.join("app/models/sentinel/tasks", class_path, "#{file_name}.rb")
       end
 
     private

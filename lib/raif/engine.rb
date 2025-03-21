@@ -21,6 +21,12 @@ module Raif
     end
 
     config.after_initialize do
+      ActiveSupport.on_load(:action_view) do
+        include Raif::Shared::ConversationsHelper
+      end
+    end
+
+    config.after_initialize do
       next unless Raif.config.open_ai_models_enabled
 
       require "openai"
@@ -61,6 +67,8 @@ module Raif
 
     config.after_initialize do
       next unless Rails.env.test?
+
+      Raif.config.conversation_types += ["Raif::TestConversation"]
 
       require "#{Raif::Engine.root}/spec/support/test_completion"
       Raif.register_llm(model_completion_type: Raif::ModelCompletions::Test, key: :sentinel_test_llm, api_name: "sentinel-test-llm")

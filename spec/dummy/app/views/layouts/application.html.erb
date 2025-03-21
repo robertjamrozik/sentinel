@@ -18,7 +18,9 @@
     <link rel="apple-touch-icon" href="/icon.png">
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app %>
+    <%= stylesheet_link_tag "application" %>
+    <%= stylesheet_link_tag "sentinel" %>
+    <%= javascript_importmap_tags %>
   </head>
 
   <body>

@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
-class Raif::ModelTools::FetchUrlTool < Raif::ModelTool
+class Raif::ModelTools::FetchUrl < Raif::ModelTool
 
   def self.example_model_invocation
     {
-      "name": "fetch_url",
+      "name": tool_name,
       "arguments": { "url": "https://en.wikipedia.org/wiki/NASA" }
     }
-  end
-
-  def self.tool_description
-    "Fetch a URL and return the page content as markdown"
   end
 
   def self.tool_arguments_schema
@@ -20,6 +16,10 @@ class Raif::ModelTools::FetchUrlTool < Raif::ModelTool
         description: "The URL to fetch"
       }
     }
+  end
+
+  def self.tool_description
+    "Fetch a URL and return the page content as markdown"
   end
 
   def self.observation_for_invocation(tool_invocation)

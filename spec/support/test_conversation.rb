@@ -5,7 +5,7 @@ class Raif::TestConversation < Raif::Conversation
   def available_model_tools
     [
       Raif::TestModelTool,
-      Raif::ModelTools::WikipediaSearchTool
+      Raif::ModelTools::WikipediaSearch
     ]
   end
 

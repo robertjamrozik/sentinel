@@ -5,22 +5,17 @@ module Raif
     include Raif::Concerns::HasLlm
     include Raif::Concerns::HasRequestedLanguage
     include Raif::Concerns::InvokesModelTools
+    include Raif::Concerns::LlmResponseParsing
 
     belongs_to :creator, polymorphic: true
 
     has_one :sentinel_model_completion, as: :source, dependent: :destroy, class_name: "Raif::ModelCompletion"
 
-    enum :response_format, Raif::Llm.valid_response_formats, prefix: true
-
     boolean_timestamp :started_at
     boolean_timestamp :completed_at
     boolean_timestamp :failed_at
 
-    validates :response_format, presence: true, inclusion: { in: response_formats.keys }
-
-    normalizes :prompt, :response, :system_prompt, with: ->(text){ text&.strip }
-
-    delegate :parsed_response, to: :sentinel_model_completion, allow_nil: true
+    normalizes :prompt, :system_prompt, with: ->(text){ text&.strip }
 
     def self.llm_response_format(format)
       raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
@@ -63,9 +58,10 @@ module Raif
 
       populate_prompts
       messages = [{ "role" => "user", "content" => prompt }]
-      self.sentinel_model_completion = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
+      mc = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
+      self.sentinel_model_completion = mc.becomes(Raif::ModelCompletion)
 
-      update(response: sentinel_model_completion.raw_response)
+      update(raw_response: sentinel_model_completion.raw_response)
 
       process_model_tool_invocations
       completed!
