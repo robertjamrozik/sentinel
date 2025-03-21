@@ -1,7 +1,7 @@
 <% if conversation.available_user_tools.any? %>
   <p class="mb-1 fs-10 text-body-tertiary text-opacity-85 fw-semibold"><%= t("sentinel.common.tools") %></p>
   <div class="d-flex mb-2">
-    <% conversation.available_user_tools.each do |tool| %>
+    <% conversation.available_user_tool_classes.each do |tool| %>
       <%= link_to tool.tool_name,
             sentinel.new_conversation_entry_path(conversation, user_tool_type: tool.name),
             class: "btn btn-sm btn-phoenix-secondary rounded-pill fs-10 me-1 mb-1",

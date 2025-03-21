@@ -13,7 +13,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.datetime :started_at
       t.datetime :completed_at
       t.datetime :failed_at
-      t.jsonb :available_model_tools
+      t.jsonb :available_model_tools, default: [], null: false
       t.string :llm_model_key, null: false
 
       t.timestamps
@@ -24,6 +24,8 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.references :creator, polymorphic: true, null: false, index: true
       t.string :requested_language_key
       t.string :type, null: false
+      t.jsonb :available_model_tools, default: [], null: false
+      t.jsonb :available_user_tools, default: [], null: false
       t.integer :conversation_entries_count, default: 0, null: false
 
       t.timestamps
@@ -69,7 +71,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.text :final_answer
       t.integer :max_iterations, default: 10, null: false
       t.integer :iteration_count, default: 0, null: false
-      t.jsonb :available_model_tools
+      t.jsonb :available_model_tools, default: [], null: false
       t.references :creator, polymorphic: true, null: false, index: true
       t.string :requested_language_key
       t.datetime :started_at
