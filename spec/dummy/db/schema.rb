@@ -22,7 +22,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.text "final_answer"
     t.integer "max_iterations", default: 10, null: false
     t.integer "iteration_count", default: 0, null: false
-    t.jsonb "available_model_tools", default: [], null: false
+    t.jsonb "available_model_tools", null: false
     t.string "creator_type", null: false
     t.bigint "creator_id", null: false
     t.string "requested_language_key"
@@ -30,7 +30,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.datetime "completed_at"
     t.datetime "failed_at"
     t.text "failure_reason"
-    t.jsonb "conversation_history", default: [], null: false
+    t.jsonb "conversation_history", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["creator_type", "creator_id"], name: "index_sentinel_agent_invocations_on_creator"
@@ -59,8 +59,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.string "requested_language_key"
     t.string "type", null: false
     t.text "system_prompt"
-    t.jsonb "available_model_tools", default: [], null: false
-    t.jsonb "available_user_tools", default: [], null: false
+    t.jsonb "available_model_tools", null: false
+    t.jsonb "available_user_tools", null: false
     t.integer "conversation_entries_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -73,7 +73,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.bigint "source_id"
     t.string "llm_model_key", null: false
     t.string "model_api_name", null: false
-    t.jsonb "messages", default: [], null: false
+    t.jsonb "messages", null: false
     t.text "system_prompt"
     t.integer "response_format", default: 0, null: false
     t.decimal "temperature", precision: 5, scale: 3
@@ -91,8 +91,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.string "source_type", null: false
     t.bigint "source_id", null: false
     t.string "tool_type", null: false
-    t.jsonb "tool_arguments", default: {}, null: false
-    t.jsonb "result", default: {}, null: false
+    t.jsonb "tool_arguments", null: false
+    t.jsonb "result", null: false
     t.datetime "completed_at"
     t.datetime "failed_at"
     t.datetime "created_at", null: false
@@ -112,7 +112,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.datetime "started_at"
     t.datetime "completed_at"
     t.datetime "failed_at"
-    t.jsonb "available_model_tools", default: [], null: false
+    t.jsonb "available_model_tools", null: false
     t.string "llm_model_key", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -129,7 +129,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   create_table "sentinel_user_tool_invocations", force: :cascade do |t|
     t.bigint "sentinel_conversation_entry_id", null: false
     t.string "type", null: false
-    t.jsonb "tool_settings", default: {}, null: false
+    t.jsonb "tool_settings", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["sentinel_conversation_entry_id"], name: "index_sentinel_user_tool_invocations_on_sentinel_conversation_entry_id"

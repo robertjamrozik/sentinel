@@ -3,6 +3,8 @@
 class Raif::UserToolInvocation < Raif::ApplicationRecord
   belongs_to :sentinel_conversation_entry, class_name: "Raif::ConversationEntry"
 
+  after_initialize -> { self.tool_settings ||= {} }
+
   delegate :tool_name, :tool_key, to: :class
 
   def message_input_placeholder

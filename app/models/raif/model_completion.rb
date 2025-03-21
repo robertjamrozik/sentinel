@@ -9,6 +9,8 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
   validates :model_api_name, presence: true
   validates :type, presence: true
 
+  after_initialize -> { self.messages ||= [] }
+
   # Triggers the call to the LLM to get the response. Must be implemented by llm provider-specific subclasses.
   def prompt_model_for_response!
     raise NotImplementedError, "Raif::ModelCompletion subclasses must implement #prompt_model_for_response!"
