@@ -79,7 +79,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     env:
-      RAILS_ENV: test_mysql
+      RAILS_ENV: test
 
     steps:
       - name: Install packages
@@ -93,6 +93,26 @@ jobs:
         with:
           ruby-version: ruby-3.4.2
           bundler-cache: true
+
+      - name: Update database.yml for MySQL
+        run: |
+          cat > spec/dummy/config/database.yml << EOL
+          default: &default
+            adapter: mysql2
+            encoding: utf8mb4
+            pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+            username: root
+            password: password
+            host: localhost
+
+          development:
+            <<: *default
+            database: sentinel_dummy_development
+
+          test:
+            <<: *default
+            database: sentinel_dummy_test
+          EOL
 
       - name: Set up database
         run: bin/rails app:db:prepare

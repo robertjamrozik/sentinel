@@ -19,7 +19,3 @@ development_mysql: &mysql
   password: 
   host: localhost
   database: sentinel_dummy_development_mysql
-  
-test_mysql:
-  <<: *mysql
-  database: sentinel_dummy_test_mysql
