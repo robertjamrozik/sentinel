@@ -36,7 +36,7 @@ RSpec.describe Raif::Conversation, type: :model do
 
     it "includes language preference if specified" do
       conversation.requested_language_key = "es"
-      expect(conversation.system_prompt.strip).to end_with("You're collaborating with teammate who speaks Spanish. Please respond in Spanish.")
+      expect(conversation.build_system_prompt.strip).to end_with("You're collaborating with teammate who speaks Spanish. Please respond in Spanish.")
     end
 
     context "when no tools are available" do
@@ -54,7 +54,7 @@ RSpec.describe Raif::Conversation, type: :model do
           - **Always** respond with a single, valid JSON object containing at minimum a "message" field, and optionally a "tool" field.
         PROMPT
 
-        expect(conversation.system_prompt.strip).to eq(prompt)
+        expect(conversation.build_system_prompt.strip).to eq(prompt)
       end
     end
 
@@ -136,7 +136,7 @@ RSpec.describe Raif::Conversation, type: :model do
           - **Always** respond with a single, valid JSON object containing at minimum a "message" field, and optionally a "tool" field.
         PROMPT
 
-        expect(test_conversation.system_prompt.strip).to eq(prompt)
+        expect(test_conversation.build_system_prompt.strip).to eq(prompt)
       end
     end
   end
