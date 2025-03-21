@@ -136,6 +136,7 @@ RSpec.describe Raif::Conversation, type: :model do
           - **Always** respond with a single, valid JSON object containing at minimum a "message" field, and optionally a "tool" field.
         PROMPT
 
+        test_conversation.populate_available_model_tools
         expect(test_conversation.build_system_prompt.strip).to eq(prompt)
       end
     end
