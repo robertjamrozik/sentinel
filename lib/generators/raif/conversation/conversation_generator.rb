@@ -18,10 +18,7 @@ module Raif
       def success_message
         say_status :success, "Conversation subclass created successfully", :green
         say "\nYou can now implement your conversation subclass in:"
-        say "  app/models/sentinel/conversations/#{file_name}.rb"
-        say "\nImportant methods to customize:"
-        say "  - build_system_prompt: Customize the system prompt for this conversation type"
-        say "  - initial_chat_message: Set the initial message shown to the user"
+        say "  app/models/sentinel/conversations/#{file_name}.rb\n\n"
       end
     end
   end
