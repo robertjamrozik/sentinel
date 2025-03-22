@@ -19,6 +19,8 @@ module Raif
         say_status :success, "Conversation subclass created successfully", :green
         say "\nYou can now implement your conversation subclass in:"
         say "  app/models/sentinel/conversations/#{file_name}.rb\n\n"
+        say "\nDon't forget to add it to the config.conversation_types in your Raif configuration"
+        say "For example: config.conversation_types += ['Raif::Conversations::#{class_name}']\n\n"
       end
     end
   end

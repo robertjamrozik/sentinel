@@ -153,9 +153,13 @@ module Raif
       on_conversation_history_entry.call(entry_stringified) if on_conversation_history_entry.present?
     end
 
+    def system_prompt_intro
+      Raif.config.agent_system_prompt_intro
+    end
+
     def build_system_prompt
       <<~PROMPT
-        #{Raif.config.agent_system_prompt_intro}
+        #{system_prompt_intro}
 
         # Available Tools
         You have access to the following tools:
