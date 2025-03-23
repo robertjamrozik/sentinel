@@ -22,7 +22,7 @@ protected
     params[:system] = [{ text: system_prompt }] if system_prompt.present?
 
     # Handle JSON response formats
-    if response_format_json?
+    if response_format_json? && source&.respond_to?(:json_response_schema)
       json_tool = format_json_tool(create_json_tool)
       params[:tool_config] = {
         tools: [{ tool_spec: json_tool }],

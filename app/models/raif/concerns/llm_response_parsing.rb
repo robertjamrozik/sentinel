@@ -20,7 +20,8 @@ module Raif::Concerns::LlmResponseParsing
     return if raw_response.blank?
 
     @parsed_response ||= if response_format_json?
-      JSON.parse(raw_response)
+      json = raw_response.gsub("```json", "").gsub("```", "")
+      JSON.parse(json, symbolize_names: true)
     elsif response_format_html?
       html = raw_response.strip.gsub("```html", "").chomp("```")
       clean_html_fragment(html)

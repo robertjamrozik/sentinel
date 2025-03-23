@@ -14,7 +14,7 @@ protected
     params[:system] = system_prompt if system_prompt
 
     # Handle JSON response formats
-    if response_format_json?
+    if response_format_json? && source&.respond_to?(:json_response_schema)
       # Create a tool for structured JSON output
       json_tool = format_json_tool(create_json_tool)
       params[:tools] = [json_tool]

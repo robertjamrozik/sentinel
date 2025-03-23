@@ -48,19 +48,10 @@ protected
   # Common method for creating JSON tool structure.
   # Subclasses may need to format the tool differently.
   def create_json_tool
-    tool_name = "json_response"
-
-    schema = if source&.respond_to?(:json_response_schema)
-      # Use the source's schema if available
-      source.json_response_schema
-    else
-      default_json_response_schema
-    end
-
     {
-      name: tool_name,
+      name: "json_response",
       description: "Generate a structured JSON response based on the provided schema.",
-      schema: schema
+      schema: source.json_response_schema
     }
   end
 end

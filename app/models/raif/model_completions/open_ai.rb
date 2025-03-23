@@ -5,7 +5,9 @@ class Raif::ModelCompletions::OpenAi < Raif::ModelCompletion
     self.temperature ||= default_temperature
 
     parameters = build_chat_parameters
+
     client = OpenAI::Client.new
+
     resp = client.chat(parameters: parameters)
 
     self.raw_response = resp.dig("choices", 0, "message", "content")
@@ -54,20 +56,13 @@ private
     # Only configure response format for JSON outputs
     return unless response_format_json?
 
-    schema = if source&.respond_to?(:json_response_schema)
-      # Use the source's schema if available
-      source.json_response_schema
-    else
-      default_json_response_schema
-    end
-
-    if supports_structured_outputs?
+    if source&.respond_to?(:json_response_schema) && supports_structured_outputs?
       {
         "type" => "json_schema",
         "json_schema" =>
         {
           name: "json_response",
-          schema: schema,
+          schema: source.json_response_schema,
           strict: true
         }
       }
