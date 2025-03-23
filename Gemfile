@@ -7,6 +7,7 @@ gemspec
 
 gem "puma"
 gem "pg"
+gem "mysql2"
 gem "guard-rspec", require: false
 gem "factory_bot_rails"
 gem "debug", platforms: [:mri]
@@ -20,3 +21,4 @@ gem "importmap-rails"
 gem "stimulus-rails"
 gem "cuprite"
 gem "webmock"
+gem "yard"

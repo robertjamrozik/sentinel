@@ -1,17 +1,15 @@
-<div class="d-flex chat-message">
-  <div class="d-flex mb-2 flex-1">
-    <div class="d-flex w-100 <%= "justify-content-end" if message_type == :user %>">
-      <% if message_type == :model_response %>
-        <%= render "sentinel/conversation_entries/model_response_avatar", conversation_entry: local_assigns[:conversation_entry] %>
-      <% end %>
+<div class="d-flex mb-2 chat-message">
+  <div class="d-flex w-100 <%= "justify-content-end" if message_type == :user %>">
+    <% if message_type == :model_response %>
+      <%= render "sentinel/conversation_entries/model_response_avatar", conversation_entry: local_assigns[:conversation_entry] %>
+    <% end %>
 
-      <div class="mb-1 rounded-2 p-3 <%= message_type == :user ? "bg-primary text-white" : "border" %>">
-        <%= simple_format content %>
-      </div>
-
-      <% if message_type == :user %>
-        <%= render "sentinel/conversation_entries/user_avatar", conversation_entry: local_assigns[:conversation_entry] %>
-      <% end %>
+    <div class="mb-1 rounded-2 p-3 <%= message_type == :user ? "bg-primary text-white" : "border" %>">
+      <%= simple_format content %>
     </div>
+
+    <% if message_type == :user %>
+      <%= render "sentinel/conversation_entries/user_avatar", conversation_entry: local_assigns[:conversation_entry] %>
+    <% end %>
   </div>
 </div>

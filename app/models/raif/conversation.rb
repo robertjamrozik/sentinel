@@ -11,7 +11,11 @@ class Raif::Conversation < Raif::ApplicationRecord
 
   validates :type, inclusion: { in: ->{ Raif.config.conversation_types } }
 
+  after_initialize -> { self.available_model_tools ||= [] }
+  after_initialize -> { self.available_user_tools ||= [] }
+
   before_validation ->{ self.type ||= "Raif::Conversation" }, on: :create
+  before_validation -> { self.system_prompt ||= build_system_prompt }, on: :create
 
   def tool_usage_system_prompt
     return if available_model_tools.empty?
@@ -33,7 +37,7 @@ class Raif::Conversation < Raif::ApplicationRecord
     PROMPT
   end
 
-  def system_prompt
+  def build_system_prompt
     <<~PROMPT
       #{system_prompt_intro}
 

@@ -5,6 +5,9 @@ require "json-schema"
 class Raif::ModelToolInvocation < Raif::ApplicationRecord
   belongs_to :source, polymorphic: true
 
+  after_initialize -> { self.tool_arguments ||= {} }
+  after_initialize -> { self.result ||= {} }
+
   validates :tool_type, presence: true
   validate :ensure_valid_tool_argument_schema, if: -> { tool_type.present? && tool_arguments_schema.present? }
 

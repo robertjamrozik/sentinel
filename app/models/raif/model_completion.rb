@@ -12,6 +12,8 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
 
   before_save :set_total_tokens
 
+  after_initialize -> { self.messages ||= [] }
+
 protected
 
   def default_temperature

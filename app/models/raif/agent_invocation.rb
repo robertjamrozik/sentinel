@@ -10,6 +10,9 @@ module Raif
 
     has_many :sentinel_model_completions, as: :source, dependent: :destroy, class_name: "Raif::ModelCompletion"
 
+    after_initialize -> { self.available_model_tools ||= [] }
+    after_initialize -> { self.conversation_history ||= [] }
+
     boolean_timestamp :started_at
     boolean_timestamp :completed_at
     boolean_timestamp :failed_at
@@ -150,9 +153,13 @@ module Raif
       on_conversation_history_entry.call(entry_stringified) if on_conversation_history_entry.present?
     end
 
+    def system_prompt_intro
+      Raif.config.agent_system_prompt_intro
+    end
+
     def build_system_prompt
       <<~PROMPT
-        #{Raif.config.agent_system_prompt_intro}
+        #{system_prompt_intro}
 
         # Available Tools
         You have access to the following tools:
