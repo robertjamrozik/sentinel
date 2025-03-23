@@ -8,19 +8,18 @@ module Raif
       :api_name,
       :default_temperature,
       :default_max_completion_tokens,
-      :model_completion_type
+      :provider_settings
 
     validates :key, presence: true
     validates :api_name, presence: true
-    validates :model_completion_type, presence: true
 
     VALID_RESPONSE_FORMATS = [:text, :json, :html].freeze
 
-    def initialize(key:, api_name:, model_completion_type:, temperature: nil, max_completion_tokens: nil)
+    def initialize(key:, api_name:, model_provider_settings: {}, temperature: nil, max_completion_tokens: nil)
       @key = key
       @api_name = api_name
-      @model_completion_type = model_completion_type
-      @default_temperature = temperature
+      @provider_settings = model_provider_settings
+      @default_temperature = temperature || 0.7
       @default_max_completion_tokens = max_completion_tokens
     end
 
@@ -56,7 +55,7 @@ module Raif
       temperature ||= default_temperature
       max_completion_tokens ||= default_max_completion_tokens
 
-      model_completion = model_completion_type.new(
+      model_completion = Raif::ModelCompletion.new(
         messages: messages,
         system_prompt: system_prompt,
         response_format: response_format,
@@ -67,13 +66,12 @@ module Raif
         max_completion_tokens: max_completion_tokens
       )
 
-      before_model_completion_prompt_hook(model_completion)
-      model_completion.prompt_model_for_response!
+      perform_model_completion!(model_completion)
       model_completion
     end
 
-    def before_model_completion_prompt_hook(model_completion)
-      # no-op
+    def perform_model_completion!(model_completion)
+      raise NotImplementedError, "Raif::Llm subclasses must implement #perform_model_completion!"
     end
 
     def self.valid_response_formats

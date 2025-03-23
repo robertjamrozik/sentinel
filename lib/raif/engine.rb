@@ -35,8 +35,8 @@ module Raif
         config.access_token = Raif.config.open_ai_api_key
       end
 
-      Raif.default_llms[Raif::ModelCompletions::OpenAi].each do |llm_config|
-        Raif.register_llm(model_completion_type: Raif::ModelCompletions::OpenAi, **llm_config)
+      Raif.default_llms[Raif::Llms::OpenAi].each do |llm_config|
+        Raif.register_llm(Raif::Llms::OpenAi, **llm_config)
       end
     end
 
@@ -49,8 +49,8 @@ module Raif
         config.api_key = Raif.config.anthropic_api_key
       end
 
-      Raif.default_llms[Raif::ModelCompletions::Anthropic].each do |llm_config|
-        Raif.register_llm(model_completion_type: Raif::ModelCompletions::Anthropic, **llm_config)
+      Raif.default_llms[Raif::Llms::Anthropic].each do |llm_config|
+        Raif.register_llm(Raif::Llms::Anthropic, **llm_config)
       end
     end
 
@@ -60,8 +60,8 @@ module Raif
       require "aws-sdk-bedrock"
       require "aws-sdk-bedrockruntime"
 
-      Raif.default_llms[Raif::ModelCompletions::BedrockClaude].each do |llm_config|
-        Raif.register_llm(model_completion_type: Raif::ModelCompletions::BedrockClaude, **llm_config)
+      Raif.default_llms[Raif::Llms::BedrockClaude].each do |llm_config|
+        Raif.register_llm(Raif::Llms::BedrockClaude, **llm_config)
       end
     end
 
@@ -70,8 +70,8 @@ module Raif
 
       Raif.config.conversation_types += ["Raif::TestConversation"]
 
-      require "#{Raif::Engine.root}/spec/support/test_completion"
-      Raif.register_llm(model_completion_type: Raif::ModelCompletions::Test, key: :sentinel_test_llm, api_name: "sentinel-test-llm")
+      require "#{Raif::Engine.root}/spec/support/test_llm"
+      Raif.register_llm(Raif::Llms::Test, key: :sentinel_test_llm, api_name: "sentinel-test-llm")
     end
 
     config.after_initialize do

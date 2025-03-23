@@ -67,7 +67,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   end
 
   create_table "sentinel_model_completions", force: :cascade do |t|
-    t.string "type", null: false
     t.string "source_type"
     t.bigint "source_id"
     t.string "llm_model_key", null: false

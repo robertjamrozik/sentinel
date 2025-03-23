@@ -84,7 +84,6 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
     end
 
     create_table :sentinel_model_completions do |t|
-      t.string :type, null: false
       t.references :source, polymorphic: true, index: true
       t.string :llm_model_key, null: false
       t.string :model_api_name, null: false

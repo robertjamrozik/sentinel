@@ -5,9 +5,7 @@ module Raif
 
     def stub_sentinel_task(task_class, &block)
       test_llm = Raif.llm(:sentinel_test_llm)
-      allow(test_llm).to receive(:before_model_completion_prompt_hook) do |model_completion|
-        model_completion.chat_handler = block
-      end
+      test_llm.chat_handler = block
 
       allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
       allow_any_instance_of(task_class).to receive(:llm){ test_llm }
@@ -15,9 +13,7 @@ module Raif
 
     def stub_sentinel_conversation(conversation, &block)
       test_llm = Raif.llm(:sentinel_test_llm)
-      allow(test_llm).to receive(:before_model_completion_prompt_hook) do |model_completion|
-        model_completion.chat_handler = block
-      end
+      test_llm.chat_handler = block
 
       allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
 
@@ -30,9 +26,7 @@ module Raif
 
     def stub_sentinel_agent_invocation(agent_invocation, &block)
       test_llm = Raif.llm(:sentinel_test_llm)
-      allow(test_llm).to receive(:before_model_completion_prompt_hook) do |model_completion|
-        model_completion.chat_handler = block
-      end
+      test_llm.chat_handler = block
 
       allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
 
@@ -44,13 +38,9 @@ module Raif
     end
 
     def stub_sentinel_llm(llm, &block)
-      allow(test_llm).to receive(:before_model_completion_prompt_hook) do |model_completion|
-        model_completion.chat_handler = block
-      end
-
+      llm.chat_handler = block
       allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
-
-      test_llm
+      llm
     end
 
   end
