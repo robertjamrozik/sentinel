@@ -6,6 +6,7 @@ module Raif
     include Raif::Concerns::HasRequestedLanguage
     include Raif::Concerns::InvokesModelTools
     include Raif::Concerns::LlmResponseParsing
+    # include Structify::Model
 
     belongs_to :creator, polymorphic: true
 
