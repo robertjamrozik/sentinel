@@ -21,15 +21,14 @@ private
   def build_chat_parameters
     formatted_system_prompt = system_prompt.to_s.strip
 
-    # Ensure system prompt ends with a period if not empty
-    unless formatted_system_prompt.empty? || formatted_system_prompt.end_with?(".", "?", "!")
-      formatted_system_prompt += "."
-    end
-
     # If the response format is JSON, we need to include "as json" in the system prompt.
     # OpenAI requires this and will throw an error if it's not included.
-    if response_format_json? && !formatted_system_prompt.empty?
-      formatted_system_prompt += " Return your response as json."
+    if response_format_json?
+      # Ensure system prompt ends with a period if not empty
+      if formatted_system_prompt.present? && !formatted_system_prompt.end_with?(".", "?", "!")
+        formatted_system_prompt += "."
+      end
+      formatted_system_prompt += " Return your response as JSON."
     end
 
     messages_with_system = if !formatted_system_prompt.empty?
