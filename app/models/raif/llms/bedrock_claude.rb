@@ -9,6 +9,10 @@ protected
   end
 
   def perform_model_completion!(model_completion)
+    if Raif.config.aws_bedrock_model_name_prefix.present?
+      model_completion.model_api_name = "#{Raif.config.aws_bedrock_model_name_prefix}.#{model_completion.model_api_name}"
+    end
+
     params = build_api_parameters(model_completion)
     resp = bedrock_client.converse(params)
 
@@ -37,7 +41,7 @@ protected
 
   def build_api_parameters(model_completion)
     params = {
-      model_id: api_name,
+      model_id: model_completion.model_api_name,
       inference_config: { max_tokens: model_completion.max_completion_tokens || 8192 },
       messages: format_messages(model_completion.messages)
     }
