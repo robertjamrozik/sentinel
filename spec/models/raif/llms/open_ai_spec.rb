@@ -63,34 +63,50 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
   describe "#build_chat_parameters" do
     let(:parameters) { llm.send(:build_chat_parameters, model_completion) }
 
-    context "with system prompt" do
+    context "for text response format" do
       let(:model_completion) do
         Raif::ModelCompletion.new(
           messages: [{ role: "user", content: "Hello" }],
-          system_prompt: "You are a helpful assistant",
           llm_model_key: "open_ai_gpt_4o",
           model_api_name: "gpt-4o",
-          temperature: 0.5,
-          response_format: "text"
+          temperature: 0.8,
+          response_format: "text",
+          system_prompt: system_prompt
         )
       end
 
-      it "includes system prompt in the parameters" do
-        expect(parameters[:model]).to eq("gpt-4o")
-        expect(parameters[:temperature]).to eq(0.5)
-        expect(parameters[:messages]).to contain_exactly(
-          { "role" => "system", "content" => "You are a helpful assistant" },
-          { "role" => "user", "content" => "Hello" }
-        )
-        expect(parameters[:response_format]).to be_nil
+      context "with system prompt" do
+        let(:system_prompt) { "You are a helpful assistant" }
+
+        it "includes system prompt in the parameters" do
+          expect(parameters[:model]).to eq("gpt-4o")
+          expect(parameters[:temperature]).to eq(0.8)
+          expect(parameters[:messages]).to contain_exactly(
+            { "role" => "system", "content" => "You are a helpful assistant" },
+            { "role" => "user", "content" => "Hello" }
+          )
+          expect(parameters[:response_format]).to be_nil
+        end
+      end
+
+      context "without system prompt" do
+        let(:system_prompt) { nil }
+
+        it "builds parameters without system prompt" do
+          expect(parameters[:model]).to eq("gpt-4o")
+          expect(parameters[:temperature]).to eq(0.8)
+          expect(parameters[:messages]).to eq([{ "role" => "user", "content" => "Hello" }])
+          expect(parameters[:response_format]).to be_nil
+        end
       end
     end
 
-    context "with system prompt and JSON response format" do
+    context "for JSON response format" do
+      let(:system_prompt) { "You are a helpful assistant" }
       let(:model_completion) do
         Raif::ModelCompletion.new(
           messages: [{ role: "user", content: "Hello" }],
-          system_prompt: "You are a helpful assistant",
+          system_prompt: system_prompt,
           llm_model_key: "open_ai_gpt_4o",
           model_api_name: "gpt-4o",
           temperature: 0.5,
@@ -98,29 +114,53 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
         )
       end
 
-      it "appends 'Return your response as json.' to the system prompt" do
-        expect(parameters[:messages].first["content"]).to eq(
-          "You are a helpful assistant. Return your response as JSON."
-        )
-      end
-    end
-
-    context "without system prompt" do
-      let(:model_completion) do
-        Raif::ModelCompletion.new(
-          messages: [{ role: "user", content: "Hello" }],
-          llm_model_key: "open_ai_gpt_4o",
-          model_api_name: "gpt-4o",
-          temperature: 0.8,
-          response_format: "text"
-        )
+      context "with existing system prompt" do
+        it "appends 'Return your response as json.' to the system prompt" do
+          message = parameters[:messages].first
+          expect(message["role"]).to eq("system")
+          expect(message["content"]).to eq("You are a helpful assistant. Return your response as JSON.")
+        end
       end
 
-      it "builds parameters without system prompt" do
-        expect(parameters[:model]).to eq("gpt-4o")
-        expect(parameters[:temperature]).to eq(0.8)
-        expect(parameters[:messages]).to eq([{ "role" => "user", "content" => "Hello" }])
-        expect(parameters[:response_format]).to be_nil
+      context "with no existing system prompt" do
+        let(:system_prompt) { nil }
+
+        it "Sets the system prompt to 'Return your response as JSON.'" do
+          message = parameters[:messages].first
+          expect(message["role"]).to eq("system")
+          expect(message["content"]).to eq("Return your response as JSON.")
+        end
+      end
+
+      context "when the model completion has a json_response_schema" do
+        before do
+          model_completion.source = Raif::TestJsonTask.new
+        end
+
+        it "sets the response_format to json_schema" do
+          expect(parameters[:response_format]).to eq({
+            type: "json_schema",
+            json_schema: {
+              name: "json_response_schema",
+              strict: true,
+              schema: {
+                type: "object",
+                required: ["joke"],
+                properties: {
+                  joke: { type: "string" },
+                  answer: { type: "string" }
+                }
+              }
+            }
+          })
+        end
+      end
+
+      context "when the model completion does not have a json_response_schema" do
+        it "sets the response_format to json_object" do
+          expect(model_completion.json_response_schema).to be_nil
+          expect(parameters[:response_format]).to eq({ type: "json_object" })
+        end
       end
     end
   end
@@ -150,17 +190,33 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
 
       it "returns the default json_schema format" do
         expect(model_completion.json_response_schema).to eq(nil)
-        expect(llm.send(:determine_response_format, model_completion)).to eq({
-          "type" => "json_object"
-        })
+        expect(llm.send(:determine_response_format, model_completion)).to eq({ type: "json_object" })
+      end
+    end
+
+    context "with json response format and a model that doesn't support structured outputs" do
+      let(:model_completion) do
+        Raif::ModelCompletion.new(
+          response_format: "json",
+          llm_model_key: "open_ai_gpt_3_5_turbo",
+          model_api_name: "gpt-3.5-turbo"
+        )
+      end
+
+      it "returns json_object type when structured outputs are not supported" do
+        llm = Raif.llm(:open_ai_gpt_3_5_turbo)
+        result = llm.send(:determine_response_format, model_completion)
+        expect(result).to eq({ type: "json_object" })
       end
     end
 
     context "with json format and source with json_response_schema" do
       let(:schema) do
         {
-          "type" => "object",
-          "properties" => { "result" => { "type" => "string" } }
+          type: "object",
+          properties: {
+            result: { type: "string" }
+          }
         }
       end
 
@@ -184,30 +240,13 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
       it "returns json_schema format with schema" do
         result = llm.send(:determine_response_format, model_completion)
         expect(result).to eq({
-          "type" => "json_schema",
-          "json_schema" => {
-            name: "json_response",
-            schema: schema,
-            strict: true
+          type: "json_schema",
+          json_schema: {
+            name: "json_response_schema",
+            strict: true,
+            schema: schema
           }
         })
-      end
-    end
-
-    context "with json response format and supports_structured_outputs? returning false" do
-      let(:model_completion) do
-        Raif::ModelCompletion.new(
-          response_format: "json",
-          llm_model_key: "open_ai_gpt_3_5_turbo",
-          model_api_name: "gpt-3.5-turbo"
-        )
-      end
-
-      it "returns json_object type when structured outputs are not supported" do
-        llm = Raif.llm(:open_ai_gpt_3_5_turbo)
-        result = llm.send(:determine_response_format, model_completion)
-
-        expect(result).to eq({ "type" => "json_object" })
       end
     end
   end

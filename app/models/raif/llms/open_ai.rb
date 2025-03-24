@@ -29,6 +29,7 @@ private
         formatted_system_prompt += "."
       end
       formatted_system_prompt += " Return your response as JSON."
+      formatted_system_prompt.strip!
     end
 
     messages = model_completion.messages
@@ -57,17 +58,16 @@ private
 
     if model_completion.json_response_schema.present? && supports_structured_outputs?
       {
-        "type" => "json_schema",
-        "json_schema" =>
-        {
-          name: "json_response",
-          schema: model_completion.json_response_schema,
-          strict: true
+        type: "json_schema",
+        json_schema: {
+          name: "json_response_schema",
+          strict: true,
+          schema: model_completion.json_response_schema
         }
       }
     else
-      # Default JSON mode for OpenAI models that don't support structured outputs
-      { "type" => "json_object" }
+      # Default JSON mode for OpenAI models that don't support structured outputs or no schema is provided
+      { type: "json_object" }
     end
   end
 

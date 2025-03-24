@@ -13,6 +13,17 @@ end
 class Raif::TestJsonTask < Raif::Task
   llm_response_format :json
 
+  def self.json_response_schema
+    {
+      type: "object",
+      required: ["joke"],
+      properties: {
+        joke: { type: "string" },
+        answer: { type: "string" }
+      }
+    }
+  end
+
   def build_prompt
     "Tell me a joke"
   end

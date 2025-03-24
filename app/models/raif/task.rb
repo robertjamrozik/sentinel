@@ -6,7 +6,6 @@ module Raif
     include Raif::Concerns::HasRequestedLanguage
     include Raif::Concerns::InvokesModelTools
     include Raif::Concerns::LlmResponseParsing
-    # include Structify::Model
 
     belongs_to :creator, polymorphic: true
 
@@ -17,6 +16,8 @@ module Raif
     boolean_timestamp :failed_at
 
     normalizes :prompt, :system_prompt, with: ->(text){ text&.strip }
+
+    delegate :json_response_schema, to: :class
 
     after_initialize -> { self.available_model_tools ||= [] }
 
@@ -87,6 +88,10 @@ module Raif
     # @return [String] The LLM system prompt for the task.
     def self.system_prompt(creator:, **args)
       new(creator:, **args).system_prompt
+    end
+
+    def self.json_response_schema
+      nil
     end
 
   private
