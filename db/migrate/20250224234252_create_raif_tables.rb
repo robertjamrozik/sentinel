@@ -97,6 +97,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.send json_column_type, :messages, null: false
       t.text :system_prompt
       t.integer :response_format, default: 0, null: false
+      t.string :response_format_parameter
       t.decimal :temperature, precision: 5, scale: 3
       t.integer :max_completion_tokens
       t.integer :completion_tokens

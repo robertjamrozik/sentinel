@@ -10,7 +10,8 @@ class Raif::Llms::OpenAi < Raif::Llm
       raw_response: resp.dig("choices", 0, "message", "content"),
       completion_tokens: resp["usage"]["completion_tokens"],
       prompt_tokens: resp["usage"]["prompt_tokens"],
-      total_tokens: resp["usage"]["total_tokens"]
+      total_tokens: resp["usage"]["total_tokens"],
+      response_format_parameter: parameters.dig(:response_format, :type)
     )
 
     model_completion

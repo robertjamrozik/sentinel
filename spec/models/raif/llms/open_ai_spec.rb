@@ -11,52 +11,115 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
   end
 
   describe "#chat" do
-    let(:model_completion) do
-      Raif::ModelCompletion.new(
-        messages: [{ role: "user", content: "Hello" }],
-        llm_model_key: "open_ai_gpt_4o",
-        model_api_name: "gpt-4o",
-        response_format: "text"
-      )
-    end
+    context "when the response format is text" do
+      let(:model_completion) do
+        Raif::ModelCompletion.new(
+          messages: [{ role: "user", content: "Hello" }],
+          llm_model_key: "open_ai_gpt_4o",
+          model_api_name: "gpt-4o",
+          response_format: "text"
+        )
+      end
 
-    let(:response) do
-      {
-        "choices" => [
-          {
-            "message" => {
-              "content" => "Response content"
+      let(:response) do
+        {
+          "choices" => [
+            {
+              "message" => {
+                "content" => "Response content"
+              }
             }
+          ],
+          "usage" => {
+            "completion_tokens" => 10,
+            "prompt_tokens" => 5,
+            "total_tokens" => 15
           }
-        ],
-        "usage" => {
-          "completion_tokens" => 10,
-          "prompt_tokens" => 5,
-          "total_tokens" => 15
         }
-      }
+      end
+
+      before do
+        allow(mock_client).to receive(:chat).and_return(response)
+      end
+
+      it "makes a request to the OpenAI API and processes the response" do
+        model_completion = llm.chat(messages: [{ role: "user", content: "Hello" }], system_prompt: "You are a helpful assistant")
+
+        expect(model_completion.raw_response).to eq("Response content")
+        expect(model_completion.completion_tokens).to eq(10)
+        expect(model_completion.prompt_tokens).to eq(5)
+        expect(model_completion.total_tokens).to eq(15)
+        expect(model_completion).to be_persisted
+        expect(model_completion.messages).to eq([{ "role" => "user", "content" => "Hello" }])
+        expect(model_completion.system_prompt).to eq("You are a helpful assistant")
+        expect(model_completion.temperature).to eq(0.7)
+        expect(model_completion.max_completion_tokens).to eq(nil)
+        expect(model_completion.response_format).to eq("text")
+        expect(model_completion.source).to be_nil
+        expect(model_completion.llm_model_key).to eq("open_ai_gpt_4o")
+        expect(model_completion.model_api_name).to eq("gpt-4o")
+        expect(model_completion.response_format_parameter).to be_nil
+      end
     end
 
-    before do
-      allow(mock_client).to receive(:chat).and_return(response)
-    end
+    context "when the response format is json" do
+      let(:model_completion) do
+        Raif::ModelCompletion.new(
+          messages: [{ role: "user", content: "Hello" }],
+          llm_model_key: "open_ai_gpt_4o",
+          model_api_name: "gpt-4o",
+          response_format: "json"
+        )
+      end
 
-    it "makes a request to the OpenAI API and processes the response" do
-      model_completion = llm.chat(messages: [{ role: "user", content: "Hello" }], system_prompt: "You are a helpful assistant")
+      let(:response) do
+        {
+          "choices" => [
+            {
+              "message" => {
+                "content" => "{\n  \"joke\": \"Why don't scientists trust atoms? Because they make up everything!\"\n}"
+              }
+            }
+          ],
+          "usage" => {
+            "completion_tokens" => 10,
+            "prompt_tokens" => 15,
+            "total_tokens" => 25
+          }
+        }
+      end
 
-      expect(model_completion.raw_response).to eq("Response content")
-      expect(model_completion.completion_tokens).to eq(10)
-      expect(model_completion.prompt_tokens).to eq(5)
-      expect(model_completion.total_tokens).to eq(15)
-      expect(model_completion).to be_persisted
-      expect(model_completion.messages).to eq([{ "role" => "user", "content" => "Hello" }])
-      expect(model_completion.system_prompt).to eq("You are a helpful assistant")
-      expect(model_completion.temperature).to eq(0.7)
-      expect(model_completion.max_completion_tokens).to eq(nil)
-      expect(model_completion.response_format).to eq("text")
-      expect(model_completion.source).to be_nil
-      expect(model_completion.llm_model_key).to eq("open_ai_gpt_4o")
-      expect(model_completion.model_api_name).to eq("gpt-4o")
+      before do
+        allow(mock_client).to receive(:chat).and_return(response)
+      end
+
+      it "makes a request to the OpenAI API and processes the response" do
+        messages = [
+          { role: "user", content: "Hello" },
+          { role: "assistant", content: "Hello! How can I assist you today?" },
+          { role: "user", content: "Can you you tell me a joke?" },
+        ]
+
+        system_prompt = "You are a helpful assistant who specializes in telling jokes. Your response should be a properly formatted JSON object containing a single `joke` key. Do not include any other text in your response outside the JSON object."
+
+        model_completion = llm.chat(messages: messages, response_format: :json, system_prompt: system_prompt)
+
+        expect(model_completion.raw_response).to eq("{\n  \"joke\": \"Why don't scientists trust atoms? Because they make up everything!\"\n}")
+        expect(model_completion.parsed_response).to eq({ "joke" => "Why don't scientists trust atoms? Because they make up everything!" })
+        expect(model_completion.completion_tokens).to eq(10)
+        expect(model_completion.prompt_tokens).to eq(15)
+        expect(model_completion.total_tokens).to eq(25)
+        expect(model_completion).to be_persisted
+        expect(model_completion.messages).to eq(messages.map(&:stringify_keys))
+        expect(model_completion.system_prompt).to eq(system_prompt)
+        expect(model_completion.temperature).to eq(0.7)
+        expect(model_completion.max_completion_tokens).to eq(nil)
+        expect(model_completion.response_format).to eq("json")
+        expect(model_completion.source).to be_nil
+        expect(model_completion.llm_model_key).to eq("open_ai_gpt_4o")
+        expect(model_completion.model_api_name).to eq("gpt-4o")
+        expect(model_completion.response_format_parameter).to eq("json_object")
+      end
     end
   end
 
