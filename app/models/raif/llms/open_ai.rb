@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Raif::Llms::OpenAi < Raif::Llm
+
   def perform_model_completion!(model_completion)
     parameters = build_chat_parameters(model_completion)
 

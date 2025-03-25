@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-class Raif::Llms::Anthropic < Raif::Llms::AnthropicBase
-
-protected
+class Raif::Llms::Anthropic < Raif::Llm
 
   def perform_model_completion!(model_completion)
     params = build_api_parameters(model_completion)
@@ -21,6 +19,8 @@ protected
     model_completion
   end
 
+protected
+
   def build_api_parameters(model_completion)
     params = {
       model: model_completion.model_api_name,
@@ -31,12 +31,9 @@ protected
 
     params[:system] = model_completion.system_prompt if model_completion.system_prompt.present?
 
-    # Handle JSON response formats
+    # If we're looking for a JSON response, add a tool to the request that the model can use to provide a JSON response
     if model_completion.response_format_json? && model_completion.json_response_schema.present?
-      # Create a tool for structured JSON output
-      json_tool = format_json_tool(json_response_tool(schema: model_completion.json_response_schema))
-
-      params[:tools] = [json_tool]
+      params[:tools] = [json_response_tool(schema: model_completion.json_response_schema)]
       # params[:tool_choice] = { type: "tool", name: json_tool[:name] }
     end
 
@@ -65,11 +62,11 @@ protected
 
 private
 
-  def format_json_tool(tool_base)
+  def json_response_tool(schema:)
     {
-      name: tool_base[:name],
-      description: tool_base[:description],
-      input_schema: tool_base[:schema]
+      name: "json_response",
+      description: "Generate a structured JSON response based on the provided schema.",
+      input_schema: schema
     }
   end
 end
