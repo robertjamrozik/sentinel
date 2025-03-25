@@ -16,6 +16,7 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
 
   delegate :available_model_tools, to: :sentinel_conversation
   delegate :system_prompt, :llm_model_key, to: :sentinel_model_completion, allow_nil: true
+  delegate :json_response_schema, to: :class
 
   accepts_nested_attributes_for :sentinel_user_tool_invocation
 
@@ -24,6 +25,17 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   boolean_timestamp :failed_at
 
   before_validation :add_user_tool_invocation_to_user_message, on: :create
+
+  def self.json_response_schema
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["message"],
+      properties: {
+        message: { type: "string" }
+      }
+    }
+  end
 
   def add_user_tool_invocation_to_user_message
     return unless sentinel_user_tool_invocation.present?

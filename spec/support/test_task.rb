@@ -16,6 +16,7 @@ class Raif::TestJsonTask < Raif::Task
   def self.json_response_schema
     {
       type: "object",
+      additionalProperties: false,
       required: ["joke"],
       properties: {
         joke: { type: "string" },
