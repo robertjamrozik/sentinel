@@ -30,17 +30,6 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   normalizes :model_response_message, with: ->(value) { value&.strip }
   normalizes :user_message, with: ->(value) { value&.strip }
 
-  def self.json_response_schema
-    {
-      type: "object",
-      additionalProperties: false,
-      required: ["message"],
-      properties: {
-        message: { type: "string" }
-      }
-    }
-  end
-
   def add_user_tool_invocation_to_user_message
     return unless sentinel_user_tool_invocation.present?
 
@@ -73,7 +62,7 @@ private
   def extract_message_and_invoke_tools!
     transaction do
       self.raw_response = sentinel_model_completion.raw_response
-      self.model_response_message = sentinel_model_completion.parsed_response&.dig("message")
+      self.model_response_message = sentinel_model_completion.parsed_response
       save!
 
       if sentinel_model_completion.response_tool_calls.present?
