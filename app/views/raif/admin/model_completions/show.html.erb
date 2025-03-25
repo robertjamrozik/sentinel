@@ -25,6 +25,10 @@
       <div class="col-md-9"><%= @model_completion.response_format %></div>
     </div>
     <div class="row mb-3">
+      <div class="col-md-3"><strong><%= t("sentinel.admin.common.response_format_parameter") %>:</strong></div>
+      <div class="col-md-9"><%= @model_completion.response_format_parameter %></div>
+    </div>
+    <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.created_at") %>:</strong></div>
       <div class="col-md-9"><%= @model_completion.created_at.rfc822 %></div>
     </div>

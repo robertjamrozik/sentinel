@@ -14,6 +14,10 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
 
   after_initialize -> { self.messages ||= [] }
 
+  def json_response_schema
+    source.json_response_schema if source&.respond_to?(:json_response_schema)
+  end
+
 protected
 
   def default_temperature

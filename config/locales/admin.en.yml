@@ -49,8 +49,9 @@ en:
         raw: Raw
         rendered: Rendered
         requested_language: Requested Language
-        response: Response
+        response_format_parameter: Response Format Parameter
         response_format: Response Format
+        response: Response
         result: Result
         running: Running
         since: Since
