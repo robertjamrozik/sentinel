@@ -23,6 +23,7 @@ Capybara.register_driver(:cuprite) do |app|
   opts = {
     browser_options: browser_options,
     flatten: false,
+    process_timeout: 25,
     window_size: [1440, 900],
     headless: headless,
   }
