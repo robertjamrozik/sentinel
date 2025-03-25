@@ -141,4 +141,25 @@ RSpec.describe Raif::Task, type: :model do
       end
     end
   end
+
+  describe "json_response_schema" do
+    it "returns the json_response_schema when the class defines one" do
+      schema = {
+        type: "object",
+        required: ["joke"],
+        properties: {
+          joke: { type: "string" },
+          answer: { type: "string" }
+        }
+      }
+
+      expect(Raif::TestJsonTask.json_response_schema).to eq(schema)
+      expect(Raif::TestJsonTask.new.json_response_schema).to eq(schema)
+    end
+
+    it "returns nil when the class does not define a json_response_schema" do
+      expect(Raif::TestTask.json_response_schema).to be_nil
+      expect(Raif::TestTask.new.json_response_schema).to be_nil
+    end
+  end
 end

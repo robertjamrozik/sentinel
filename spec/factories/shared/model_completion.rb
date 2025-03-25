@@ -20,10 +20,4 @@ FactoryBot.define do
       raw_response { '<div class="response">This is an HTML response</div>' }
     end
   end
-
-  factory :sentinel_test_model_completion, class: "Raif::ModelCompletions::Test" do
-    llm_model_key { "sentinel_test_llm" }
-    response_format { "text" }
-    raw_response { "Test model response" }
-  end
 end

@@ -120,7 +120,7 @@ RSpec.describe "Admin::AgentInvocations", type: :feature do
     end
 
     let!(:model_completion) do
-      Raif::ModelCompletions::OpenAi.create!(
+      Raif::ModelCompletion.create!(
         source: agent_invocation,
         llm_model_key: "open_ai_gpt_4o",
         model_api_name: "gpt-4o",

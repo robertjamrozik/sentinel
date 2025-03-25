@@ -91,13 +91,13 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
     end
 
     create_table :sentinel_model_completions do |t|
-      t.string :type, null: false
       t.references :source, polymorphic: true, index: true
       t.string :llm_model_key, null: false
       t.string :model_api_name, null: false
       t.send json_column_type, :messages, null: false
       t.text :system_prompt
       t.integer :response_format, default: 0, null: false
+      t.string :response_format_parameter
       t.decimal :temperature, precision: 5, scale: 3
       t.integer :max_completion_tokens
       t.integer :completion_tokens
