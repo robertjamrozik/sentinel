@@ -100,7 +100,7 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
           { role: "user", content: "Can you you tell me a joke?" },
         ]
 
-        system_prompt = "You are a helpful assistant who specializes in telling jokes. Your response should be a properly formatted JSON object containing a single `joke` key. Do not include any other text in your response outside the JSON object."
+        system_prompt = "You are a helpful assistant who specializes in telling jokes. Your response should be a properly formatted JSON object containing a single `joke` key. Do not include any other text in your response outside the JSON object." # rubocop:disable Layout/LineLength
 
         model_completion = llm.chat(messages: messages, response_format: :json, system_prompt: system_prompt)
 
