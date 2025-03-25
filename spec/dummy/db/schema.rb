@@ -82,6 +82,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.integer "completion_tokens"
     t.integer "prompt_tokens"
     t.text "raw_response"
+    t.jsonb "response_tool_calls"
     t.integer "total_tokens"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

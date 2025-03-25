@@ -104,6 +104,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.integer :completion_tokens
       t.integer :prompt_tokens
       t.text :raw_response
+      t.send json_column_type, :response_tool_calls
       t.integer :total_tokens
 
       t.timestamps

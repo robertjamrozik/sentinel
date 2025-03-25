@@ -22,10 +22,6 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
 
 protected
 
-  def default_temperature
-    0.7
-  end
-
   def set_total_tokens
     self.total_tokens ||= completion_tokens.present? && prompt_tokens.present? ? completion_tokens + prompt_tokens : nil
   end
