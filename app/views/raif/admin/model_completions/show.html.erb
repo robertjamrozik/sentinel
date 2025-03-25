@@ -102,3 +102,16 @@
     <% end %>
   </div>
 </div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="mb-0"><%= t("sentinel.admin.common.tool_calls") %></h5>
+  </div>
+  <div class="card-body">
+    <% if @model_completion.response_tool_calls.present? %>
+      <pre class="pre-wrap"><%= JSON.pretty_generate(@model_completion.response_tool_calls) %></pre>
+    <% else %>  
+      <%= t("sentinel.admin.common.no_tool_calls") %>
+    <% end %>
+  </div>
+</div>
