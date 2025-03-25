@@ -3,6 +3,7 @@
 class Raif::Conversation < Raif::ApplicationRecord
   include Raif::Concerns::HasLlm
   include Raif::Concerns::HasRequestedLanguage
+  include Raif::Concerns::HasAvailableModelTools
   include Raif::Concerns::InvokesModelTools
 
   belongs_to :creator, polymorphic: true
@@ -75,7 +76,13 @@ class Raif::Conversation < Raif::ApplicationRecord
   end
 
   def prompt_model_for_entry_response(entry:)
-    llm.chat(messages: llm_messages, source: entry, response_format: :json, system_prompt: system_prompt)
+    llm.chat(
+      messages: llm_messages,
+      source: entry,
+      response_format: :json,
+      system_prompt: system_prompt,
+      available_model_tools: available_model_tools
+    )
   end
 
   def llm_messages
