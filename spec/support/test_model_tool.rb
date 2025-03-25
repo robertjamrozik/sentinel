@@ -40,15 +40,4 @@ class Raif::TestModelTool < Raif::ModelTool
   def self.observation_for_invocation(tool_invocation)
     "Mock Observation"
   end
-
-  def self.clean_tool_arguments(tool_arguments)
-    return unless tool_arguments.is_a?(Array)
-
-    tool_arguments.map do |arg|
-      {
-        "title" => arg["title"],
-        "description" => arg["description"]
-      }
-    end
-  end
 end

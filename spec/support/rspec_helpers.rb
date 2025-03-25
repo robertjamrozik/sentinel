@@ -11,9 +11,10 @@ module Raif
       allow_any_instance_of(task_class).to receive(:llm){ test_llm }
     end
 
-    def stub_sentinel_conversation(conversation, &block)
+    def stub_sentinel_conversation(conversation, response_tool_calls: nil, &block)
       test_llm = Raif.llm(:sentinel_test_llm)
       test_llm.chat_handler = block
+      test_llm.response_tool_calls = response_tool_calls
 
       allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
 

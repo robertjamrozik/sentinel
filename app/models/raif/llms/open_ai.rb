@@ -66,8 +66,8 @@ private
 
     resp.dig("choices", 0, "message", "tool_calls").map do |tool_call|
       {
-        name: tool_call["function"]["name"],
-        arguments: JSON.parse(tool_call["function"]["arguments"])
+        "name" => tool_call["function"]["name"],
+        "arguments" => JSON.parse(tool_call["function"]["arguments"])
       }
     end
   end

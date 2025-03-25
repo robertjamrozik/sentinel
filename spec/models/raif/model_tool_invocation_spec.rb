@@ -15,20 +15,22 @@ RSpec.describe Raif::ModelToolInvocation, type: :model do
       invocation = described_class.new(
         source: FB.build(:sentinel_test_task),
         tool_type: "Raif::TestModelTool",
-        tool_arguments: [{ title: "foo", description: "bar" }]
+        tool_arguments: { "items": [{ "title": "foo", "description": "bar" }] }
       )
       expect(invocation).to be_valid
 
       # Invalid arguments
-      invocation.tool_arguments = [{ foo: "bar" }]
+      invocation.tool_arguments = { "foo": "bar" }
       expect(invocation).not_to be_valid
       expect(invocation.errors[:tool_arguments]).to include("does not match schema")
 
-      invocation.tool_arguments = [{ title: "foo" }]
+      # Missing "description" key"
+      invocation.tool_arguments = { "items": [{ "title": "foo" }] }
       expect(invocation).not_to be_valid
       expect(invocation.errors[:tool_arguments]).to include("does not match schema")
 
-      invocation.tool_arguments = { title: "foo", description: "bar" }
+      # Missing top level "items" object/key
+      invocation.tool_arguments = [{ "title": "foo", "description": "bar" }]
       expect(invocation).not_to be_valid
       expect(invocation.errors[:tool_arguments]).to include("does not match schema")
     end
