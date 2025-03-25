@@ -45,14 +45,14 @@ en:
         no_tool_calls: No tool calls
         pending: Pending
         prettified: Prettified
-        prompt_tokens: Prompt Tokens
         prompt: Prompt
+        prompt_tokens: Prompt Tokens
         raw: Raw
         rendered: Rendered
         requested_language: Requested Language
-        response_format_parameter: Response Format Parameter
-        response_format: Response Format
         response: Response
+        response_format: Response Format
+        response_format_parameter: Response Format Parameter
         result: Result
         running: Running
         since: Since

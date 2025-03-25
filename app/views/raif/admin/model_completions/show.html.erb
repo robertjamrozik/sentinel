@@ -110,7 +110,7 @@
   <div class="card-body">
     <% if @model_completion.response_tool_calls.present? %>
       <pre class="pre-wrap"><%= JSON.pretty_generate(@model_completion.response_tool_calls) %></pre>
-    <% else %>  
+    <% else %>
       <%= t("sentinel.admin.common.no_tool_calls") %>
     <% end %>
   </div>
