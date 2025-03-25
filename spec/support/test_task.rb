@@ -17,7 +17,7 @@ class Raif::TestJsonTask < Raif::Task
     {
       type: "object",
       additionalProperties: false,
-      required: ["joke"],
+      required: ["joke", "answer"],
       properties: {
         joke: { type: "string" },
         answer: { type: "string" }
