@@ -5,10 +5,6 @@ class Raif::Llms::OpenAi < Raif::Llm
   def perform_model_completion!(model_completion)
     parameters = build_chat_parameters(model_completion)
 
-    if parameters.dig(:response_format, :type) == "json_schema"
-      validate_json_response_schema!(parameters.dig(:response_format, :json_schema))
-    end
-
     client = OpenAI::Client.new
     resp = client.chat(parameters: parameters)
 
@@ -21,6 +17,44 @@ class Raif::Llms::OpenAi < Raif::Llm
     )
 
     model_completion
+  end
+
+  def validate_json_schema!(schema)
+    return if schema.blank?
+
+    errors = []
+
+    # Check if schema is present
+    if schema.blank?
+      errors << "JSON schema must include a 'schema' property"
+    else
+      # Check root object type
+      if schema[:type] != "object" && !schema.key?(:properties)
+        errors << "Root schema must be of type 'object' with 'properties'"
+      end
+
+      # Check all objects in the schema recursively
+      validate_object_properties(schema, errors)
+
+      # Check properties count (max 100 total)
+      validate_properties_count(schema, errors)
+
+      # Check nesting depth (max 5 levels)
+      validate_nesting_depth(schema, errors)
+
+      # Check for unsupported anyOf at root level
+      if schema[:anyOf].present? && schema[:properties].blank?
+        errors << "Root objects cannot be of type 'anyOf'"
+      end
+    end
+
+    # Raise error if any validation issues found
+    if errors.any?
+      error_message = "Invalid JSON schema for OpenAI structured outputs: #{errors.join("; ")}"
+      raise Raif::Errors::OpenAi::JsonSchemaError, error_message
+    else
+      true
+    end
   end
 
 private
@@ -64,6 +98,8 @@ private
     return unless model_completion.response_format_json?
 
     if model_completion.json_response_schema.present? && supports_structured_outputs?
+      validate_json_schema!(model_completion.json_response_schema)
+
       {
         type: "json_schema",
         json_schema: {
@@ -84,45 +120,25 @@ private
     provider_settings[:supports_structured_outputs]
   end
 
-  def validate_json_response_schema!(json_schema)
-    return if json_schema.blank?
-
-    schema = json_schema[:schema]
-    errors = []
-
-    # Check if schema is present
-    if schema.blank?
-      errors << "JSON schema must include a 'schema' property"
-    else
-      # Check root object type
-      if schema[:type] != "object" && !schema.key?(:properties)
-        errors << "Root schema must be of type 'object' with 'properties'"
-      end
-
-      # Check all objects in the schema recursively
-      validate_object_properties(schema, errors)
-
-      # Check properties count (max 100 total)
-      validate_properties_count(schema, errors)
-
-      # Check nesting depth (max 5 levels)
-      validate_nesting_depth(schema, errors)
-
-      # Check for unsupported anyOf at root level
-      if schema[:anyOf].present? && schema[:properties].blank?
-        errors << "Root objects cannot be of type 'anyOf'"
-      end
-    end
-
-    # Raise error if any validation issues found
-    if errors.any?
-      error_message = "Invalid JSON schema for OpenAI structured outputs: #{errors.join("; ")}"
-      raise Raif::Errors::OpenAi::JsonSchemaError, error_message
-    end
-  end
-
   def validate_object_properties(schema, errors)
     return unless schema.is_a?(Hash)
+
+    # Check if the current schema is an object and validate additionalProperties and required fields
+    if schema[:type] == "object"
+      if schema[:additionalProperties] != false
+        errors << "All objects must have 'additionalProperties' set to false"
+      end
+
+      # Check that all properties are required
+      if schema[:properties].is_a?(Hash) && schema[:properties].any?
+        property_keys = schema[:properties].keys
+        required_fields = schema[:required] || []
+
+        if required_fields.sort != property_keys.map(&:to_s).sort
+          errors << "All object properties must be listed in the 'required' array"
+        end
+      end
+    end
 
     # Check if the current schema is an object and validate additionalProperties
     if schema[:type] == "object"
