@@ -23,6 +23,7 @@ en:
         entry: Entry
         failed: Failed
         failed_at: Failed At
+        filter: Filter
         final_answer: Final Answer
         id: ID
         in_progress: In Progress
