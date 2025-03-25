@@ -5,9 +5,6 @@ module Raif
     class Test < Raif::Llm
       attr_accessor :chat_handler
 
-      def prompt_model_for_response!
-      end
-
       def perform_model_completion!(model_completion)
         model_completion.raw_response = chat_handler.call(model_completion.messages)
         model_completion.completion_tokens = rand(100..2000)
