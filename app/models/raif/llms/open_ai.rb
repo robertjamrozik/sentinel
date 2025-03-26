@@ -52,7 +52,7 @@ class Raif::Llms::OpenAi < Raif::Llm
 
     # Raise error if any validation issues found
     if errors.any?
-      error_message = "Invalid JSON schema for OpenAI structured outputs: #{errors.join("; ")}"
+      error_message = "Invalid JSON schema for OpenAI structured outputs: #{errors.join("; ")}\nSchema was: #{schema.inspect}"
       raise Raif::Errors::OpenAi::JsonSchemaError, error_message
     else
       true
