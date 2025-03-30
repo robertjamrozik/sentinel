@@ -28,12 +28,12 @@ RSpec.describe "Agent features", type: :feature do
 
   it "runs an agent with tools", js: true do
     i = 0
-    stub_sentinel_agent_invocation(Raif::AgentInvocation) do |_messages|
+    stub_sentinel_agent(Raif::Agent) do |_messages|
       i += 1
       model_response_sequence[i - 1]
     end
 
-    visit agent_invocations_path
+    visit agents_path
 
     fill_in "task", with: "What is Jimmy Buffet's birthday?"
     click_button "Run Agent"
@@ -49,7 +49,7 @@ RSpec.describe "Agent features", type: :feature do
     expect(page).to have_content("assistant: <thought>The fetched Wikipedia page for Jimmy Buffett confirms his birthdate as December 25, 1946.</thought>") # rubocop:disable Layout/LineLength
     expect(page).to have_content("assistant: <answer>Jimmy Buffett was born on December 25, 1946.</answer>")
 
-    ai = Raif::AgentInvocation.last
+    ai = Raif::Agent.last
     expect(ai.task).to eq("What is Jimmy Buffet's birthday?")
     expect(ai.started_at).to be_present
     expect(ai.completed_at).to be_present

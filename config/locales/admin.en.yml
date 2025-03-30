@@ -2,12 +2,12 @@
 en:
   sentinel:
     admin:
-      agent_invocations:
+      agents:
         show:
-          back_to_agent_invocations: Back to Agent Invocations
-          title: 'Agent Invocation #%{id}'
+          back_to_agents: Back to Agents
+          title: 'Agent #%{id}'
       common:
-        agent_invocations: Agent Invocations
+        agents: Agents
         arguments: Arguments
         at: at
         completed: Completed
@@ -37,7 +37,7 @@ en:
         model_completions: Model Completions
         model_response: Model Response
         model_tool_invocations: Model Tool Invocations
-        no_agent_invocations: No agent invocations found.
+        no_agents: No agents found.
         no_conversations: No conversations found.
         no_model_completions: No model completions found.
         no_model_tool_invocations: No model tool invocations found.

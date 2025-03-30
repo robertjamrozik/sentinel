@@ -2,7 +2,7 @@
 
 module Raif
   class Configuration
-    attr_accessor :agent_invocation_types,
+    attr_accessor :agent_types,
       :anthropic_api_key,
       :anthropic_bedrock_models_enabled,
       :anthropic_models_enabled,
@@ -25,7 +25,7 @@ module Raif
 
     def initialize
       # Set default config
-      @agent_invocation_types = Set.new(["Raif::AgentInvocations::ReActAgent", "Raif::AgentInvocations::NativeToolCallingAgent"])
+      @agent_types = Set.new(["Raif::Agents::ReActAgent", "Raif::Agents::NativeToolCallingAgent"])
       @anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
       @anthropic_bedrock_models_enabled = true
       @anthropic_models_enabled = true

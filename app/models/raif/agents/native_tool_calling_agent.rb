@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Raif
-  module AgentInvocations
-    class NativeToolCallingAgent < Raif::AgentInvocation
+  module Agents
+    class NativeToolCallingAgent < Raif::Agent
       validate :ensure_llm_supports_native_tool_use
 
     private
@@ -105,7 +105,7 @@ module Raif
 
       def ensure_llm_supports_native_tool_use
         unless llm.supports_native_tool_use?
-          errors.add(:base, "Raif::AgentInvocation#llm_model_key must use an LLM that supports native tool use")
+          errors.add(:base, "Raif::Agent#llm_model_key must use an LLM that supports native tool use")
         end
       end
 

@@ -33,7 +33,7 @@ class Raif::ModelTools::<%= class_name %> < Raif::ModelTool
     "Description of your tool that will be provided to the LLM so it knows when to invoke it"
   end
 
-  # When your tool is invoked by the LLM in a Raif::AgentInvocation loop, 
+  # When your tool is invoked by the LLM in a Raif::Agent loop, 
   # the results of the tool invocation are provided back to the LLM as an observation.
   # This method should return whatever you want provided to the LLM.
   # For example, if you were implementing a GoogleSearch tool, this might return a JSON

@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between align-items-center my-4">
-  <h1><%= t(".title", id: @agent_invocation.id) %></h1>
-  <%= link_to t(".back_to_agent_invocations"), sentinel.admin_agent_invocations_path, class: "btn btn-outline-secondary" %>
+  <h1><%= t(".title", id: @agent.id) %></h1>
+  <%= link_to t(".back_to_agents"), sentinel.admin_agents_path, class: "btn btn-outline-secondary" %>
 </div>
 
 <div class="card mb-4">
@@ -10,25 +10,25 @@
   <div class="card-body">
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.id") %>:</strong></div>
-      <div class="col-md-9"><%= @agent_invocation.id %></div>
+      <div class="col-md-9"><%= @agent.id %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.created_at") %>:</strong></div>
-      <div class="col-md-9"><%= @agent_invocation.created_at.rfc822 %></div>
+      <div class="col-md-9"><%= @agent.created_at.rfc822 %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.creator") %>:</strong></div>
-      <div class="col-md-9"><%= @agent_invocation.creator_type %> #<%= @agent_invocation.creator_id %></div>
+      <div class="col-md-9"><%= @agent.creator_type %> #<%= @agent.creator_id %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.status") %>:</strong></div>
       <div class="col-md-9">
-        <% if @agent_invocation.completed_at? %>
-          <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span> <%= t("sentinel.admin.common.at") %> <%= @agent_invocation.completed_at.rfc822 %>
-        <% elsif @agent_invocation.failed_at? %>
-          <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span> <%= t("sentinel.admin.common.at") %> <%= @agent_invocation.failed_at.rfc822 %>
-        <% elsif @agent_invocation.started_at? %>
-          <span class="badge bg-warning"><%= t("sentinel.admin.common.running") %></span> <%= t("sentinel.admin.common.since") %> <%= @agent_invocation.started_at.rfc822 %>
+        <% if @agent.completed_at? %>
+          <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span> <%= t("sentinel.admin.common.at") %> <%= @agent.completed_at.rfc822 %>
+        <% elsif @agent.failed_at? %>
+          <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span> <%= t("sentinel.admin.common.at") %> <%= @agent.failed_at.rfc822 %>
+        <% elsif @agent.started_at? %>
+          <span class="badge bg-warning"><%= t("sentinel.admin.common.running") %></span> <%= t("sentinel.admin.common.since") %> <%= @agent.started_at.rfc822 %>
         <% else %>
           <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
         <% end %>
@@ -36,16 +36,16 @@
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.iterations") %>:</strong></div>
-      <div class="col-md-9"><%= @agent_invocation.iteration_count %> / <%= @agent_invocation.max_iterations %></div>
+      <div class="col-md-9"><%= @agent.iteration_count %> / <%= @agent.max_iterations %></div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.model") %>:</strong></div>
-      <div class="col-md-9"><%= @agent_invocation.llm_model_key %></div>
+      <div class="col-md-9"><%= @agent.llm_model_key %></div>
     </div>
-    <% if @agent_invocation.requested_language_key.present? %>
+    <% if @agent.requested_language_key.present? %>
       <div class="row mb-3">
         <div class="col-md-3"><strong><%= t("sentinel.admin.common.language") %>:</strong></div>
-        <div class="col-md-9"><%= @agent_invocation.requested_language_key %></div>
+        <div class="col-md-9"><%= @agent.requested_language_key %></div>
       </div>
     <% end %>
   </div>
@@ -56,17 +56,17 @@
     <h5 class="mb-0"><%= t("sentinel.admin.common.task") %></h5>
   </div>
   <div class="card-body">
-    <pre class="pre-wrap"><%= @agent_invocation.task %></pre>
+    <pre class="pre-wrap"><%= @agent.task %></pre>
   </div>
 </div>
 
-<% if @agent_invocation.final_answer.present? %>
+<% if @agent.final_answer.present? %>
   <div class="card mb-4">
     <div class="card-header">
       <h5 class="mb-0"><%= t("sentinel.admin.common.final_answer") %></h5>
     </div>
     <div class="card-body">
-      <pre class="pre-wrap"><%= @agent_invocation.final_answer %></pre>
+      <pre class="pre-wrap"><%= @agent.final_answer %></pre>
     </div>
   </div>
 <% end %>
@@ -76,19 +76,19 @@
     <h5 class="mb-0"><%= t("sentinel.admin.common.system_prompt") %></h5>
   </div>
   <div class="card-body">
-    <pre class="pre-wrap"><%= @agent_invocation.system_prompt %></pre>
+    <pre class="pre-wrap"><%= @agent.system_prompt %></pre>
   </div>
 </div>
 
-<% if @agent_invocation.conversation_history.present? %>
+<% if @agent.conversation_history.present? %>
   <div class="card mb-4 conversation-card">
     <div class="card-header">
       <h5 class="mb-0"><%= t("sentinel.admin.common.conversation_history") %></h5>
     </div>
     <div class="card-body p-0">
       <div class="conversation-history p-3">
-        <% @agent_invocation.conversation_history.each_with_index do |message, index| %>
-          <%= render partial: "sentinel/admin/agent_invocations/conversation_message",
+        <% @agent.conversation_history.each_with_index do |message, index| %>
+          <%= render partial: "sentinel/admin/agents/conversation_message",
                 locals: { message: message, message_count: index + 1 } %>
         <% end %>
       </div>
@@ -96,7 +96,7 @@
   </div>
 <% end %>
 
-<% if @agent_invocation.sentinel_model_completions.any? %>
+<% if @agent.sentinel_model_completions.any? %>
   <div class="card mb-4">
     <div class="card-header">
       <h5 class="mb-0"><%= t("sentinel.admin.common.model_completions") %></h5>
@@ -114,7 +114,7 @@
             </tr>
           </thead>
           <tbody>
-            <% @agent_invocation.sentinel_model_completions.order(created_at: :asc).each do |model_completion| %>
+            <% @agent.sentinel_model_completions.order(created_at: :asc).each do |model_completion| %>
               <tr>
                 <td><%= link_to "##{model_completion.id}", sentinel.admin_model_completion_path(model_completion) %></td>
                 <td><small class="text-muted"><%= model_completion.created_at.rfc822 %></small></td>

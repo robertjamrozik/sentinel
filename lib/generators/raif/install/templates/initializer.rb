@@ -65,9 +65,9 @@ Raif.configure do |config|
   # The method to call to get the current user. Defaults to :current_user
   # config.current_user_method = :current_user
 
-  # The agent invocation types that are available. Defaults to Set.new(["Raif::AgentInvocations::ReActAgent", "Raif::AgentInvocations::NativeToolCallingAgent"])
-  # If you want to use custom agent invocation types that inherits from Raif::AgentInvocation, you can add them here.
-  # config.agent_invocation_types += ["MyAgentInvocation"]
+  # The agent types that are available. Defaults to Set.new(["Raif::Agents::ReActAgent", "Raif::Agents::NativeToolCallingAgent"])
+  # If you want to use custom agent types that inherits from Raif::Agent, you can add them here.
+  # config.agent_types += ["MyAgent"]
 
   # The superclass for Raif models. Defaults to "ApplicationRecord"
   # config.model_superclass = "ApplicationRecord"

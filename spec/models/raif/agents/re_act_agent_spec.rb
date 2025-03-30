@@ -2,13 +2,13 @@
 
 require "rails_helper"
 
-RSpec.describe Raif::AgentInvocations::ReActAgent, type: :model do
+RSpec.describe Raif::Agents::ReActAgent, type: :model do
   let(:creator) { FB.create(:sentinel_test_user) }
 
-  it_behaves_like "an agent invocation"
+  it_behaves_like "an agent"
 
   describe "#run!" do
-    let(:invocation) do
+    let(:agent) do
       described_class.new(
         creator: creator,
         task: "What is the capital of France?",
@@ -19,27 +19,27 @@ RSpec.describe Raif::AgentInvocations::ReActAgent, type: :model do
     end
 
     it "runs the agent" do
-      stub_sentinel_agent_invocation(invocation) do |_messages|
+      stub_sentinel_agent(agent) do |_messages|
         "<thought>I know this.</thought>\n<answer>Paris</answer>"
       end
 
-      expect(invocation.started_at).to be_nil
-      expect(invocation.completed_at).to be_nil
-      expect(invocation.failed_at).to be_nil
+      expect(agent.started_at).to be_nil
+      expect(agent.completed_at).to be_nil
+      expect(agent.failed_at).to be_nil
 
-      invocation.run!
+      agent.run!
 
-      expect(invocation.started_at).to be_present
-      expect(invocation.completed_at).to be_present
-      expect(invocation.failed_at).to be_nil
+      expect(agent.started_at).to be_present
+      expect(agent.completed_at).to be_present
+      expect(agent.failed_at).to be_nil
 
-      expect(invocation.conversation_history).to eq([
+      expect(agent.conversation_history).to eq([
         { "role" => "user", "content" => "What is the capital of France?" },
         { "role" => "assistant", "content" => "<thought>I know this.</thought>" },
         { "role" => "assistant", "content" => "<answer>Paris</answer>" }
       ])
 
-      expect(invocation.final_answer).to eq("Paris")
+      expect(agent.final_answer).to eq("Paris")
     end
 
     context "with multiple iterations" do
@@ -50,7 +50,7 @@ RSpec.describe Raif::AgentInvocations::ReActAgent, type: :model do
 
       it "processes multiple iterations until finding an answer" do
         i = 0
-        stub_sentinel_agent_invocation(invocation) do |_messages|
+        stub_sentinel_agent(agent) do |_messages|
           i += 1
           if i == 1
             "<thought>I need to search.</thought>\n<action>{\"tool\": \"wikipedia_search\", \"arguments\": {\"query\": \"capital of France\"}}</action>" # rubocop:disable Layout/LineLength
@@ -59,18 +59,18 @@ RSpec.describe Raif::AgentInvocations::ReActAgent, type: :model do
           end
         end
 
-        expect(invocation.started_at).to be_nil
-        expect(invocation.completed_at).to be_nil
-        expect(invocation.failed_at).to be_nil
+        expect(agent.started_at).to be_nil
+        expect(agent.completed_at).to be_nil
+        expect(agent.failed_at).to be_nil
 
-        invocation.run!
+        agent.run!
 
-        expect(invocation.started_at).to be_present
-        expect(invocation.completed_at).to be_present
-        expect(invocation.failed_at).to be_nil
-        expect(invocation.final_answer).to eq("Paris")
+        expect(agent.started_at).to be_present
+        expect(agent.completed_at).to be_present
+        expect(agent.failed_at).to be_nil
+        expect(agent.final_answer).to eq("Paris")
 
-        expect(invocation.conversation_history).to eq([
+        expect(agent.conversation_history).to eq([
           { "role" => "user", "content" => "What is the capital of France?" },
           { "role" => "assistant", "content" => "<thought>I need to search.</thought>" },
           {
@@ -86,8 +86,8 @@ RSpec.describe Raif::AgentInvocations::ReActAgent, type: :model do
           { "role" => "assistant", "content" => "<answer>Paris</answer>" }
         ])
 
-        expect(invocation.sentinel_model_tool_invocations.length).to eq(1)
-        mti = invocation.sentinel_model_tool_invocations.first
+        expect(agent.sentinel_model_tool_invocations.length).to eq(1)
+        mti = agent.sentinel_model_tool_invocations.first
         expect(mti.tool_name).to eq("wikipedia_search")
         expect(mti.tool_type).to eq("Raif::ModelTools::WikipediaSearch")
         expect(mti.tool_arguments).to eq({ "query" => "capital of France" })
@@ -130,16 +130,16 @@ RSpec.describe Raif::AgentInvocations::ReActAgent, type: :model do
     end
 
     it "handles an action with an unavailable tool" do
-      stub_sentinel_agent_invocation(invocation) do |_messages|
+      stub_sentinel_agent(agent) do |_messages|
         <<~RESPONSE
           <thought>Maybe I'll make up a tool.</thought>
           <action>{"tool": "unavailable_tool", "arguments": {"query": "capital of France"}}</action>
         RESPONSE
       end
-      invocation.max_iterations = 1
-      invocation.run!
+      agent.max_iterations = 1
+      agent.run!
 
-      expect(invocation.conversation_history).to eq([
+      expect(agent.conversation_history).to eq([
         { "role" => "user", "content" => "What is the capital of France?" },
         { "role" => "assistant", "content" => "<thought>Maybe I'll make up a tool.</thought>" },
         {
@@ -155,17 +155,17 @@ RSpec.describe Raif::AgentInvocations::ReActAgent, type: :model do
     end
 
     it "handles an action with invalid tool arguments" do
-      stub_sentinel_agent_invocation(invocation) do |_messages|
+      stub_sentinel_agent(agent) do |_messages|
         <<~RESPONSE
           <thought>I'll look this up on Wikipedia.</thought>
           <action>{"tool": "wikipedia_search", "arguments": {"search_term": "jingle bells"}}</action>
         RESPONSE
       end
 
-      invocation.max_iterations = 1
-      invocation.run!
+      agent.max_iterations = 1
+      agent.run!
 
-      expect(invocation.conversation_history).to eq([
+      expect(agent.conversation_history).to eq([
         { "role" => "user", "content" => "What is the capital of France?" },
         { "role" => "assistant", "content" => "<thought>I'll look this up on Wikipedia.</thought>" },
         {
@@ -184,7 +184,7 @@ RSpec.describe Raif::AgentInvocations::ReActAgent, type: :model do
   describe "#build_system_prompt" do
     let(:task) { "What is the capital of France?" }
     let(:tools) { [Raif::TestModelTool, Raif::ModelTools::WikipediaSearch] }
-    let(:agent_invocation) { described_class.new(task: task, available_model_tools: tools, creator: creator) }
+    let(:agent) { described_class.new(task: task, available_model_tools: tools, creator: creator) }
 
     let(:base_prompt) do
       <<~PROMPT.strip
@@ -290,11 +290,11 @@ RSpec.describe Raif::AgentInvocations::ReActAgent, type: :model do
     end
 
     it "includes tool descriptions in the prompt" do
-      expect(agent_invocation.build_system_prompt).to eq(base_prompt)
+      expect(agent.build_system_prompt).to eq(base_prompt)
     end
 
     context "when requested language is set" do
-      let(:agent_invocation) { described_class.new(task: task, available_model_tools: tools, creator: creator, requested_language_key: "fr") }
+      let(:agent) { described_class.new(task: task, available_model_tools: tools, creator: creator, requested_language_key: "fr") }
 
       it "includes the requested language in the prompt" do
         prompt = <<~PROMPT.strip
@@ -302,7 +302,7 @@ RSpec.describe Raif::AgentInvocations::ReActAgent, type: :model do
           You're collaborating with teammate who speaks French. Please respond in French.
         PROMPT
 
-        expect(agent_invocation.build_system_prompt).to eq(prompt)
+        expect(agent.build_system_prompt).to eq(prompt)
       end
     end
   end

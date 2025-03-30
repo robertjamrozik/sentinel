@@ -70,7 +70,7 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    create_table :sentinel_agent_invocations do |t|
+    create_table :sentinel_agents do |t|
       t.string :type, null: false
       t.string :llm_model_key, null: false
       t.text :task

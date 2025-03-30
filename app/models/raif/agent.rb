@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Raif
-  class AgentInvocation < ApplicationRecord
+  class Agent < ApplicationRecord
     include Raif::Concerns::HasLlm
     include Raif::Concerns::HasRequestedLanguage
     include Raif::Concerns::HasAvailableModelTools
@@ -18,14 +18,14 @@ module Raif
     boolean_timestamp :completed_at
     boolean_timestamp :failed_at
 
-    validates :type, inclusion: { in: ->{ Raif.config.agent_invocation_types } }
+    validates :type, inclusion: { in: ->{ Raif.config.agent_types } }
     validates :task, presence: true
     validates :system_prompt, presence: true
     validates :max_iterations, presence: true, numericality: { greater_than: 0 }
     validates :available_model_tools, length: {
       minimum: 1,
       message: ->(_object, _data) {
-        I18n.t("sentinel.agent_invocations.errors.available_model_tools.too_short")
+        I18n.t("sentinel.agents.errors.available_model_tools.too_short")
       }
     }
 
@@ -33,21 +33,21 @@ module Raif
 
     attr_accessor :on_conversation_history_entry
 
-    # Runs the agent and returns a Raif::AgentInvocation.
+    # Runs the agent and returns a Raif::Agent.
     # If a block is given, it will be called each time a new entry is added to the agent's conversation history.
-    # The block will receive the Raif::AgentInvocation and the new entry as arguments:
-    # agent_invocation = Raif::AgentInvocation.new(
+    # The block will receive the Raif::Agent and the new entry as arguments:
+    # agent = Raif::Agent.new(
     #   task: task,
     #   tools: [Raif::ModelTools::WikipediaSearch, Raif::ModelTools::FetchUrl],
     #   creator: creator
     # )
     #
-    # agent_invocation.run! do |conversation_history_entry|
+    # agent.run! do |conversation_history_entry|
     #   Turbo::StreamsChannel.broadcast_append_to(
     #     :my_agent_channel,
     #     target: "agent-progress",
     #     partial: "my_partial_displaying_agent_progress",
-    #     locals: { agent_invocation: agent_invocation, conversation_history_entry: conversation_history_entry }
+    #     locals: { agent: agent, conversation_history_entry: conversation_history_entry }
     #   )
     # end
     #
@@ -55,7 +55,7 @@ module Raif
     # { "role" => "assistant", "content" => "a message here" }
     #
     # @param block [Proc] Optional block to be called each time a new entry to the agent's conversation history is generated
-    # @return [Raif::AgentInvocation] The agent invocation that was created and run
+    # @return [Raif::Agent] The agent that was created and run
     def run!(&block)
       self.on_conversation_history_entry = block_given? ? block : nil
       self.started_at = Time.current
@@ -126,7 +126,7 @@ module Raif
     end
 
     def build_system_prompt
-      raise NotImplementedError, "Subclasses of Raif::AgentInvocation must implement build_system_prompt"
+      raise NotImplementedError, "Subclasses of Raif::Agent must implement build_system_prompt"
     end
 
   end

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Raif
-  module AgentInvocations
-    class ReActAgent < Raif::AgentInvocation
+  module Agents
+    class ReActAgent < Raif::Agent
 
       def build_system_prompt
         <<~PROMPT.strip

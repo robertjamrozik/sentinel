@@ -7,7 +7,7 @@ RSpec.describe "Admin::ModelToolInvocations", type: :feature do
   let(:task) { FB.create(:sentinel_test_task, creator: creator) }
   let(:conversation) { FB.create(:sentinel_test_conversation, creator: creator) }
   let(:conversation_entry) { FB.create(:sentinel_conversation_entry, sentinel_conversation: conversation, creator: creator) }
-  let(:agent_invocation) { FB.create(:sentinel_re_act_agent_invocation, creator: creator) }
+  let(:agent) { FB.create(:sentinel_re_act_agent, creator: creator) }
 
   describe "index page" do
     let!(:pending_tool_invocation) do
@@ -30,7 +30,7 @@ RSpec.describe "Admin::ModelToolInvocations", type: :feature do
 
     let!(:failed_tool_invocation) do
       invocation = Raif::ModelToolInvocation.create!(
-        source: agent_invocation,
+        source: agent,
         tool_type: "Raif::TestModelTool",
         tool_arguments: { "items": [{ "title": "Failed Tool", "description": "This is a failed tool invocation" }] }
       )

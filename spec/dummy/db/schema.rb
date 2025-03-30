@@ -14,7 +14,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
-  create_table "sentinel_agent_invocations", force: :cascade do |t|
+  create_table "sentinel_agents", force: :cascade do |t|
     t.string "type", null: false
     t.string "llm_model_key", null: false
     t.text "task"
@@ -33,7 +33,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.jsonb "conversation_history", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["creator_type", "creator_id"], name: "index_sentinel_agent_invocations_on_creator"
+    t.index ["creator_type", "creator_id"], name: "index_sentinel_agents_on_creator"
   end
 
   create_table "sentinel_conversation_entries", force: :cascade do |t|
