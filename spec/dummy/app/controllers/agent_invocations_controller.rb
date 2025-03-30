@@ -6,7 +6,7 @@ class AgentInvocationsController < ApplicationController
   end
 
   def create
-    agent_invocation = Raif::AgentInvocation.new(
+    agent_invocation = Raif::AgentInvocations::ReActAgent.new(
       task: params[:task],
       available_model_tools: [Raif::ModelTools::WikipediaSearch, Raif::ModelTools::FetchUrl],
       creator: current_user

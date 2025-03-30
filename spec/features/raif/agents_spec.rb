@@ -42,10 +42,10 @@ RSpec.describe "Agent features", type: :feature do
     expect(page).to have_content("user: What is Jimmy Buffet's birthday?")
     expect(page).to have_content("assistant: <thought>I need to find the birthdate of Jimmy Buffett. The best way to do this is by searching")
     expect(page).to have_content("assistant: <action>{\"tool\": \"wikipedia_search\", \"arguments\": {\"query\": \"Jimmy Buffett\"}}</action>")
-    expect(page).to have_content("user: <observation>{ \"results\": [ { \"title\": \"Jimmy Buffett\", \"snippet\": \"Wikiquote Official website")
+    expect(page).to have_content("assistant: <observation>{ \"results\": [ { \"title\": \"Jimmy Buffett\", \"snippet\": \"Wikiquote Official website")
     expect(page).to have_content("assistant: <thought>The first search result is directly related to Jimmy Buffett and likely contains his birthdate. I'll fetch the content from that Wikipedia page to find the information.</thought>") # rubocop:disable Layout/LineLength
     expect(page).to have_content("assistant: <action>{\"tool\": \"fetch_url\", \"arguments\": {\"url\": \"https://en.wikipedia.org/wiki/Jimmy_Buffett\"}}</action>")
-    expect(page).to have_content("user: <observation>Result Status: 200 Result Content: # Jimmy Buffett From Wikipedia, the free encyc")
+    expect(page).to have_content("assistant: <observation>Result Status: 200 Result Content: # Jimmy Buffett From Wikipedia, the free encyc")
     expect(page).to have_content("assistant: <thought>The fetched Wikipedia page for Jimmy Buffett confirms his birthdate as December 25, 1946.</thought>") # rubocop:disable Layout/LineLength
     expect(page).to have_content("assistant: <answer>Jimmy Buffett was born on December 25, 1946.</answer>")
 
@@ -56,7 +56,7 @@ RSpec.describe "Agent features", type: :feature do
     expect(ai.failed_at).to be_nil
     expect(ai.failure_reason).to be_nil
     expect(ai.final_answer).to eq("Jimmy Buffett was born on December 25, 1946.")
-    expect(ai.available_model_tools).to eq(["Raif::ModelTools::WikipediaSearch", "Raif::ModelTools::FetchUrl"])
+    expect(ai.available_model_tools).to eq(["Raif::ModelTools::WikipediaSearch", "Raif::ModelTools::FetchUrl", "Raif::ModelTools::AgentFinalAnswer"])
     expect(ai.iteration_count).to eq(4)
 
     expect(ai.sentinel_model_tool_invocations.length).to eq(2)
