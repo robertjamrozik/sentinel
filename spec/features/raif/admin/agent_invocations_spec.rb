@@ -8,16 +8,16 @@ RSpec.describe "Admin::AgentInvocations", type: :feature do
   describe "index page" do
     let!(:pending_invocation) do
       FB.create(
-        :sentinel_agent_invocation,
+        :sentinel_native_tool_calling_agent_invocation,
         creator: creator,
         task: "What is the capital of France?",
         max_iterations: 5
       )
     end
 
-    let!(:running_invocation) do
+    let!(:sentinel_agent_invocation) do
       FB.create(
-        :sentinel_agent_invocation,
+        :sentinel_re_act_agent_invocation,
         creator: creator,
         task: "List the planets in our solar system",
         started_at: 2.minutes.ago,
@@ -28,7 +28,7 @@ RSpec.describe "Admin::AgentInvocations", type: :feature do
 
     let!(:completed_invocation) do
       FB.create(
-        :sentinel_agent_invocation,
+        :sentinel_re_act_agent_invocation,
         creator: creator,
         task: "Calculate 15 * 24",
         started_at: 5.minutes.ago,
@@ -41,7 +41,7 @@ RSpec.describe "Admin::AgentInvocations", type: :feature do
 
     let!(:failed_invocation) do
       FB.create(
-        :sentinel_agent_invocation,
+        :sentinel_native_tool_calling_agent_invocation,
         creator: creator,
         task: "This task will fail",
         started_at: 10.minutes.ago,
@@ -53,7 +53,7 @@ RSpec.describe "Admin::AgentInvocations", type: :feature do
 
     let!(:long_task_invocation) do
       FB.create(
-        :sentinel_agent_invocation,
+        :sentinel_native_tool_calling_agent_invocation,
         creator: creator,
         task: "a" * 200,
         max_iterations: 10
@@ -102,7 +102,7 @@ RSpec.describe "Admin::AgentInvocations", type: :feature do
   describe "show page" do
     let!(:agent_invocation) do
       FB.create(
-        :sentinel_agent_invocation,
+        :sentinel_native_tool_calling_agent_invocation,
         creator: creator,
         task: "What is the capital of France?",
         started_at: 5.minutes.ago,

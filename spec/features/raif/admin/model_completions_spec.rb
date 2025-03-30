@@ -9,7 +9,7 @@ RSpec.describe "Admin::ModelCompletions", type: :feature do
   let(:task3) { FB.create(:sentinel_test_task, creator: user) }
   let(:conversation) { FB.create(:sentinel_test_conversation, creator: user) }
   let(:conversation_entry) { FB.create(:sentinel_conversation_entry, sentinel_conversation: conversation, creator: user) }
-  let(:agent_invocation) { FB.create(:sentinel_agent_invocation, creator: user) }
+  let(:agent_invocation) { FB.create(:sentinel_re_act_agent_invocation, creator: user) }
 
   describe "admin root redirect" do
     it "redirects from admin root to model completions index" do

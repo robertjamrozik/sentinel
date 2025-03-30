@@ -7,7 +7,7 @@ RSpec.describe "Admin::ModelToolInvocations", type: :feature do
   let(:task) { FB.create(:sentinel_test_task, creator: creator) }
   let(:conversation) { FB.create(:sentinel_test_conversation, creator: creator) }
   let(:conversation_entry) { FB.create(:sentinel_conversation_entry, sentinel_conversation: conversation, creator: creator) }
-  let(:agent_invocation) { FB.create(:sentinel_agent_invocation, creator: creator) }
+  let(:agent_invocation) { FB.create(:sentinel_re_act_agent_invocation, creator: creator) }
 
   describe "index page" do
     let!(:pending_tool_invocation) do

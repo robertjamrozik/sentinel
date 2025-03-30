@@ -30,7 +30,6 @@ module Raif
     }
 
     before_validation -> { self.system_prompt ||= build_system_prompt }, on: :create
-    before_validation ->{ self.type ||= "Raif::AgentInvocation" }, on: :create
 
     attr_accessor :on_conversation_history_entry
 
@@ -60,30 +59,31 @@ module Raif
     def run!(&block)
       self.on_conversation_history_entry = block_given? ? block : nil
       self.started_at = Time.current
+      self.available_model_tools += ["Raif::ModelTools::AgentFinalAnswer"] unless available_model_tools.include?("Raif::ModelTools::AgentFinalAnswer")
       save!
+
+      logger.debug <<~DEBUG
+        --------------------------------
+        Starting Agent Run
+        --------------------------------
+        System Prompt:
+        #{system_prompt}
+
+        Task: #{task}
+      DEBUG
 
       add_conversation_history_entry({ role: "user", content: task })
 
       while iteration_count < max_iterations
         update_columns(iteration_count: iteration_count + 1)
 
-        if iteration_count == 1
-          logger.debug <<~DEBUG
-            --------------------------------
-            Starting Agent Run
-            --------------------------------
-            System Prompt:
-            #{system_prompt}
-          DEBUG
-        end
-
         model_completion = llm.chat(
           messages: conversation_history,
           source: self,
           system_prompt: system_prompt,
-          available_model_tools: available_model_tools
+          available_model_tools: native_model_tools
         )
-        agent_step = Raif::AgentStep.new(model_response_text: model_completion.raw_response)
+
         logger.debug <<~DEBUG
           --------------------------------
           Agent iteration #{iteration_count}
@@ -95,62 +95,28 @@ module Raif
           --------------------------------
         DEBUG
 
-        # Add the thought to conversation history
-        if agent_step.thought
-          add_conversation_history_entry({ role: "assistant", content: "<thought>#{agent_step.thought}</thought>" })
-        end
-
-        # If there's an answer, we're done
-        if agent_step.answer
-          self.final_answer = agent_step.answer
-          add_conversation_history_entry({ role: "assistant", content: "<answer>#{agent_step.answer}</answer>" })
-          break
-        end
-
-        # If there's an action, execute it
-        next unless agent_step.action
-
-        add_conversation_history_entry({ role: "assistant", content: "<action>#{agent_step.action}</action>" })
-
-        if agent_step.parsed_action && agent_step.parsed_action["tool"] && agent_step.parsed_action["arguments"]
-          process_action(agent_step.parsed_action)
-        else
-          # No action specified
-          add_conversation_history_entry({
-            role: "user",
-            content: "<observation>Error: No valid action specified. Please provide a valid action, formatted as a JSON object with 'tool' and 'arguments' keys.</observation>" # rubocop:disable Layout/LineLength
-          })
-        end
+        process_iteration_model_completion(model_completion)
+        break if final_answer.present?
       end
 
       completed!
       final_answer
+    rescue StandardError => e
+      self.failed_at = Time.current
+      self.failure_reason = e.message
+      save!
+
+      raise
     end
 
-    def process_action(action)
-      tool_name = action["tool"]
-      tool_arguments = action["arguments"]
+  private
 
-      # Find the tool class
-      tool_klass = available_model_tools_map[tool_name]
+    def process_iteration_model_completion(model_completion)
+      raise NotImplementedError, "#{self.class.name} must implement execute_agent_iteration"
+    end
 
-      # The model tried to use a tool that doesn't exist
-      unless tool_klass
-        add_conversation_history_entry({
-          role: "user",
-          content: "<observation>Error: Tool '#{tool_name}' not found. Available tools: #{available_model_tools_map.keys.join(", ")}</observation>"
-        })
-        return
-      end
-
-      tool_invocation = tool_klass.invoke_tool(tool_arguments: tool_arguments, source: self)
-      observation = tool_klass.observation_for_invocation(tool_invocation)
-
-      # Add the tool invocation to conversation history
-      add_conversation_history_entry({
-        role: "user",
-        content: "<observation>#{observation}</observation>"
-      })
+    def native_model_tools
+      # no-op by default
     end
 
     def add_conversation_history_entry(entry)
@@ -159,44 +125,8 @@ module Raif
       on_conversation_history_entry.call(entry_stringified) if on_conversation_history_entry.present?
     end
 
-    def system_prompt_intro
-      Raif.config.agent_system_prompt_intro
-    end
-
     def build_system_prompt
-      <<~PROMPT
-        #{system_prompt_intro}
-
-        # Available Tools
-        You have access to the following tools:
-        #{available_model_tools_map.values.map(&:description_for_llm).join("\n---\n")}
-
-        # Your Responses
-        Your responses should follow this structure & format:
-        <thought>Your step-by-step reasoning about what to do</thought>
-        <action>JSON object with "tool" and "arguments" keys</action>
-        <observation>Results from the tool, which will be provided to you</observation>
-        ... (repeat Thought/Action/Observation as needed until the task is complete)
-        <thought>Final reasoning based on all observations</thought>
-        <answer>Your final response to the user</answer>
-
-        # How to Use Tools
-        When you need to use a tool:
-        1. Identify which tool is appropriate for the task
-        2. Format your tool call using JSON with the required arguments and place it in the <action> tag
-        3. Here is an example: <action>{"tool": "tool_name", "arguments": {...}}</action>
-
-        # Guidelines
-        - Always think step by step
-        - Use tools when appropriate, but don't use tools for tasks you can handle directly
-        - Be concise in your reasoning but thorough in your analysis
-        - If a tool returns an error, try to understand why and adjust your approach
-        - If you're unsure about something, explain your uncertainty, but do not make things up
-        - After each thought, make sure to also include an <action> or <answer>
-        - Always provide a final answer that directly addresses the user's request
-
-        Remember: Your goal is to be helpful, accurate, and efficient in solving the user's request.#{system_prompt_language_preference}
-      PROMPT
+      raise NotImplementedError, "Subclasses of Raif::AgentInvocation must implement build_system_prompt"
     end
 
   end
