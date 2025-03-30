@@ -74,10 +74,7 @@ module Raif
           return
         end
 
-        tool_name = parsed_action["tool"]
-        tool_arguments = parsed_action["arguments"]
-
-        unless tool_name && tool_arguments
+        unless parsed_action["tool"] && parsed_action["arguments"]
           add_conversation_history_entry({
             role: "assistant",
             content: "<observation>Error: Invalid action specified. Please provide a valid action, formatted as a JSON object with 'tool' and 'arguments' keys.</observation>" # rubocop:disable Layout/LineLength
@@ -85,6 +82,8 @@ module Raif
           return
         end
 
+        tool_name = parsed_action["tool"]
+        tool_arguments = parsed_action["arguments"]
         tool_klass = available_model_tools_map[tool_name]
 
         # The model tried to use a tool that doesn't exist

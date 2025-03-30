@@ -10,7 +10,7 @@ module Raif
           You are an AI agent that follows the ReAct (Reasoning + Acting) framework to complete tasks step by step using tool/function calls.
 
           At each step, you must:
-          1. Clearly state your thought about what to do next.
+          1. Think about what to do next.
           2. Choose and invoke exactly one tool/function call based on that thought.
           3. Observe the results of the tool/function call.
           4. Use the results to update your thought process.
@@ -46,9 +46,7 @@ module Raif
           })
         end
 
-        tool_calls = model_completion.response_tool_calls
-
-        if tool_calls.blank?
+        if model_completion.response_tool_calls.blank?
           add_conversation_history_entry({
             role: "assistant",
             content: "<observation>Error: No tool call found. I need make a tool call at each step. Available tools: #{available_model_tools_map.keys.join(", ")}</observation>" # rubocop:disable Layout/LineLength
@@ -56,59 +54,66 @@ module Raif
           return
         end
 
-        # Check if any of the tool calls contains a final answer from the assistant
-        answer_call = tool_calls.find{|call| call["name"] == "agent_final_answer" }
-        if answer_call
-          self.final_answer = answer_call["arguments"]["final_answer"]
+        tool_call = model_completion.response_tool_calls.first
+
+        unless tool_call["name"] && tool_call["arguments"]
+          add_conversation_history_entry({
+            role: "assistant",
+            content: "<observation>Error: Invalid action specified. Please provide a valid action, formatted as a JSON object with 'tool' and 'arguments' keys.</observation>" # rubocop:disable Layout/LineLength
+          })
+          return
+        end
+
+        tool_name = tool_call["name"]
+        tool_arguments = tool_call["arguments"]
+
+        # Add assistant's response to conversation history (without the actual tool calls)
+        # add_conversation_history_entry({
+        #   role: "assistant",
+        #   content: "<thought>I need to use the #{tool_name} tool to help with this task.</thought>"
+        # })
+
+        # Check if we have a final answer. If yes, we're done.
+        if tool_name == "agent_final_answer"
+          self.final_answer = tool_arguments["final_answer"]
           add_conversation_history_entry({ role: "assistant", content: "<answer>#{final_answer}</answer>" })
           return
         end
 
-        tool_calls.each do |tool_call|
-          tool_name = tool_call["name"]
-          tool_arguments = tool_call["arguments"]
+        # Add the tool call to conversation history
+        add_conversation_history_entry({
+          role: "assistant",
+          content: "<action>#{JSON.pretty_generate(tool_call)}</action>"
+        })
 
-          # Add assistant's response to conversation history (without the actual tool calls)
-          # add_conversation_history_entry({
-          #   role: "assistant",
-          #   content: "<thought>I need to use the #{tool_name} tool to help with this task.</thought>"
-          # })
+        # Find the tool class and process it
+        tool_klass = available_model_tools_map[tool_name]
 
-          # Add the tool call to conversation history
+        # The model tried to use a tool that doesn't exist
+        unless tool_klass
           add_conversation_history_entry({
             role: "assistant",
-            content: "<action>#{JSON.pretty_generate(tool_call)}</action>"
+            content: "<observation>Error: Tool '#{tool_name}' not found. Available tools: #{available_model_tools_map.keys.join(", ")}</observation>"
           })
-
-          # Find the tool class and process it
-          tool_klass = available_model_tools_map[tool_name]
-
-          # The model tried to use a tool that doesn't exist
-          unless tool_klass
-            add_conversation_history_entry({
-              role: "assistant",
-              content: "<observation>Error: Tool '#{tool_name}' not found. Available tools: #{available_model_tools_map.keys.join(", ")}</observation>"
-            })
-            next
-          end
-
-          unless JSON::Validator.validate(tool_klass.tool_arguments_schema, tool_arguments)
-            add_conversation_history_entry({
-              role: "assistant",
-              content: "<observation>Error: Invalid tool arguments. Please provide valid arguments for the tool '#{tool_name}'. Tool arguments schema: #{tool_klass.tool_arguments_schema.to_json}</observation>"
-            })
-            next
-          end
-
-          # Process the tool and add observation to history
-          tool_invocation = tool_klass.invoke_tool(tool_arguments: tool_arguments, source: self)
-          observation = tool_klass.observation_for_invocation(tool_invocation)
-
-          add_conversation_history_entry({
-            role: "assistant",
-            content: "<observation>#{observation}</observation>"
-          })
+          return
         end
+
+        unless JSON::Validator.validate(tool_klass.tool_arguments_schema, tool_arguments)
+          add_conversation_history_entry({
+            role: "assistant",
+            content: "<observation>Error: Invalid tool arguments. Please provide valid arguments for the tool '#{tool_name}'. Tool arguments schema: #{tool_klass.tool_arguments_schema.to_json}</observation>"
+          })
+          return
+        end
+
+        # Process the tool and add observation to history
+        tool_invocation = tool_klass.invoke_tool(tool_arguments: tool_arguments, source: self)
+        observation = tool_klass.observation_for_invocation(tool_invocation)
+
+        add_conversation_history_entry({
+          role: "assistant",
+          content: "<observation>#{observation}</observation>"
+        })
       end
 
       def ensure_llm_supports_native_tool_use

@@ -208,6 +208,27 @@ RSpec.describe Raif::Agents::NativeToolCallingAgent, type: :model do
         }
       ])
     end
+
+    it "handles an iteration with no tool call" do
+      stub_sentinel_agent(agent) do |_messages, model_completion|
+        model_completion.response_tool_calls = nil
+
+        "Maybe I'll just jabber instead of using a tool"
+      end
+
+      agent.max_iterations = 1
+      agent.run!
+
+      expect(agent.conversation_history).to eq([
+        { "role" => "user", "content" => "What is the capital of France?" },
+        { "role" => "assistant", "content" => "Maybe I'll just jabber instead of using a tool" },
+        {
+          "role" => "assistant",
+          "content" =>
+          "<observation>Error: No tool call found. I need make a tool call at each step. Available tools: wikipedia_search, fetch_url, agent_final_answer</observation>" # rubocop:disable Layout/LineLength
+        }
+      ])
+    end
   end
 
   describe "#build_system_prompt" do
@@ -220,7 +241,7 @@ RSpec.describe Raif::Agents::NativeToolCallingAgent, type: :model do
         You are an AI agent that follows the ReAct (Reasoning + Acting) framework to complete tasks step by step using tool/function calls.
 
         At each step, you must:
-        1. Clearly state your thought about what to do next.
+        1. Think about what to do next.
         2. Choose and invoke exactly one tool/function call based on that thought.
         3. Observe the results of the tool/function call.
         4. Use the results to update your thought process.
