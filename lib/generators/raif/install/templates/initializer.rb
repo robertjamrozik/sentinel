@@ -50,12 +50,9 @@ Raif.configure do |config|
   # The system prompt intro for Raif::Conversation instances. Defaults to "You are a helpful assistant who is collaborating with a teammate."
   # config.conversation_system_prompt_intro = "You are a helpful assistant who is collaborating with a teammate."
 
-  # The system prompt intro for Raif::AgentInvocation instances.
-  # config.agent_system_prompt_intro = "You are an intelligent assistant that follows the ReAct (Reasoning + Acting) framework to complete tasks step by step using tool calls."
-
   # The conversation types that are available. Defaults to ["Raif::Conversation"]
-  # If you want to use a custom conversation type that inherits from Raif::Conversation, you can add them here.
-  # config.conversation_types = ["Raif::Conversation"]
+  # If you want to use custom conversation types that inherits from Raif::Conversation, you can add them here.
+  # config.conversation_types += ["Raif::MyConversation"]
 
   # The controller class for conversations. Defaults to "Raif::ConversationsController"
   # If you want to use a custom controller that inherits from Raif::ConversationsController, you can set it here.
@@ -67,6 +64,10 @@ Raif.configure do |config|
 
   # The method to call to get the current user. Defaults to :current_user
   # config.current_user_method = :current_user
+
+  # The agent invocation types that are available. Defaults to Set.new(["Raif::AgentInvocations::ReActAgent", "Raif::AgentInvocations::NativeToolCallingAgent"])
+  # If you want to use custom agent invocation types that inherits from Raif::AgentInvocation, you can add them here.
+  # config.agent_invocation_types += ["MyAgentInvocation"]
 
   # The superclass for Raif models. Defaults to "ApplicationRecord"
   # config.model_superclass = "ApplicationRecord"
