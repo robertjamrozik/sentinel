@@ -96,6 +96,14 @@ module Raif
           return
         end
 
+        unless JSON::Validator.validate(tool_klass.tool_arguments_schema, tool_arguments)
+          add_conversation_history_entry({
+            role: "assistant",
+            content: "<observation>Error: Invalid tool arguments. Please provide valid arguments for the tool '#{tool_name}'. Tool arguments schema: #{tool_klass.tool_arguments_schema.to_json}</observation>"
+          })
+          return
+        end
+
         tool_invocation = tool_klass.invoke_tool(tool_arguments: tool_arguments, source: self)
         observation = tool_klass.observation_for_invocation(tool_invocation)
 

@@ -153,6 +153,32 @@ RSpec.describe Raif::AgentInvocations::ReActAgent, type: :model do
         }
       ])
     end
+
+    it "handles an action with invalid tool arguments" do
+      stub_sentinel_agent_invocation(invocation) do |_messages|
+        <<~RESPONSE
+          <thought>I'll look this up on Wikipedia.</thought>
+          <action>{"tool": "wikipedia_search", "arguments": {"search_term": "jingle bells"}}</action>
+        RESPONSE
+      end
+
+      invocation.max_iterations = 1
+      invocation.run!
+
+      expect(invocation.conversation_history).to eq([
+        { "role" => "user", "content" => "What is the capital of France?" },
+        { "role" => "assistant", "content" => "<thought>I'll look this up on Wikipedia.</thought>" },
+        {
+          "role" => "assistant",
+          "content" => "<action>{\"tool\": \"wikipedia_search\", \"arguments\": {\"search_term\": \"jingle bells\"}}</action>"
+        },
+        {
+          "role" => "assistant",
+          "content" =>
+          "<observation>Error: Invalid tool arguments. Please provide valid arguments for the tool 'wikipedia_search'. Tool arguments schema: {\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"query\"],\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"The query to search Wikipedia for\"}}}</observation>" # rubocop:disable Layout/LineLength
+        }
+      ])
+    end
   end
 
   describe "#build_system_prompt" do
