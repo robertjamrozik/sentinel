@@ -24,7 +24,9 @@ RSpec.describe Raif::ConversationEntry, type: :model do
           "arguments": { "items": [{ "title": "foo", "description": "bar" }] }
         }]
 
-        stub_sentinel_conversation(conversation, response_tool_calls: tool_calls) do |_messages|
+        stub_sentinel_conversation(conversation) do |_messages, model_completion|
+          model_completion.response_tool_calls = tool_calls
+
           "Hello"
         end
       end
