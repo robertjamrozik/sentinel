@@ -11,9 +11,14 @@ class Raif::ModelTools::FetchUrl < Raif::ModelTool
 
   def self.tool_arguments_schema
     {
-      url: {
-        type: "string",
-        description: "The URL to fetch"
+      type: "object",
+      additionalProperties: false,
+      required: ["url"],
+      properties: {
+        url: {
+          type: "string",
+          description: "The URL to fetch content from"
+        }
       }
     }
   end

@@ -14,7 +14,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
-  create_table "sentinel_agent_invocations", force: :cascade do |t|
+  create_table "sentinel_agents", force: :cascade do |t|
     t.string "type", null: false
     t.string "llm_model_key", null: false
     t.text "task"
@@ -33,7 +33,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.jsonb "conversation_history", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["creator_type", "creator_id"], name: "index_sentinel_agent_invocations_on_creator"
+    t.index ["creator_type", "creator_id"], name: "index_sentinel_agents_on_creator"
   end
 
   create_table "sentinel_conversation_entries", force: :cascade do |t|
@@ -72,6 +72,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.bigint "source_id"
     t.string "llm_model_key", null: false
     t.string "model_api_name", null: false
+    t.jsonb "available_model_tools", null: false
     t.jsonb "messages", null: false
     t.text "system_prompt"
     t.integer "response_format", default: 0, null: false
@@ -81,6 +82,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.integer "completion_tokens"
     t.integer "prompt_tokens"
     t.text "raw_response"
+    t.jsonb "response_tool_calls"
     t.integer "total_tokens"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

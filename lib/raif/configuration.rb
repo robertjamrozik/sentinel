@@ -2,16 +2,14 @@
 
 module Raif
   class Configuration
-    attr_accessor :agent_system_prompt_intro,
-      :agent_invocation_types,
+    attr_accessor :agent_types,
       :anthropic_api_key,
       :anthropic_bedrock_models_enabled,
       :anthropic_models_enabled,
       :authorize_admin_controller_action,
       :authorize_controller_action,
-      :aws_bedrock_region,
       :aws_bedrock_model_name_prefix,
-      :task_system_prompt_intro,
+      :aws_bedrock_region,
       :conversation_entries_controller,
       :conversation_system_prompt_intro,
       :conversation_types,
@@ -22,12 +20,12 @@ module Raif
       :model_superclass,
       :open_ai_api_key,
       :open_ai_models_enabled,
+      :task_system_prompt_intro,
       :user_tool_types
 
     def initialize
       # Set default config
-      @agent_system_prompt_intro = "You are an intelligent assistant that follows the ReAct (Reasoning + Acting) framework to complete tasks step by step using tool calls." # rubocop:disable Layout/LineLength
-      @agent_invocation_types = Set.new(["Raif::AgentInvocation"])
+      @agent_types = Set.new(["Raif::Agents::ReActAgent", "Raif::Agents::NativeToolCallingAgent"])
       @anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
       @anthropic_bedrock_models_enabled = true
       @anthropic_models_enabled = true

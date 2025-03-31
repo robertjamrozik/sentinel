@@ -1,7 +1,7 @@
 ---
 en:
   sentinel:
-    agent_invocations:
+    agents:
       errors:
         available_model_tools:
           too_short: must have at least 1 tool

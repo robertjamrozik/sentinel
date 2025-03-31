@@ -16,7 +16,7 @@ Raif::Engine.routes.draw do
     resources :tasks, only: [:index, :show]
     resources :conversations, only: [:index, :show]
     resources :model_completions, only: [:index, :show]
-    resources :agent_invocations, only: [:index, :show]
+    resources :agents, only: [:index, :show]
     resources :model_tool_invocations, only: [:index, :show]
   end
 end

@@ -24,16 +24,16 @@ module Raif
       end
     end
 
-    def stub_sentinel_agent_invocation(agent_invocation, &block)
+    def stub_sentinel_agent(agent, &block)
       test_llm = Raif.llm(:sentinel_test_llm)
       test_llm.chat_handler = block
 
       allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
 
-      if agent_invocation.is_a?(Raif::AgentInvocation)
-        allow(agent_invocation).to receive(:llm){ test_llm }
+      if agent.is_a?(Raif::Agent)
+        allow(agent).to receive(:llm){ test_llm }
       else
-        allow_any_instance_of(agent_invocation).to receive(:llm){ test_llm }
+        allow_any_instance_of(agent).to receive(:llm){ test_llm }
       end
     end
 

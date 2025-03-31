@@ -7,14 +7,14 @@ RSpec.describe "Admin::ModelToolInvocations", type: :feature do
   let(:task) { FB.create(:sentinel_test_task, creator: creator) }
   let(:conversation) { FB.create(:sentinel_test_conversation, creator: creator) }
   let(:conversation_entry) { FB.create(:sentinel_conversation_entry, sentinel_conversation: conversation, creator: creator) }
-  let(:agent_invocation) { FB.create(:sentinel_agent_invocation, creator: creator) }
+  let(:agent) { FB.create(:sentinel_re_act_agent, creator: creator) }
 
   describe "index page" do
     let!(:pending_tool_invocation) do
       Raif::ModelToolInvocation.create!(
         source: task,
         tool_type: "Raif::TestModelTool",
-        tool_arguments: [{ title: "Pending Tool", description: "This is a pending tool invocation" }]
+        tool_arguments: { "items": [{ "title": "Pending Tool", "description": "This is a pending tool invocation" }] }
       )
     end
 
@@ -22,7 +22,7 @@ RSpec.describe "Admin::ModelToolInvocations", type: :feature do
       invocation = Raif::ModelToolInvocation.create!(
         source: conversation_entry,
         tool_type: "Raif::TestModelTool",
-        tool_arguments: [{ title: "Completed Tool", description: "This is a completed tool invocation" }]
+        tool_arguments: { "items": [{ "title": "Completed Tool", "description": "This is a completed tool invocation" }] }
       )
       invocation.completed!
       invocation
@@ -30,9 +30,9 @@ RSpec.describe "Admin::ModelToolInvocations", type: :feature do
 
     let!(:failed_tool_invocation) do
       invocation = Raif::ModelToolInvocation.create!(
-        source: agent_invocation,
+        source: agent,
         tool_type: "Raif::TestModelTool",
-        tool_arguments: [{ title: "Failed Tool", description: "This is a failed tool invocation" }]
+        tool_arguments: { "items": [{ "title": "Failed Tool", "description": "This is a failed tool invocation" }] }
       )
       invocation.failed!
       invocation
@@ -42,7 +42,7 @@ RSpec.describe "Admin::ModelToolInvocations", type: :feature do
       invocation = Raif::ModelToolInvocation.create!(
         source: task,
         tool_type: "Raif::TestModelTool",
-        tool_arguments: [{ title: "Tool with Result", description: "This tool has a result" }],
+        tool_arguments: { "items": [{ "title": "Tool with Result", "description": "This tool has a result" }] },
         result: { status: "success", data: "Some result data" }
       )
       invocation.completed!
@@ -84,7 +84,7 @@ RSpec.describe "Admin::ModelToolInvocations", type: :feature do
       invocation = Raif::ModelToolInvocation.create!(
         source: task,
         tool_type: "Raif::TestModelTool",
-        tool_arguments: [{ title: "Test Tool", description: "This is a test tool invocation" }],
+        tool_arguments: { "items": [{ "title": "Test Tool", "description": "This is a test tool invocation" }] },
         result: { status: "success", data: "Test result data" }
       )
       invocation.completed!
@@ -131,7 +131,7 @@ RSpec.describe "Admin::ModelToolInvocations", type: :feature do
         invocation = Raif::ModelToolInvocation.create!(
           source: task,
           tool_type: "Raif::TestModelTool",
-          tool_arguments: [{ title: "Failed Tool", description: "This is a failed tool invocation" }]
+          tool_arguments: { "items": [{ "title": "Failed Tool", "description": "This is a failed tool invocation" }] }
         )
         invocation.failed!
         invocation
@@ -150,7 +150,7 @@ RSpec.describe "Admin::ModelToolInvocations", type: :feature do
         Raif::ModelToolInvocation.create!(
           source: task,
           tool_type: "Raif::TestModelTool",
-          tool_arguments: [{ title: "Pending Tool", description: "This is a pending tool invocation" }]
+          tool_arguments: { "items": [{ "title": "Pending Tool", "description": "This is a pending tool invocation" }] }
         )
       end
 

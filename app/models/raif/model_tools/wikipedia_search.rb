@@ -4,16 +4,21 @@ class Raif::ModelTools::WikipediaSearch < Raif::ModelTool
 
   def self.example_model_invocation
     {
-      "name": tool_name,
-      "arguments": { "query": "Jimmy Buffett" }
+      "name" => tool_name,
+      "arguments" => { "query": "Jimmy Buffett" }
     }
   end
 
   def self.tool_arguments_schema
     {
-      query: {
-        type: "string",
-        description: "The query to search Wikipedia for"
+      type: "object",
+      additionalProperties: false,
+      required: ["query"],
+      properties: {
+        query: {
+          type: "string",
+          description: "The query to search Wikipedia for"
+        }
       }
     }
   end

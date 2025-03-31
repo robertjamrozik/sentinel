@@ -7,9 +7,7 @@ RSpec.describe "Conversation interface", type: :feature do
 
   it "displays the conversation interface", js: true do
     stub_sentinel_conversation(Raif::Conversation) do |_messages|
-      {
-        message: "I'm great how are you?"
-      }.to_json
+      "I'm great how are you?"
     end
 
     visit chat_path
@@ -32,7 +30,7 @@ RSpec.describe "Conversation interface", type: :feature do
     user = Raif::TestUser.last
     expect(entry.user_message).to eq("How are you today?")
     expect(entry.model_response_message).to eq("I'm great how are you?")
-    expect(entry.raw_response).to eq("{\"message\":\"I'm great how are you?\"}")
+    expect(entry.raw_response).to eq("I'm great how are you?")
     expect(entry).to be_completed
     expect(entry.creator).to eq(user)
     expect(entry.sentinel_user_tool_invocation).to be_nil
@@ -42,6 +40,6 @@ RSpec.describe "Conversation interface", type: :feature do
     mc = entry.sentinel_model_completion
     expect(mc.model_api_name).to eq("sentinel-test-llm")
     expect(mc.llm_model_key).to eq("sentinel_test_llm")
-    expect(mc.parsed_response).to eq({ "message" => "I'm great how are you?" })
+    expect(mc.parsed_response).to eq("I'm great how are you?")
   end
 end

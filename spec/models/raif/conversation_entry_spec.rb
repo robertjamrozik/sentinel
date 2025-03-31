@@ -19,16 +19,15 @@ RSpec.describe Raif::ConversationEntry, type: :model do
 
     context "when the response includes a tool call" do
       before do
-        stub_sentinel_conversation(conversation) do |_messages|
-          <<~JSON.strip
-            {
-              "message" : "Hello",
-              "tool" : {
-                "name": "test_model_tool",
-                "arguments": [{ "title": "foo", "description": "bar" }]
-              }
-            }
-          JSON
+        tool_calls = [{
+          "name": "test_model_tool",
+          "arguments": { "items": [{ "title": "foo", "description": "bar" }] }
+        }]
+
+        stub_sentinel_conversation(conversation) do |_messages, model_completion|
+          model_completion.response_tool_calls = tool_calls
+
+          "Hello"
         end
       end
 
@@ -38,55 +37,21 @@ RSpec.describe Raif::ConversationEntry, type: :model do
         expect(entry.model_response_message).to eq("Hello")
         expect(entry.sentinel_model_tool_invocations.count).to eq(1)
         expect(entry.sentinel_model_tool_invocations.first.tool_name).to eq("test_model_tool")
-        expect(entry.sentinel_model_tool_invocations.first.tool_arguments).to eq([{ "title" => "foo", "description" => "bar" }])
+        expect(entry.sentinel_model_tool_invocations.first.tool_arguments).to eq({ "items" => [{ "title" => "foo", "description" => "bar" }] })
       end
     end
 
     context "when the response does not include a tool call" do
       before do
         stub_sentinel_conversation(conversation) do |_messages|
-          <<~JSON.strip
-            {
-              "message" : "Hello"
-            }
-          JSON
+          "Hello user"
         end
       end
 
       it "processes the entry" do
         entry.process_entry!
         expect(entry.reload).to be_completed
-        expect(entry.model_response_message).to eq("Hello")
-        expect(entry.sentinel_model_tool_invocations.count).to eq(0)
-      end
-    end
-
-    context "when the response contains malformed JSON" do
-      before do
-        stub_sentinel_conversation(conversation) do |_messages|
-          "This is not valid JSON"
-        end
-      end
-
-      it "marks the entry as failed" do
-        entry.process_entry!
-        expect(entry.reload).to be_failed
-        expect(entry.model_response_message).to be_nil
-        expect(entry.sentinel_model_tool_invocations.count).to eq(0)
-      end
-    end
-
-    context "when the response is empty" do
-      before do
-        stub_sentinel_conversation(conversation) do |_messages|
-          nil
-        end
-      end
-
-      it "marks the entry as failed" do
-        entry.process_entry!
-        expect(entry.reload).to be_failed
-        expect(entry.model_response_message).to be_nil
+        expect(entry.model_response_message).to eq("Hello user")
         expect(entry.sentinel_model_tool_invocations.count).to eq(0)
       end
     end

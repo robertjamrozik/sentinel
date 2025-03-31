@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Raif::AgentStep, type: :model do
+RSpec.describe Raif::Agents::ReActStep, type: :model do
   describe "tag extraction" do
     context "with a complete response containing all tags" do
       let(:model_response_text) do

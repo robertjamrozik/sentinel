@@ -33,7 +33,7 @@ class Raif::ModelTools::<%= class_name %> < Raif::ModelTool
     "Description of your tool that will be provided to the LLM so it knows when to invoke it"
   end
 
-  # When your tool is invoked by the LLM in a Raif::AgentInvocation loop, 
+  # When your tool is invoked by the LLM in a Raif::Agent loop, 
   # the results of the tool invocation are provided back to the LLM as an observation.
   # This method should return whatever you want provided to the LLM.
   # For example, if you were implementing a GoogleSearch tool, this might return a JSON
@@ -43,14 +43,6 @@ class Raif::ModelTools::<%= class_name %> < Raif::ModelTool
 
     JSON.pretty_generate(tool_invocation.result)
   end
-
-  # This method will be called with the arguments provided by the LLM when it 
-  # invokes your tool. You can use it to remove invalid keys/values. 
-  # def self.clean_tool_arguments(tool_arguments)
-  #  # Optional: Clean or validate the tool arguments before processing
-  #  # By default, we return them as-is
-  #  tool_arguments
-  # end
 
   # When the LLM invokes your tool, this method will be called with a `Raif::ModelToolInvocation` record as an argument.
   # It should handle the actual execution of the tool. 
