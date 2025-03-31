@@ -64,15 +64,18 @@ module Raif
         add_conversation_history_entry({ role: "assistant", content: "<action>#{action}</action>" })
 
         # The action should always be a JSON object with "tool" and "arguments" keys
-        parsed_action ||= begin
+        parsed_action = begin
           JSON.parse(action)
         rescue JSON::ParserError => e
           add_conversation_history_entry({
             role: "assistant",
             content: "<observation>Error parsing action JSON: #{e.message}</observation>"
           })
-          return
+
+          nil
         end
+
+        return if parsed_action.blank?
 
         unless parsed_action["tool"] && parsed_action["arguments"]
           add_conversation_history_entry({
