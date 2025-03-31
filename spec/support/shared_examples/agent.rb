@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples "an agent" do |parameter|
+RSpec.shared_examples "an agent" do |_parameter|
   describe "validations" do
     it "validates presence of task" do
       agent = described_class.new(
