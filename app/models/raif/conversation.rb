@@ -46,9 +46,15 @@ class Raif::Conversation < Raif::ApplicationRecord
   def llm_messages
     messages = []
 
-    entries.oldest_first.each do |entry|
+    entries.oldest_first.includes(:sentinel_model_tool_invocations).each do |entry|
       messages << { "role" => "user", "content" => entry.user_message }
-      messages << { "role" => "assistant", "content" => entry.model_response_message } if entry.completed?
+      next unless entry.completed?
+
+      messages << { "role" => "assistant", "content" => entry.model_response_message } unless entry.model_response_message.blank?
+      entry.sentinel_model_tool_invocations.each do |tool_invocation|
+        messages << { "role" => "assistant", "content" => tool_invocation.as_llm_message }
+        messages << { "role" => "assistant", "content" => tool_invocation.result_llm_message } if tool_invocation.result_llm_message.present?
+      end
     end
 
     messages

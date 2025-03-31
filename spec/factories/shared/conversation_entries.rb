@@ -10,5 +10,11 @@ FactoryBot.define do
       started_at { Time.current }
       completed_at { Time.current }
     end
+
+    trait :with_tool_invocation do
+      after(:create) do |entry|
+        create(:sentinel_model_tool_invocation, source: entry)
+      end
+    end
   end
 end
