@@ -20,6 +20,31 @@ RSpec.describe Raif::Conversation, type: :model do
       expect(conversation.llm_messages).to eq(messages)
       expect(messages.length).to eq(6)
     end
+
+    it "includes tool invocations" do
+      conversation = FB.create(:sentinel_conversation, creator: creator)
+      entry1 = FB.create(:sentinel_conversation_entry, :completed, sentinel_conversation: conversation, creator: creator)
+      entry2 = FB.create(:sentinel_conversation_entry, :completed, :with_tool_invocation, sentinel_conversation: conversation, creator: creator)
+      entry2.update_columns model_response_message: nil
+      entry2.sentinel_model_tool_invocations.first.update!(result: { "status": "success" })
+      entry3 = FB.create(:sentinel_conversation_entry, :completed, :with_tool_invocation, sentinel_conversation: conversation, creator: creator)
+
+      mti = entry2.sentinel_model_tool_invocations.first
+      mti2 = entry3.sentinel_model_tool_invocations.first
+
+      messages = [
+        { "role" => "user", "content" => entry1.user_message },
+        { "role" => "assistant", "content" => entry1.model_response_message },
+        { "role" => "user", "content" => entry2.user_message },
+        { "role" => "assistant", "content" => "Invoking tool: #{mti.tool_name} with arguments: #{mti.tool_arguments.to_json}" },
+        { "role" => "assistant", "content" => "Result from #{mti.tool_name}: {\"status\":\"success\"}" },
+        { "role" => "user", "content" => entry3.user_message },
+        { "role" => "assistant", "content" => entry3.model_response_message },
+        { "role" => "assistant", "content" => "Invoking tool: #{mti2.tool_name} with arguments: #{mti2.tool_arguments.to_json}" }
+      ]
+
+      expect(conversation.llm_messages).to eq(messages)
+    end
   end
 
   it "does not allow invalid types" do
