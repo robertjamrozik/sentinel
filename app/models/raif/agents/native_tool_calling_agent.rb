@@ -101,7 +101,7 @@ module Raif
         unless JSON::Validator.validate(tool_klass.tool_arguments_schema, tool_arguments)
           add_conversation_history_entry({
             role: "assistant",
-            content: "<observation>Error: Invalid tool arguments. Please provide valid arguments for the tool '#{tool_name}'. Tool arguments schema: #{tool_klass.tool_arguments_schema.to_json}</observation>"
+            content: "<observation>Error: Invalid tool arguments. Please provide valid arguments for the tool '#{tool_name}'. Tool arguments schema: #{tool_klass.tool_arguments_schema.to_json}</observation>" # rubocop:disable Layout/LineLength
           })
           return
         end
