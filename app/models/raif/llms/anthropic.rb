@@ -4,7 +4,18 @@ class Raif::Llms::Anthropic < Raif::Llm
 
   def perform_model_completion!(model_completion)
     params = build_api_parameters(model_completion)
-    resp = ::Anthropic.messages.create(**params)
+
+    response = connection.post("messages") do |req|
+      req.body = params.to_json
+    end
+
+    resp = JSON.parse(response.body, symbolize_names: true)
+
+    # Handle API errors
+    unless response.success?
+      error_message = resp[:error]&.dig(:message) || "Anthropic API error: #{response.status}"
+      raise Raif::Errors::Anthropic::ApiError, error_message
+    end
 
     model_completion.raw_response = if model_completion.response_format_json?
       extract_json_response(resp)
@@ -13,11 +24,19 @@ class Raif::Llms::Anthropic < Raif::Llm
     end
 
     model_completion.response_tool_calls = extract_response_tool_calls(resp)
-    model_completion.completion_tokens = resp.body&.dig(:usage, :output_tokens)
-    model_completion.prompt_tokens = resp.body&.dig(:usage, :input_tokens)
+    model_completion.completion_tokens = resp&.dig(:usage, :output_tokens)
+    model_completion.prompt_tokens = resp&.dig(:usage, :input_tokens)
     model_completion.save!
 
     model_completion
+  end
+
+  def connection
+    @connection ||= Faraday.new(url: "https://api.anthropic.com/v1") do |f|
+      f.headers["Content-Type"] = "application/json"
+      f.headers["x-api-key"] = Raif.config.anthropic_api_key
+      f.headers["anthropic-version"] = "2023-06-01"
+    end
   end
 
 protected
@@ -61,15 +80,15 @@ protected
   end
 
   def extract_text_response(resp)
-    resp.body&.dig(:content)&.first&.dig(:text)
+    resp&.dig(:content)&.first&.dig(:text)
   end
 
   def extract_json_response(resp)
-    return extract_text_response(resp) if resp.body&.dig(:content).nil?
+    return extract_text_response(resp) if resp&.dig(:content).nil?
 
     # Look for tool_use blocks in the content array
     tool_name = "json_response"
-    tool_response = resp.body&.dig(:content)&.find do |content|
+    tool_response = resp&.dig(:content)&.find do |content|
       content[:type] == "tool_use" && content[:name] == tool_name
     end
 
@@ -81,10 +100,10 @@ protected
   end
 
   def extract_response_tool_calls(resp)
-    return if resp.body&.dig(:content).nil?
+    return if resp&.dig(:content).nil?
 
     # Find any tool_use content blocks
-    tool_uses = resp.body&.dig(:content)&.select do |content|
+    tool_uses = resp&.dig(:content)&.select do |content|
       content[:type] == "tool_use"
     end
 

@@ -6,8 +6,17 @@ class Raif::Llms::OpenAi < Raif::Llm
     model_completion.temperature ||= default_temperature
     parameters = build_chat_parameters(model_completion)
 
-    client = OpenAI::Client.new
-    resp = client.chat(parameters: parameters)
+    response = connection.post("chat/completions") do |req|
+      req.body = parameters.to_json
+    end
+
+    resp = JSON.parse(response.body)
+
+    # Handle API errors
+    unless response.success?
+      error_message = resp["error"]&.dig("message") || "OpenAI API error: #{response.status}"
+      raise Raif::Errors::OpenAi::ApiError, error_message
+    end
 
     model_completion.update!(
       response_tool_calls: extract_response_tool_calls(resp),
@@ -19,6 +28,13 @@ class Raif::Llms::OpenAi < Raif::Llm
     )
 
     model_completion
+  end
+
+  def connection
+    @connection ||= Faraday.new(url: "https://api.openai.com/v1") do |f|
+      f.headers["Content-Type"] = "application/json"
+      f.headers["Authorization"] = "Bearer #{Raif.config.open_ai_api_key}"
+    end
   end
 
   def validate_json_schema!(schema)
