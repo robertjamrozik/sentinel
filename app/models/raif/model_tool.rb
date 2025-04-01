@@ -39,11 +39,6 @@ class Raif::ModelTool
     name.gsub("Raif::ModelTools::", "").underscore
   end
 
-  def self.clean_tool_arguments(tool_arguments)
-    # By default, we do nothing to the tool arguments. Subclasses can override to clean as desired.
-    tool_arguments
-  end
-
   def self.tool_arguments_schema
     raise NotImplementedError, "#{self.class.name}#tool_arguments_schema is not implemented"
   end
@@ -53,8 +48,6 @@ class Raif::ModelTool
   end
 
   def self.invoke_tool(tool_arguments:, source:)
-    tool_arguments = clean_tool_arguments(tool_arguments)
-
     tool_invocation = Raif::ModelToolInvocation.new(
       source: source,
       tool_type: name,

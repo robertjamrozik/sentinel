@@ -33,19 +33,26 @@ module Raif
     @logger ||= Rails.logger
   end
 
-  def self.register_llm(llm_config)
-    llm = Raif::Llm.new(**llm_config)
+  def self.register_llm(llm_class, llm_config)
+    llm = llm_class.new(**llm_config)
 
     unless llm.valid?
       raise ArgumentError, "The LLM you tried to register is invalid: #{llm.errors.full_messages.join(", ")}"
     end
 
     @llm_registry ||= {}
-    @llm_registry[llm.key] = llm_config
+    @llm_registry[llm.key] = llm_config.merge(llm_class: llm_class)
   end
 
   def self.llm(model_key)
-    Raif::Llm.new(**llm_registry[model_key])
+    llm_config = llm_registry[model_key]
+
+    if llm_config.nil?
+      raise ArgumentError, "No LLM found for model key: #{model_key}. Available models: #{available_llm_keys.join(", ")}"
+    end
+
+    llm_class = llm_config[:llm_class]
+    llm_class.new(**llm_config.except(:llm_class))
   end
 
   def self.available_llms

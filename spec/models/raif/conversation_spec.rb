@@ -20,6 +20,31 @@ RSpec.describe Raif::Conversation, type: :model do
       expect(conversation.llm_messages).to eq(messages)
       expect(messages.length).to eq(6)
     end
+
+    it "includes tool invocations" do
+      conversation = FB.create(:sentinel_conversation, creator: creator)
+      entry1 = FB.create(:sentinel_conversation_entry, :completed, sentinel_conversation: conversation, creator: creator)
+      entry2 = FB.create(:sentinel_conversation_entry, :completed, :with_tool_invocation, sentinel_conversation: conversation, creator: creator)
+      entry2.update_columns model_response_message: nil
+      entry2.sentinel_model_tool_invocations.first.update!(result: { "status": "success" })
+      entry3 = FB.create(:sentinel_conversation_entry, :completed, :with_tool_invocation, sentinel_conversation: conversation, creator: creator)
+
+      mti = entry2.sentinel_model_tool_invocations.first
+      mti2 = entry3.sentinel_model_tool_invocations.first
+
+      messages = [
+        { "role" => "user", "content" => entry1.user_message },
+        { "role" => "assistant", "content" => entry1.model_response_message },
+        { "role" => "user", "content" => entry2.user_message },
+        { "role" => "assistant", "content" => "Invoking tool: #{mti.tool_name} with arguments: #{mti.tool_arguments.to_json}" },
+        { "role" => "assistant", "content" => "Result from #{mti.tool_name}: {\"status\":\"success\"}" },
+        { "role" => "user", "content" => entry3.user_message },
+        { "role" => "assistant", "content" => entry3.model_response_message },
+        { "role" => "assistant", "content" => "Invoking tool: #{mti2.tool_name} with arguments: #{mti2.tool_arguments.to_json}" }
+      ]
+
+      expect(conversation.llm_messages).to eq(messages)
+    end
   end
 
   it "does not allow invalid types" do
@@ -34,111 +59,17 @@ RSpec.describe Raif::Conversation, type: :model do
     let(:conversation) { FB.build(:sentinel_conversation, creator: creator) }
     let(:test_conversation) { FB.build(:sentinel_test_conversation, creator: creator) }
 
+    it "returns the system prompt" do
+      prompt = <<~PROMPT.strip
+        You are a helpful assistant who is collaborating with a teammate.
+      PROMPT
+
+      expect(conversation.build_system_prompt.strip).to eq(prompt)
+    end
+
     it "includes language preference if specified" do
       conversation.requested_language_key = "es"
       expect(conversation.build_system_prompt.strip).to end_with("You're collaborating with teammate who speaks Spanish. Please respond in Spanish.")
-    end
-
-    context "when no tools are available" do
-      it "does not include tool usage instructions" do
-        prompt = <<~PROMPT.strip
-          You are a helpful assistant who is collaborating with a teammate.
-
-          # Your Responses
-          Your responses should always be in JSON format with a "message" field containing your response to your collaborator. For example:
-          {
-            "message": "Your response message"
-          }
-
-          # Other rules/reminders
-          - **Always** respond with a single, valid JSON object containing at minimum a "message" field, and optionally a "tool" field.
-        PROMPT
-
-        expect(conversation.build_system_prompt.strip).to eq(prompt)
-      end
-    end
-
-    context "when tools are available" do
-      it "includes tool usage instructions" do
-        prompt = <<~PROMPT.strip
-          You are a helpful assistant who is collaborating with a teammate.
-
-          # Your Responses
-          Your responses should always be in JSON format with a "message" field containing your response to your collaborator. For example:
-          {
-            "message": "Your response message"
-          }
-
-          # Available Tools
-          You have access to the following tools:
-          Name: test_model_tool
-          Description: Mock Tool Description
-          Arguments Schema:
-          {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "title",
-                "description"
-              ]
-            }
-          }
-          Example Usage:
-          {
-            "name": "test_model_tool",
-            "arguments": [
-              {
-                "title": "foo",
-                "description": "bar"
-              }
-            ]
-          }
-
-          ---
-          Name: wikipedia_search
-          Description: Search Wikipedia for information
-          Arguments Schema:
-          {
-            "query": {
-              "type": "string",
-              "description": "The query to search Wikipedia for"
-            }
-          }
-          Example Usage:
-          {
-            "name": "wikipedia_search",
-            "arguments": {
-              "query": "Jimmy Buffett"
-            }
-          }
-
-          # Tool Usage
-          To utilize a tool, include a tool object in your JSON response with the name of the tool you want to use and the arguments for that tool. An example response that invokes a tool:
-          {
-            "message": "I suggest we add a new scenario.",
-            "tool": {
-              "name": "tool_name",
-              "arguments": {"arg_name": "Example arg"}
-            }
-          }
-
-          # Other rules/reminders
-          - Use tools if you think they are useful for the conversation.
-          - **Always** respond with a single, valid JSON object containing at minimum a "message" field, and optionally a "tool" field.
-        PROMPT
-
-        test_conversation.populate_available_model_tools
-        expect(test_conversation.build_system_prompt.strip).to eq(prompt)
-      end
     end
   end
 
@@ -147,15 +78,13 @@ RSpec.describe Raif::Conversation, type: :model do
       conversation = FB.create(:sentinel_conversation, :with_entries, entries_count: 1, creator: creator)
 
       stub_sentinel_conversation(conversation) do |_messages|
-        <<~JSON.strip
-          { "message" : "Hello" }
-        JSON
+        "Hello user"
       end
 
       completion = conversation.prompt_model_for_entry_response(entry: conversation.entries.first)
       expect(completion).to be_a(Raif::ModelCompletion)
-      expect(completion.raw_response).to eq("{ \"message\" : \"Hello\" }")
-      expect(completion.response_format).to eq("json")
+      expect(completion.raw_response).to eq("Hello user")
+      expect(completion.response_format).to eq("text")
     end
   end
 end

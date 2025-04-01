@@ -6,7 +6,13 @@ module Raif
       include Pagy::Backend
 
       def index
-        @pagy, @tasks = pagy(Raif::Task.order(created_at: :desc))
+        @task_types = Raif::Task.distinct.pluck(:type)
+        @selected_types = params[:task_types] || []
+
+        tasks = Raif::Task.order(created_at: :desc)
+        tasks = tasks.where(type: @selected_types) if @selected_types.present?
+
+        @pagy, @tasks = pagy(tasks)
       end
 
       def show

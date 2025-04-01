@@ -9,7 +9,7 @@ RSpec.describe "Admin::ModelCompletions", type: :feature do
   let(:task3) { FB.create(:sentinel_test_task, creator: user) }
   let(:conversation) { FB.create(:sentinel_test_conversation, creator: user) }
   let(:conversation_entry) { FB.create(:sentinel_conversation_entry, sentinel_conversation: conversation, creator: user) }
-  let(:agent_invocation) { FB.create(:sentinel_agent_invocation, creator: user) }
+  let(:agent) { FB.create(:sentinel_re_act_agent, creator: user) }
 
   describe "admin root redirect" do
     it "redirects from admin root to model completions index" do
@@ -21,15 +21,15 @@ RSpec.describe "Admin::ModelCompletions", type: :feature do
   describe "index page" do
     let!(:model_completions) do
       [
-        Raif::ModelCompletions::OpenAi.create!(
-          source: agent_invocation,
+        Raif::ModelCompletion.create!(
+          source: agent,
           llm_model_key: "open_ai_gpt_4o_mini",
           model_api_name: "gpt-4o-mini",
           response_format: "text",
           raw_response: "Test response 1",
           total_tokens: 1000
         ),
-        Raif::ModelCompletions::OpenAi.create!(
+        Raif::ModelCompletion.create!(
           source: conversation_entry,
           llm_model_key: "open_ai_gpt_4o",
           model_api_name: "gpt-4o",
@@ -41,7 +41,7 @@ RSpec.describe "Admin::ModelCompletions", type: :feature do
     end
 
     let!(:json_completion) do
-      Raif::ModelCompletions::OpenAi.create!(
+      Raif::ModelCompletion.create!(
         source: task,
         llm_model_key: "open_ai_gpt_4o",
         model_api_name: "gpt-4o",
@@ -54,7 +54,7 @@ RSpec.describe "Admin::ModelCompletions", type: :feature do
     end
 
     let!(:html_completion) do
-      Raif::ModelCompletions::BedrockClaude.create!(
+      Raif::ModelCompletion.create!(
         source: task2,
         llm_model_key: "bedrock_claude_3_5_sonnet",
         model_api_name: "anthropic.claude-3-5-sonnet-20240620-v1:0",
@@ -67,7 +67,7 @@ RSpec.describe "Admin::ModelCompletions", type: :feature do
     end
 
     let!(:long_completion) do
-      Raif::ModelCompletions::OpenAi.create!(
+      Raif::ModelCompletion.create!(
         source: task3,
         llm_model_key: "open_ai_gpt_4o_mini",
         model_api_name: "gpt-4o-mini",
@@ -118,7 +118,7 @@ RSpec.describe "Admin::ModelCompletions", type: :feature do
 
   describe "show page" do
     let!(:text_completion) do
-      Raif::ModelCompletions::OpenAi.create!(
+      Raif::ModelCompletion.create!(
         source: task,
         llm_model_key: "open_ai_gpt_4o_mini",
         model_api_name: "gpt-4o-mini",
@@ -173,7 +173,7 @@ RSpec.describe "Admin::ModelCompletions", type: :feature do
 
     context "with JSON response format" do
       let!(:json_completion) do
-        Raif::ModelCompletions::OpenAi.create!(
+        Raif::ModelCompletion.create!(
           source: task,
           llm_model_key: "open_ai_gpt_4o",
           model_api_name: "gpt-4o",
@@ -199,7 +199,7 @@ RSpec.describe "Admin::ModelCompletions", type: :feature do
 
     context "with HTML response format" do
       let!(:html_completion) do
-        Raif::ModelCompletions::BedrockClaude.create!(
+        Raif::ModelCompletion.create!(
           source: task2,
           llm_model_key: "bedrock_claude_3_5_sonnet",
           model_api_name: "anthropic.claude-3-5-sonnet-20240620-v1:0",

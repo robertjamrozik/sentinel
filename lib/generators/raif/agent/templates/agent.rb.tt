@@ -1,0 +1,33 @@
+# frozen_string_literal: true
+
+module Raif
+  module Agents
+    class <%= class_name %> < Raif::Agent
+      # If you want to always include a certain set of model tools with this agent type,
+      # uncomment this callback to populate the available_model_tools attribute with your desired model tools.
+      # before_create -> {
+      #   self.available_model_tools ||= [
+      #     Raif::ModelTools::WikipediaSearchTool,
+      #     Raif::ModelTools::FetchUrlTool
+      #   ]
+      # }
+
+      # Customize the system prompt intro for this specific agent type
+      # def system_prompt_intro
+      #   <<~PROMPT
+      #     You are an intelligent assistant that follows the ReAct (Reasoning + Acting) framework to complete tasks step by step using tool calls.
+      #     You are an expert in researching and synthesizing information from Wikipedia.
+      #   PROMPT
+      # end
+
+      # Or if needed, you can override the entire system prompt. Below is the default implementation.
+      def build_system_prompt
+        # TODO: Implement your system prompt here
+      end
+
+      def process_iteration_model_completion(model_completion)
+        # TODO: Implement your iteration processing here
+      end
+    end
+  end
+end

@@ -1,0 +1,9 @@
+<%= turbo_stream_from :agents %>
+
+<%= form_with url: agents_path, method: :post do |form| %>
+  <%= form.text_field :task, placeholder: "Enter a task", class: "form-control" %>
+  <%= form.submit "Run Agent" %>
+<% end %>
+
+<div id="agent-progress">
+</div>

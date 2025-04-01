@@ -20,6 +20,16 @@ class Raif::ModelToolInvocation < Raif::ApplicationRecord
     @tool ||= tool_type.constantize
   end
 
+  def as_llm_message
+    "Invoking tool: #{tool_name} with arguments: #{tool_arguments.to_json}"
+  end
+
+  def result_llm_message
+    if result.present?
+      "Result from #{tool_name}: #{result.to_json}"
+    end
+  end
+
   def to_partial_path
     "sentinel/model_tool_invocations/#{tool.invocation_partial_name}"
   end

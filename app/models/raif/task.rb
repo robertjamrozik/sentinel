@@ -4,6 +4,7 @@ module Raif
   class Task < Raif::ApplicationRecord
     include Raif::Concerns::HasLlm
     include Raif::Concerns::HasRequestedLanguage
+    include Raif::Concerns::HasAvailableModelTools
     include Raif::Concerns::InvokesModelTools
     include Raif::Concerns::LlmResponseParsing
 
@@ -16,6 +17,8 @@ module Raif
     boolean_timestamp :failed_at
 
     normalizes :prompt, :system_prompt, with: ->(text){ text&.strip }
+
+    delegate :json_response_schema, to: :class
 
     after_initialize -> { self.available_model_tools ||= [] }
 
@@ -60,7 +63,14 @@ module Raif
 
       populate_prompts
       messages = [{ "role" => "user", "content" => prompt }]
-      mc = llm.chat(messages: messages, source: self, system_prompt: system_prompt, response_format: response_format.to_sym)
+      mc = llm.chat(
+        messages: messages,
+        source: self,
+        system_prompt: system_prompt,
+        response_format: response_format.to_sym,
+        available_model_tools: available_model_tools
+      )
+
       self.sentinel_model_completion = mc.becomes(Raif::ModelCompletion)
 
       update(raw_response: sentinel_model_completion.raw_response)
@@ -86,6 +96,10 @@ module Raif
     # @return [String] The LLM system prompt for the task.
     def self.system_prompt(creator:, **args)
       new(creator:, **args).system_prompt
+    end
+
+    def self.json_response_schema
+      nil
     end
 
   private
