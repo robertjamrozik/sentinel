@@ -29,12 +29,6 @@ module Raif
     config.after_initialize do
       next unless Raif.config.open_ai_models_enabled
 
-      require "openai"
-
-      ::OpenAI.configure do |config|
-        config.access_token = Raif.config.open_ai_api_key
-      end
-
       Raif.default_llms[Raif::Llms::OpenAi].each do |llm_config|
         Raif.register_llm(Raif::Llms::OpenAi, **llm_config)
       end
@@ -42,12 +36,6 @@ module Raif
 
     config.after_initialize do
       next unless Raif.config.anthropic_models_enabled
-
-      require "anthropic"
-
-      ::Anthropic.setup do |config|
-        config.api_key = Raif.config.anthropic_api_key
-      end
 
       Raif.default_llms[Raif::Llms::Anthropic].each do |llm_config|
         Raif.register_llm(Raif::Llms::Anthropic, **llm_config)
