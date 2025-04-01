@@ -20,9 +20,14 @@ class Raif::ModelTools::<%= class_name %> < Raif::ModelTool
   def self.tool_arguments_schema
     # For example:
     # {
-    #   query: {
-    #     type: "string",
-    #     description: "The query to search for"
+    #   type: "object",
+    #   additionalProperties: false,
+    #   required: ["query"],
+    #   properties: {
+    #     query: {
+    #       type: "string",
+    #       description: "The query to search for"
+    #     }
     #   }
     # }
     # Would expect the model to invoke your tool with an arguments JSON object like:
@@ -37,7 +42,7 @@ class Raif::ModelTools::<%= class_name %> < Raif::ModelTool
   # the results of the tool invocation are provided back to the LLM as an observation.
   # This method should return whatever you want provided to the LLM.
   # For example, if you were implementing a GoogleSearch tool, this might return a JSON
-  # object containing search resutls for the query.
+  # object containing search results for the query.
   def self.observation_for_invocation(tool_invocation)
     return "No results found" unless tool_invocation.result.present?
 
@@ -47,7 +52,7 @@ class Raif::ModelTools::<%= class_name %> < Raif::ModelTool
   # When the LLM invokes your tool, this method will be called with a `Raif::ModelToolInvocation` record as an argument.
   # It should handle the actual execution of the tool. 
   # For example, if you are implementing a GoogleSearch tool, this method should run the actual search
-  # and store the results on the tool_invocation record.
+  # and store the results in the tool_invocation's result JSON column.
   def self.process_invocation(tool_invocation)
     # Extract arguments from tool_invocation.tool_arguments
     # query = tool_invocation.tool_arguments["query"]
@@ -66,4 +71,4 @@ class Raif::ModelTools::<%= class_name %> < Raif::ModelTool
     # tool_invocation.result
   end
 
-end 
+end

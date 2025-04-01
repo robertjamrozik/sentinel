@@ -12,19 +12,14 @@ module Raif
       #   ]
       # }
 
-      # Customize the system prompt intro for this specific agent type
-      # def system_prompt_intro
-      #   <<~PROMPT
-      #     You are an intelligent assistant that follows the ReAct (Reasoning + Acting) framework to complete tasks step by step using tool calls.
-      #     You are an expert in researching and synthesizing information from Wikipedia.
-      #   PROMPT
-      # end
-
-      # Or if needed, you can override the entire system prompt. Below is the default implementation.
+      # Enter your agent's system prompt here. Alternatively, you can change your agent's superclass
+      # to an existing agent types (like Raif::Agents::ReActAgent) to utilize an existing system prompt.
       def build_system_prompt
         # TODO: Implement your system prompt here
       end
 
+      # Each iteration of the agent loop will generate a new Raif::ModelCompletion record and
+      # then call this method with it as an argument.
       def process_iteration_model_completion(model_completion)
         # TODO: Implement your iteration processing here
       end
