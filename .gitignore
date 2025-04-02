@@ -9,3 +9,4 @@
 /node_modules/
 /.yardoc/
 /doc/
+*.gem
