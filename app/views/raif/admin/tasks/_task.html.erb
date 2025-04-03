@@ -2,7 +2,7 @@
   <td><%= link_to "##{task.id}", sentinel.admin_task_path(task) %></td>
   <td><%= task.type %></td>
   <td><small class="text-muted"><%= task.created_at.rfc822 %></small></td>
-  <td><%= task.creator_type %> #<%= task.creator_id %></td>
+  <td><%= task.creator.try(:sentinel_display_name) || "#{task.creator_type} ##{task.creator_id}" %></td>
   <td><%= task.llm_model_key %></td>
   <td>
     <% if task.completed_at? %>

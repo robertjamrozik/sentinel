@@ -14,7 +14,9 @@
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.creator") %>:</strong></div>
-      <div class="col-md-9"><%= @conversation.creator_type %> #<%= @conversation.creator_id %></div>
+      <div class="col-md-9">
+        <%= @conversation.creator.try(:sentinel_display_name) || "#{@conversation.creator_type} ##{@conversation.creator_id}" %>
+      </div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.type") %>:</strong></div>
