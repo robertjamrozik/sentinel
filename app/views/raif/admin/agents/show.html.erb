@@ -18,7 +18,9 @@
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.creator") %>:</strong></div>
-      <div class="col-md-9"><%= @agent.creator_type %> #<%= @agent.creator_id %></div>
+      <div class="col-md-9">
+        <%= @agent.creator.try(:sentinel_display_name) || "#{@agent.creator_type} ##{@agent.creator_id}" %>
+      </div>
     </div>
     <div class="row mb-3">
       <div class="col-md-3"><strong><%= t("sentinel.admin.common.status") %>:</strong></div>
