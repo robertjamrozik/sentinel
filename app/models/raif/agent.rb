@@ -20,6 +20,7 @@ module Raif
 
     validates :type, inclusion: { in: ->{ Raif.config.agent_types } }
     validates :task, presence: true
+    validates :system_prompt, presence: true
     validates :max_iterations, presence: true, numericality: { greater_than: 0 }
     validates :available_model_tools, length: {
       minimum: 1,
