@@ -26,16 +26,6 @@ RSpec.shared_examples "an agent" do |_parameter|
       expect(agent.errors[:system_prompt]).to include("can't be blank")
     end
 
-    it "validates the length of available_model_tools" do
-      agent = described_class.new(
-        creator: creator,
-        task: "What is the capital of France?",
-        system_prompt: "System prompt",
-      )
-      expect(agent).not_to be_valid
-      expect(agent.errors[:available_model_tools]).to include("must have at least 1 tool")
-    end
-
     it "validates presence and numericality of max_iterations" do
       agent = described_class.new(
         creator: creator,

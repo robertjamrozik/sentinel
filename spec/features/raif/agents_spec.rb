@@ -50,13 +50,14 @@ RSpec.describe "Agent features", type: :feature do
     expect(page).to have_content("assistant: <answer>Jimmy Buffett was born on December 25, 1946.</answer>")
 
     ai = Raif::Agent.last
+    expect(ai.type).to eq("Raif::Agents::ReActAgent")
     expect(ai.task).to eq("What is Jimmy Buffet's birthday?")
     expect(ai.started_at).to be_present
     expect(ai.completed_at).to be_present
     expect(ai.failed_at).to be_nil
     expect(ai.failure_reason).to be_nil
     expect(ai.final_answer).to eq("Jimmy Buffett was born on December 25, 1946.")
-    expect(ai.available_model_tools).to eq(["Raif::ModelTools::WikipediaSearch", "Raif::ModelTools::FetchUrl", "Raif::ModelTools::AgentFinalAnswer"])
+    expect(ai.available_model_tools).to eq(["Raif::ModelTools::WikipediaSearch", "Raif::ModelTools::FetchUrl"])
     expect(ai.iteration_count).to eq(4)
 
     expect(ai.sentinel_model_tool_invocations.length).to eq(2)

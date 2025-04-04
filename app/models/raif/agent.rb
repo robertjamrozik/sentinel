@@ -22,14 +22,12 @@ module Raif
     validates :task, presence: true
     validates :system_prompt, presence: true
     validates :max_iterations, presence: true, numericality: { greater_than: 0 }
-    validates :available_model_tools, length: {
-      minimum: 1,
-      message: ->(_object, _data) {
-        I18n.t("sentinel.agents.errors.available_model_tools.too_short")
-      }
-    }
 
-    before_validation -> { self.system_prompt ||= build_system_prompt }, on: :create
+    before_validation -> {
+      populate_default_model_tools
+      self.system_prompt ||= build_system_prompt
+    },
+      on: :create
 
     attr_accessor :on_conversation_history_entry
 
@@ -59,7 +57,6 @@ module Raif
     def run!(&block)
       self.on_conversation_history_entry = block_given? ? block : nil
       self.started_at = Time.current
-      self.available_model_tools += ["Raif::ModelTools::AgentFinalAnswer"] unless available_model_tools.include?("Raif::ModelTools::AgentFinalAnswer")
       save!
 
       logger.debug <<~DEBUG
@@ -111,6 +108,10 @@ module Raif
 
   private
 
+    def populate_default_model_tools
+      # no-op by default. Can be overridden by subclasses to add default model tools
+    end
+
     def process_iteration_model_completion(model_completion)
       raise NotImplementedError, "#{self.class.name} must implement execute_agent_iteration"
     end
@@ -122,6 +123,7 @@ module Raif
     def add_conversation_history_entry(entry)
       entry_stringified = entry.stringify_keys
       conversation_history << entry_stringified
+      save!
       on_conversation_history_entry.call(entry_stringified) if on_conversation_history_entry.present?
     end
 

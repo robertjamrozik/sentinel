@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "json-schema"
-
 class Raif::ModelToolInvocation < Raif::ApplicationRecord
   belongs_to :source, polymorphic: true
 

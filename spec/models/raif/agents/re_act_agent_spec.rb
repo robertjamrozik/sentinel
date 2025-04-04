@@ -7,6 +7,16 @@ RSpec.describe Raif::Agents::ReActAgent, type: :model do
 
   it_behaves_like "an agent"
 
+  it "validates the length of available_model_tools" do
+    agent = described_class.new(
+      creator: creator,
+      task: "What is the capital of France?",
+      system_prompt: "System prompt",
+    )
+    expect(agent).not_to be_valid
+    expect(agent.errors[:available_model_tools]).to include("must have at least 1 tool")
+  end
+
   describe "#run!" do
     let(:agent) do
       described_class.new(
@@ -149,7 +159,7 @@ RSpec.describe Raif::Agents::ReActAgent, type: :model do
         {
           "role" => "assistant",
           "content" =>
-          "<observation>Error: Tool 'unavailable_tool' not found. Available tools: wikipedia_search, fetch_url, agent_final_answer</observation>"
+          "<observation>Error: Tool 'unavailable_tool' not found. Available tools: wikipedia_search, fetch_url</observation>"
         }
       ])
     end
