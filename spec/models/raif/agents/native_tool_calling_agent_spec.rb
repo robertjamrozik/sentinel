@@ -7,6 +7,16 @@ RSpec.describe Raif::Agents::NativeToolCallingAgent, type: :model do
 
   it_behaves_like "an agent"
 
+  it "validates the length of available_model_tools" do
+    agent = described_class.new(
+      creator: creator,
+      task: "What is the capital of France?",
+      system_prompt: "System prompt",
+    )
+    expect(agent).not_to be_valid
+    expect(agent.errors[:available_model_tools]).to include("must have at least 1 tool in addition to the agent_final_answer tool")
+  end
+
   describe "#run!" do
     let(:agent) do
       described_class.new(

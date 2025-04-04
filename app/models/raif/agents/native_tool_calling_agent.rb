@@ -4,6 +4,16 @@ module Raif
   module Agents
     class NativeToolCallingAgent < Raif::Agent
       validate :ensure_llm_supports_native_tool_use
+      validates :available_model_tools, length: {
+        minimum: 2,
+        message: ->(_object, _data) {
+          I18n.t("sentinel.agents.native_tool_calling_agent.errors.available_model_tools.too_short")
+        }
+      }
+
+      before_validation -> {
+        available_model_tools << "Raif::ModelTools::AgentFinalAnswer" unless available_model_tools.include?("Raif::ModelTools::AgentFinalAnswer")
+      }
 
       def build_system_prompt
         <<~PROMPT.strip
@@ -35,9 +45,7 @@ module Raif
     private
 
       def native_model_tools
-        tools = available_model_tools
-        tools += ["Raif::ModelTools::AgentFinalAnswer"] unless tools.include?("Raif::ModelTools::AgentFinalAnswer")
-        tools
+        available_model_tools
       end
 
       def process_iteration_model_completion(model_completion)

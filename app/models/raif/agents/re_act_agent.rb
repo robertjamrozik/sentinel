@@ -3,6 +3,12 @@
 module Raif
   module Agents
     class ReActAgent < Raif::Agent
+      validates :available_model_tools, length: {
+        minimum: 1,
+        message: ->(_object, _data) {
+          I18n.t("sentinel.agents.re_act_agent.errors.available_model_tools.too_short")
+        }
+      }
 
       def build_system_prompt
         <<~PROMPT.strip

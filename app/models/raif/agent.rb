@@ -22,12 +22,6 @@ module Raif
     validates :task, presence: true
     validates :system_prompt, presence: true
     validates :max_iterations, presence: true, numericality: { greater_than: 0 }
-    validates :available_model_tools, length: {
-      minimum: 1,
-      message: ->(_object, _data) {
-        I18n.t("sentinel.agents.errors.available_model_tools.too_short")
-      }
-    }
 
     before_validation -> {
       populate_default_model_tools
