@@ -149,7 +149,7 @@ RSpec.describe Raif::Agents::ReActAgent, type: :model do
         {
           "role" => "assistant",
           "content" =>
-          "<observation>Error: Tool 'unavailable_tool' not found. Available tools: wikipedia_search, fetch_url, agent_final_answer</observation>"
+          "<observation>Error: Tool 'unavailable_tool' not found. Available tools: wikipedia_search, fetch_url</observation>"
         }
       ])
     end
