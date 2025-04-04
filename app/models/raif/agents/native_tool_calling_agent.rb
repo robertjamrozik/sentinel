@@ -35,7 +35,9 @@ module Raif
     private
 
       def native_model_tools
-        available_model_tools
+        tools = available_model_tools
+        tools += ["Raif::ModelTools::AgentFinalAnswer"] unless tools.include?("Raif::ModelTools::AgentFinalAnswer")
+        tools
       end
 
       def process_iteration_model_completion(model_completion)

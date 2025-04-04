@@ -5,12 +5,12 @@ module Raif
     class <%= class_name %> < Raif::Agent
       # If you want to always include a certain set of model tools with this agent type,
       # uncomment this callback to populate the available_model_tools attribute with your desired model tools.
-      # before_create -> {
+      # def populate_default_model_tools
       #   self.available_model_tools ||= [
       #     Raif::ModelTools::WikipediaSearchTool,
       #     Raif::ModelTools::FetchUrlTool
       #   ]
-      # }
+      # end
 
       # Enter your agent's system prompt here. Alternatively, you can change your agent's superclass
       # to an existing agent types (like Raif::Agents::ReActAgent) to utilize an existing system prompt.
