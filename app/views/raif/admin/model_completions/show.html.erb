@@ -38,7 +38,7 @@
         <% if @model_completion.prompt_tokens %>
           <%= number_with_delimiter(@model_completion.prompt_tokens) %>
           <% if @model_completion.prompt_token_cost %>
-            <small>(<%= t("sentinel.admin.common.est_cost") %>: $<%= number_with_precision(@model_completion.prompt_token_cost, precision: 6) %> )</small>
+            <small>(<%= t("sentinel.admin.common.est_cost") %>: $<%= number_with_precision(@model_completion.prompt_token_cost, precision: 6) %>)</small>
           <% end %>
         <% else %>
           -

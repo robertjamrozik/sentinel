@@ -124,9 +124,9 @@ RSpec.describe "Admin::ModelCompletions", type: :feature do
         model_api_name: "gpt-4o-mini",
         response_format: "text",
         raw_response: "This is a test response",
-        prompt_tokens: 25,
-        completion_tokens: 75,
-        total_tokens: 100,
+        prompt_tokens: 2500,
+        completion_tokens: 7500,
+        total_tokens: 10000,
         messages: [
           { "role" => "user", "content" => "Test message" },
           { "role" => "assistant", "content" => "This is a test response" }
@@ -150,9 +150,9 @@ RSpec.describe "Admin::ModelCompletions", type: :feature do
       expect(page).to have_content(text_completion.created_at.rfc822)
 
       # Check token counts
-      expect(page).to have_content("25") # prompt_tokens
-      expect(page).to have_content("75") # completion_tokens
-      expect(page).to have_content("100") # total_tokens
+      expect(page).to have_content("2,500 (est. cost: $0.000375)") # prompt_tokens
+      expect(page).to have_content("7,500 (est. cost: $0.004500)") # completion_tokens
+      expect(page).to have_content("10,000 (est. cost: $0.004875)") # total_tokens
 
       # Check messages section
       expect(page).to have_content(I18n.t("sentinel.admin.common.messages"))
