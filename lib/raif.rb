@@ -64,4 +64,8 @@ module Raif
   def self.available_llm_keys
     llm_registry.keys
   end
+
+  def self.llm_config(model_key)
+    llm_registry[model_key]
+  end
 end

@@ -9,7 +9,9 @@ module Raif
       :default_temperature,
       :default_max_completion_tokens,
       :supports_native_tool_use,
-      :provider_settings
+      :provider_settings,
+      :input_token_cost,
+      :output_token_cost
 
     validates :key, presence: true
     validates :api_name, presence: true
@@ -18,13 +20,16 @@ module Raif
 
     alias_method :supports_native_tool_use?, :supports_native_tool_use
 
-    def initialize(key:, api_name:, model_provider_settings: {}, supports_native_tool_use: true, temperature: nil, max_completion_tokens: nil)
+    def initialize(key:, api_name:, model_provider_settings: {}, supports_native_tool_use: true, temperature: nil, max_completion_tokens: nil,
+      input_token_cost: nil, output_token_cost: nil)
       @key = key
       @api_name = api_name
       @provider_settings = model_provider_settings
       @supports_native_tool_use = supports_native_tool_use
       @default_temperature = temperature || 0.7
       @default_max_completion_tokens = max_completion_tokens
+      @input_token_cost = input_token_cost
+      @output_token_cost = output_token_cost
     end
 
     def name
