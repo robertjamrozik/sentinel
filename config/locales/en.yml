@@ -50,6 +50,9 @@ en:
       bedrock_claude_3_7_sonnet: Anthropic Claude 3.7 Sonnet (via AWS Bedrock)
       bedrock_claude_3_opus: Anthropic Claude 3 Opus (via AWS Bedrock)
       open_ai_gpt_3_5_turbo: OpenAI GPT-3.5 Turbo
+      open_ai_gpt_4_1: OpenAI GPT-4.1
+      open_ai_gpt_4_1_mini: OpenAI GPT-4.1 Mini
+      open_ai_gpt_4_1_nano: OpenAI GPT-4.1 Nano
       open_ai_gpt_4o: OpenAI GPT-4o
       open_ai_gpt_4o_mini: OpenAI GPT-4o Mini
       sentinel_test_llm: Raif Test LLM
