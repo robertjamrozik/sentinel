@@ -3,12 +3,17 @@
 module Raif
   module RspecHelpers
 
-    def stub_sentinel_task(task_class, &block)
+    def stub_sentinel_task(task, &block)
       test_llm = Raif.llm(:sentinel_test_llm)
       test_llm.chat_handler = block
 
       allow(Raif.config).to receive(:llm_api_requests_enabled){ true }
-      allow_any_instance_of(task_class).to receive(:llm){ test_llm }
+
+      if task.is_a?(Raif::Task)
+        allow(task).to receive(:llm){ test_llm }
+      else
+        allow_any_instance_of(task).to receive(:llm){ test_llm }
+      end
     end
 
     def stub_sentinel_conversation(conversation, &block)
