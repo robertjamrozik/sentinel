@@ -86,7 +86,7 @@ module Raif
     # @param args [Hash] Additional arguments to pass to the instance of the task that is created.
     # @return [String] The LLM prompt for the task.
     def self.prompt(creator:, **args)
-      new(creator:, **args).prompt
+      new(creator:, **args).build_prompt
     end
 
     # Returns the LLM system prompt for the task.
