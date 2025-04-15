@@ -162,7 +162,7 @@ private
   def supports_structured_outputs?
     # Not all OpenAI models support structured outputs:
     # https://platform.openai.com/docs/guides/structured-outputs?api-mode=chat#supported-models
-    provider_settings[:supports_structured_outputs]
+    provider_settings.key?(:supports_structured_outputs) ? provider_settings[:supports_structured_outputs] : true
   end
 
   def validate_object_properties(schema, errors)
