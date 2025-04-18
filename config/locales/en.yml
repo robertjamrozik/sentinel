@@ -17,6 +17,11 @@ en:
       type_your_message: Type your message...
     conversation:
       initial_chat_message: Hello, how can I help you today?
+    embedding_model_names:
+      bedrock_titan_embed_text_v2: AWS Bedrock Titan Text Embeddings v2
+      open_ai_text_embedding_3_large: OpenAI Text Embedding 3 Large
+      open_ai_text_embedding_3_small: OpenAI Text Embedding 3 Small
+      open_ai_text_embedding_ada_002: OpenAI Text Embedding Ada 002
     languages:
       ar: Arabic
       da: Danish
