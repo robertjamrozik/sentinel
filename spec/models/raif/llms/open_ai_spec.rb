@@ -44,7 +44,7 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
       let(:mock_request) { double("Request") }
 
       before do
-        allow(mock_response).to receive(:body).and_return(response_body.to_json)
+        allow(mock_response).to receive(:body).and_return(response_body)
         allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
         allow(mock_request).to receive(:body=)
       end
@@ -99,7 +99,7 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
       let(:mock_request) { double("Request") }
 
       before do
-        allow(mock_response).to receive(:body).and_return(response_body.to_json)
+        allow(mock_response).to receive(:body).and_return(response_body)
         allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
         allow(mock_request).to receive(:body=)
       end
@@ -148,7 +148,7 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
       before do
         allow(mock_response).to receive(:success?).and_return(false)
         allow(mock_response).to receive(:status).and_return(429)
-        allow(mock_response).to receive(:body).and_return(error_response_body.to_json)
+        allow(mock_response).to receive(:body).and_return(error_response_body)
         allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
         allow(mock_request).to receive(:body=)
       end
@@ -204,8 +204,8 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
     end
   end
 
-  describe "#build_chat_parameters" do
-    let(:parameters) { llm.send(:build_chat_parameters, model_completion) }
+  describe "#build_request_parameters" do
+    let(:parameters) { llm.send(:build_request_parameters, model_completion) }
 
     context "for text response format" do
       let(:model_completion) do

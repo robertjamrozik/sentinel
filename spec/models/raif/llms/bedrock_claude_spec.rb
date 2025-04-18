@@ -37,7 +37,7 @@ RSpec.describe Raif::Llms::BedrockClaude, type: :model do
     end
   end
 
-  describe "#build_api_parameters" do
+  describe "#build_request_parameters" do
     let(:model_completion) do
       Raif::ModelCompletion.new(
         messages: [{ role: "user", content: "Hello" }],
@@ -48,7 +48,7 @@ RSpec.describe Raif::Llms::BedrockClaude, type: :model do
     end
 
     it "builds the correct parameters" do
-      parameters = llm.send(:build_api_parameters, model_completion)
+      parameters = llm.send(:build_request_parameters, model_completion)
       expect(parameters[:model_id]).to eq("us.anthropic.claude-3-5-sonnet-20241022-v2:0")
       expect(parameters[:inference_config][:max_tokens]).to eq(8192)
       expect(parameters[:messages]).to eq([{ role: "user", content: [{ text: "Hello" }] }])

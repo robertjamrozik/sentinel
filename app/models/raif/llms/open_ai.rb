@@ -4,26 +4,25 @@ class Raif::Llms::OpenAi < Raif::Llm
 
   def perform_model_completion!(model_completion)
     model_completion.temperature ||= default_temperature
-    parameters = build_chat_parameters(model_completion)
-
+    parameters = build_request_parameters(model_completion)
     response = connection.post("chat/completions") do |req|
-      req.body = parameters.to_json
+      req.body = parameters
     end
 
-    resp = JSON.parse(response.body)
+    response_json = response.body
 
     # Handle API errors
     unless response.success?
-      error_message = resp["error"]&.dig("message") || "OpenAI API error: #{response.status}"
+      error_message = response_json.dig("error", "message") || "OpenAI API error: #{response.status}"
       raise Raif::Errors::OpenAi::ApiError, error_message
     end
 
     model_completion.update!(
-      response_tool_calls: extract_response_tool_calls(resp),
-      raw_response: resp.dig("choices", 0, "message", "content"),
-      completion_tokens: resp["usage"]["completion_tokens"],
-      prompt_tokens: resp["usage"]["prompt_tokens"],
-      total_tokens: resp["usage"]["total_tokens"],
+      response_tool_calls: extract_response_tool_calls(response_json),
+      raw_response: response_json.dig("choices", 0, "message", "content"),
+      completion_tokens: response_json.dig("usage", "completion_tokens"),
+      prompt_tokens: response_json.dig("usage", "prompt_tokens"),
+      total_tokens: response_json.dig("usage", "total_tokens"),
       response_format_parameter: parameters.dig(:response_format, :type)
     )
 
@@ -32,8 +31,9 @@ class Raif::Llms::OpenAi < Raif::Llm
 
   def connection
     @connection ||= Faraday.new(url: "https://api.openai.com/v1") do |f|
-      f.headers["Content-Type"] = "application/json"
       f.headers["Authorization"] = "Bearer #{Raif.config.open_ai_api_key}"
+      f.request :json
+      f.response :json
     end
   end
 
@@ -88,7 +88,7 @@ private
     end
   end
 
-  def build_chat_parameters(model_completion)
+  def build_request_parameters(model_completion)
     formatted_system_prompt = model_completion.system_prompt.to_s.strip
 
     # If the response format is JSON, we need to include "as json" in the system prompt.
