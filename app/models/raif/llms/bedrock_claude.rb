@@ -7,7 +7,7 @@ class Raif::Llms::BedrockClaude < Raif::Llm
       model_completion.model_api_name = "#{Raif.config.aws_bedrock_model_name_prefix}.#{model_completion.model_api_name}"
     end
 
-    params = build_api_parameters(model_completion)
+    params = build_request_parameters(model_completion)
     resp = bedrock_client.converse(params)
 
     model_completion.raw_response = if model_completion.response_format_json?
@@ -39,7 +39,7 @@ protected
     end
   end
 
-  def build_api_parameters(model_completion)
+  def build_request_parameters(model_completion)
     params = {
       model_id: model_completion.model_api_name,
       inference_config: { max_tokens: model_completion.max_completion_tokens || 8192 },

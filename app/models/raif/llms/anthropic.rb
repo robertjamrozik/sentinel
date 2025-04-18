@@ -3,29 +3,27 @@
 class Raif::Llms::Anthropic < Raif::Llm
 
   def perform_model_completion!(model_completion)
-    params = build_api_parameters(model_completion)
-
+    params = build_request_parameters(model_completion)
     response = connection.post("messages") do |req|
-      req.body = params.to_json
+      req.body = params
     end
 
-    resp = JSON.parse(response.body, symbolize_names: true)
+    response_json = response.body
 
-    # Handle API errors
     unless response.success?
-      error_message = resp[:error]&.dig(:message) || "Anthropic API error: #{response.status}"
+      error_message = response_json.dig("error", "message") || "Anthropic API error: #{response.status}"
       raise Raif::Errors::Anthropic::ApiError, error_message
     end
 
     model_completion.raw_response = if model_completion.response_format_json?
-      extract_json_response(resp)
+      extract_json_response(response_json)
     else
-      extract_text_response(resp)
+      extract_text_response(response_json)
     end
 
-    model_completion.response_tool_calls = extract_response_tool_calls(resp)
-    model_completion.completion_tokens = resp&.dig(:usage, :output_tokens)
-    model_completion.prompt_tokens = resp&.dig(:usage, :input_tokens)
+    model_completion.response_tool_calls = extract_response_tool_calls(response_json)
+    model_completion.completion_tokens = response_json&.dig("usage", "output_tokens")
+    model_completion.prompt_tokens = response_json&.dig("usage", "input_tokens")
     model_completion.save!
 
     model_completion
@@ -33,15 +31,16 @@ class Raif::Llms::Anthropic < Raif::Llm
 
   def connection
     @connection ||= Faraday.new(url: "https://api.anthropic.com/v1") do |f|
-      f.headers["Content-Type"] = "application/json"
       f.headers["x-api-key"] = Raif.config.anthropic_api_key
       f.headers["anthropic-version"] = "2023-06-01"
+      f.request :json
+      f.response :json
     end
   end
 
 protected
 
-  def build_api_parameters(model_completion)
+  def build_request_parameters(model_completion)
     params = {
       model: model_completion.model_api_name,
       messages: model_completion.messages,
@@ -80,7 +79,7 @@ protected
   end
 
   def extract_text_response(resp)
-    resp&.dig(:content)&.first&.dig(:text)
+    resp&.dig("content")&.first&.dig("text")
   end
 
   def extract_json_response(resp)
@@ -88,8 +87,8 @@ protected
 
     # Look for tool_use blocks in the content array
     tool_name = "json_response"
-    tool_response = resp&.dig(:content)&.find do |content|
-      content[:type] == "tool_use" && content[:name] == tool_name
+    tool_response = resp&.dig("content")&.find do |content|
+      content["type"] == "tool_use" && content["name"] == tool_name
     end
 
     if tool_response
@@ -100,19 +99,19 @@ protected
   end
 
   def extract_response_tool_calls(resp)
-    return if resp&.dig(:content).nil?
+    return if resp&.dig("content").nil?
 
     # Find any tool_use content blocks
-    tool_uses = resp&.dig(:content)&.select do |content|
-      content[:type] == "tool_use"
+    tool_uses = resp&.dig("content")&.select do |content|
+      content["type"] == "tool_use"
     end
 
     return if tool_uses.blank?
 
     tool_uses.map do |tool_use|
       {
-        "name" => tool_use[:name],
-        "arguments" => tool_use[:input]
+        "name" => tool_use["name"],
+        "arguments" => tool_use["input"]
       }
     end
   end

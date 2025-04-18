@@ -17,15 +17,15 @@ RSpec.describe Raif::Llms::Anthropic, type: :model do
     context "when the response format is text" do
       let(:response_body) do
         {
-          content: [{ type: "text", text: "Response content" }],
-          usage: { input_tokens: 5, output_tokens: 10 }
+          "content" => [{ "type" => "text", "text" => "Response content" }],
+          "usage" => { "input_tokens" => 5, "output_tokens" => 10 }
         }
       end
 
       let(:mock_request) { double("Request") }
 
       before do
-        allow(mock_response).to receive(:body).and_return(response_body.to_json)
+        allow(mock_response).to receive(:body).and_return(response_body)
         allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
         allow(mock_request).to receive(:body=)
       end
@@ -48,15 +48,15 @@ RSpec.describe Raif::Llms::Anthropic, type: :model do
     context "when the response format is JSON" do
       let(:response_body) do
         {
-          content: [{ type: "text", text: "{\"name\": \"John\", \"age\": 30}" }],
-          usage: { input_tokens: 5, output_tokens: 10 }
+          "content" => [{ "type" => "text", "text" => "{\"name\": \"John\", \"age\": 30}" }],
+          "usage" => { "input_tokens" => 5, "output_tokens" => 10 }
         }
       end
 
       let(:mock_request) { double("Request") }
 
       before do
-        allow(mock_response).to receive(:body).and_return(response_body.to_json)
+        allow(mock_response).to receive(:body).and_return(response_body)
         allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
         allow(mock_request).to receive(:body=)
       end
@@ -81,24 +81,24 @@ RSpec.describe Raif::Llms::Anthropic, type: :model do
     context "when the response includes tool use" do
       let(:response_body) do
         {
-          content: [
+          "content" => [
             {
-              type: "tool_use",
-              name: "calculator",
-              input: {
-                "operation": "add",
-                "operands": [5, 7]
+              "type" => "tool_use",
+              "name" => "calculator",
+              "input" => {
+                "operation" => "add",
+                "operands" => [5, 7]
               }
             }
           ],
-          usage: { input_tokens: 8, output_tokens: 12 }
+          "usage" => { "input_tokens" => 8, "output_tokens" => 12 }
         }
       end
 
       let(:mock_request) { double("Request") }
 
       before do
-        allow(mock_response).to receive(:body).and_return(response_body.to_json)
+        allow(mock_response).to receive(:body).and_return(response_body)
         allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
         allow(mock_request).to receive(:body=)
       end
@@ -121,9 +121,9 @@ RSpec.describe Raif::Llms::Anthropic, type: :model do
     context "when the API returns an error" do
       let(:error_response_body) do
         {
-          error: {
-            message: "API rate limit exceeded",
-            type: "rate_limit_error"
+          "error" => {
+            "message" => "API rate limit exceeded",
+            "type" => "rate_limit_error"
           }
         }
       end
@@ -133,7 +133,7 @@ RSpec.describe Raif::Llms::Anthropic, type: :model do
       before do
         allow(mock_response).to receive(:success?).and_return(false)
         allow(mock_response).to receive(:status).and_return(429)
-        allow(mock_response).to receive(:body).and_return(error_response_body.to_json)
+        allow(mock_response).to receive(:body).and_return(error_response_body)
         allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
         allow(mock_request).to receive(:body=)
       end
