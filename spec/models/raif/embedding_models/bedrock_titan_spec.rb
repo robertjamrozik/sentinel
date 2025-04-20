@@ -22,7 +22,7 @@ RSpec.describe Raif::EmbeddingModels::BedrockTitan, type: :model do
   describe "#generate_embedding!" do
     context "with a string input" do
       let(:input) { "This is a test sentence" }
-      let(:embedding_vector) { Array.new(1536) { rand(-1.0..1.0) } }
+      let(:embedding_vector) { Array.new(model.default_output_vector_size) { rand(-1.0..1.0) } }
       let(:response_body) { { "embedding" => embedding_vector } }
 
       before do

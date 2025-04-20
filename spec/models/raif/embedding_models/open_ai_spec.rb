@@ -23,7 +23,7 @@ RSpec.describe Raif::EmbeddingModels::OpenAi, type: :model do
   describe "#generate_embedding!" do
     context "with a string input" do
       let(:input) { "This is a test sentence" }
-      let(:embedding_vector) { Array.new(1536) { rand(-1.0..1.0) } }
+      let(:embedding_vector) { Array.new(model.default_output_vector_size) { rand(-1.0..1.0) } }
       let(:response_body) { { "data" => [{ "embedding" => embedding_vector }] } }
 
       before do
@@ -68,8 +68,8 @@ RSpec.describe Raif::EmbeddingModels::OpenAi, type: :model do
       let(:input) { ["This is sentence one", "This is sentence two"] }
       let(:embedding_vectors) do
         [
-          Array.new(1536) { rand(-1.0..1.0) },
-          Array.new(1536) { rand(-1.0..1.0) }
+          Array.new(model.default_output_vector_size) { rand(-1.0..1.0) },
+          Array.new(model.default_output_vector_size) { rand(-1.0..1.0) }
         ]
       end
 
