@@ -5,7 +5,12 @@ class Raif::EmbeddingModel
 
   attr_accessor :key,
     :api_name,
-    :input_token_cost
+    :input_token_cost,
+    :default_output_vector_size
+
+  validates :default_output_vector_size, presence: true, numericality: { only_integer: true, greater_than: 0 }
+  validates :api_name, presence: true
+  validates :key, presence: true
 
   def name
     I18n.t("sentinel.embedding_model_names.#{key}")

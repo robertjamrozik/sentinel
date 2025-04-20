@@ -6,8 +6,12 @@ module Raif
   end
 
   def self.generate_embedding!(input, dimensions: nil)
-    embedding_model = embedding_model(config.default_embedding_model_key.to_sym)
+    embedding_model = embedding_model(default_embedding_model_key)
     embedding_model.generate_embedding!(input, dimensions:)
+  end
+
+  def self.default_embedding_model_key
+    Rails.env.test? ? :sentinel_test_embedding_model : Raif.config.default_embedding_model_key
   end
 
   def self.register_embedding_model(embedding_model_class, embedding_model_config)
@@ -51,16 +55,19 @@ module Raif
           key: :open_ai_text_embedding_3_large,
           api_name: "text-embedding-3-large",
           input_token_cost: 0.13 / 1_000_000,
+          default_output_vector_size: 3072,
         },
         {
           key: :open_ai_text_embedding_3_small,
           api_name: "text-embedding-3-small",
           input_token_cost: 0.02 / 1_000_000,
+          default_output_vector_size: 1536,
         },
         {
           key: :open_ai_text_embedding_ada_002,
           api_name: "text-embedding-ada-002",
           input_token_cost: 0.01 / 1_000_000,
+          default_output_vector_size: 1536,
         },
       ],
       Raif::EmbeddingModels::BedrockTitan => [
@@ -68,6 +75,7 @@ module Raif
           key: :bedrock_titan_embed_text_v2,
           api_name: "amazon.titan-embed-text-v2:0",
           input_token_cost: 0.01 / 1_000_000,
+          default_output_vector_size: 1024,
         },
       ]
     }

@@ -43,7 +43,7 @@ module Raif
       @conversation_types = Set.new(["Raif::Conversation"])
       @conversations_controller = "Raif::ConversationsController"
       @current_user_method = :current_user
-      @default_embedding_model_key = "open_ai_text_embedding_3_large"
+      @default_embedding_model_key = "open_ai_text_embedding_3_small"
       @default_llm_model_key = "open_ai_gpt_4o"
       @llm_api_requests_enabled = true
       @model_superclass = "ApplicationRecord"
