@@ -6,7 +6,7 @@ module Raif
   end
 
   def self.generate_embedding!(input, dimensions: nil)
-    embedding_model = embedding_model(default_embedding_model_key)
+    embedding_model = embedding_model(default_embedding_model_key.to_sym)
     embedding_model.generate_embedding!(input, dimensions:)
   end
 
