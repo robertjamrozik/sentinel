@@ -34,7 +34,11 @@ private
   end
 
   def validate_conversation_type
-    head :bad_request unless Raif.config.conversation_types.include?(conversation_type_param)
+    unless Raif.config.conversation_types.include?(conversation_type_param)
+      logger.error("Invalid Raif conversation type - not in Raif.config.conversation_types: #{conversation_type_param}")
+      logger.debug("\n\n\e[33m!!! Make sure to add the conversation type in Raif.config.conversation_types\e[0m\n")
+      head :bad_request
+    end
   end
 
   def sentinel_conversation_type
