@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
-# desc "Explaining what the task does"
-# task :sentinel do
-#   # Task goes here
-# end
+namespace :sentinel do
+  namespace :install do
+    desc "Copy migrations from Raif to host application"
+    task :migrations do
+      ENV["FROM"] = "sentinel"
+      Rake::Task["railties:install:migrations"].invoke
+    end
+  end
+end

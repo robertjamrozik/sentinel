@@ -4,6 +4,7 @@ class Raif::Conversation < Raif::ApplicationRecord
   include Raif::Concerns::HasLlm
   include Raif::Concerns::HasRequestedLanguage
   include Raif::Concerns::HasAvailableModelTools
+  include Raif::Concerns::LlmResponseParsing
 
   belongs_to :creator, polymorphic: true
 

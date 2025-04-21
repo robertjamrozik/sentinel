@@ -22,12 +22,6 @@ module Raif
 
     after_initialize -> { self.available_model_tools ||= [] }
 
-    def self.llm_response_format(format)
-      raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
-
-      after_initialize -> { self.response_format = format }, if: :new_record?
-    end
-
     # The primary interface for running a task. It will hit the LLM with the task's prompt and system prompt and return a Raif::Task object.
     # It will also create a new Raif::ModelCompletion record.
     #
