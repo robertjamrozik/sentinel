@@ -12,18 +12,10 @@ module Raif
       # def system_prompt_intro
       #   Raif.config.conversation_system_prompt_intro
       # end
-      
+
       # def build_system_prompt
       #   <<~PROMPT
       #     #{system_prompt_intro}
-      #
-      #     # Your Responses
-      #     Your responses should always be in JSON format with a "message" field containing your response to your collaborator. For example:
-      #     {
-      #       "message": "Your response message"
-      #     }
-      #     #{tool_usage_system_prompt}
-      #     #{system_prompt_reminders}
       #     #{system_prompt_language_preference}
       #   PROMPT
       # end
