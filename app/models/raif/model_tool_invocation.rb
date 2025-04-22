@@ -9,7 +9,11 @@ class Raif::ModelToolInvocation < Raif::ApplicationRecord
   validates :tool_type, presence: true
   validate :ensure_valid_tool_argument_schema, if: -> { tool_type.present? && tool_arguments_schema.present? }
 
-  delegate :tool_arguments_schema, :renderable?, :tool_name, to: :tool
+  delegate :tool_arguments_schema,
+    :renderable?,
+    :tool_name,
+    :triggers_observation_to_model?,
+    to: :tool
 
   boolean_timestamp :completed_at
   boolean_timestamp :failed_at
@@ -23,9 +27,12 @@ class Raif::ModelToolInvocation < Raif::ApplicationRecord
   end
 
   def result_llm_message
-    if result.present?
-      "Result from #{tool_name}: #{result.to_json}"
-    end
+    return unless tool.respond_to?(:observation_for_invocation)
+
+    observation = tool.observation_for_invocation(self)
+    return if observation.blank?
+
+    "Result from #{tool_name}: #{observation}"
   end
 
   def to_partial_path
