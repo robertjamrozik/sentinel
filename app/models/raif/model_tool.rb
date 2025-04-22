@@ -47,6 +47,10 @@ class Raif::ModelTool
     true
   end
 
+  def self.triggers_observation_to_model?
+    false
+  end
+
   def self.invoke_tool(tool_arguments:, source:)
     tool_invocation = Raif::ModelToolInvocation.new(
       source: source,

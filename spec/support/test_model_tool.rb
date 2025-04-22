@@ -38,6 +38,8 @@ class Raif::TestModelTool < Raif::ModelTool
   end
 
   def self.observation_for_invocation(tool_invocation)
-    "Mock Observation"
+    return if tool_invocation.result.blank?
+
+    "Mock Observation for #{tool_invocation.id}. Result was: #{tool_invocation.result["status"]}"
   end
 end

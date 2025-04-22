@@ -49,6 +49,12 @@ class Raif::ModelTools::<%= class_name %> < Raif::ModelTool
     JSON.pretty_generate(tool_invocation.result)
   end
 
+  # When your tool is invoked in a Raif::Conversation, should the result be automatically provided back to the model?
+  # When true, observation_for_invocation will be used to produce the observation provided to the model
+  def self.triggers_observation_to_model?
+    false
+  end
+
   # When the LLM invokes your tool, this method will be called with a `Raif::ModelToolInvocation` record as an argument.
   # It should handle the actual execution of the tool. 
   # For example, if you are implementing a GoogleSearch tool, this method should run the actual search
