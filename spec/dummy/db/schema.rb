@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_21_202149) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -64,6 +64,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_25_005128) do
     t.integer "conversation_entries_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "response_format", default: 0, null: false
     t.index ["creator_type", "creator_id"], name: "index_sentinel_conversations_on_creator"
   end
 

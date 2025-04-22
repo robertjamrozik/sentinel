@@ -11,6 +11,14 @@ module Raif::Concerns::LlmResponseParsing
     validates :response_format, presence: true, inclusion: { in: response_formats.keys }
   end
 
+  class_methods do
+    def llm_response_format(format)
+      raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
+
+      after_initialize -> { self.response_format = format }, if: :new_record?
+    end
+  end
+
   # Parses the response from the LLM into a structured format, based on the response_format.
   # If the response format is JSON, it will be parsed using JSON.parse.
   # If the response format is HTML, it will be sanitized via ActionController::Base.helpers.sanitize.
