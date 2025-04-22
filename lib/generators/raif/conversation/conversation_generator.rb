@@ -7,6 +7,11 @@ module Raif
 
       desc "Creates a new conversation type in the app/models/sentinel/conversations directory"
 
+      class_option :response_format,
+        type: :string,
+        default: "text",
+        desc: "Response format for the task (text, html, or json)"
+
       def create_application_conversation
         template "application_conversation.rb.tt",
           "app/models/sentinel/application_conversation.rb" unless File.exist?("app/models/sentinel/application_conversation.rb")
