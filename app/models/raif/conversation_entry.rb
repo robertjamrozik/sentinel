@@ -16,7 +16,7 @@ class Raif::ConversationEntry < Raif::ApplicationRecord
   has_one :sentinel_model_completion, as: :source, dependent: :destroy, class_name: "Raif::ModelCompletion"
 
   delegate :available_model_tools, to: :sentinel_conversation
-  delegate :system_prompt, :llm_model_key, to: :sentinel_model_completion, allow_nil: true
+  delegate :system_prompt, :llm_model_key, :response_format, to: :sentinel_model_completion, allow_nil: true
   delegate :json_response_schema, to: :class
 
   accepts_nested_attributes_for :sentinel_user_tool_invocation

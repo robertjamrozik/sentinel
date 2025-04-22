@@ -38,7 +38,7 @@ class Raif::Conversation < Raif::ApplicationRecord
     llm.chat(
       messages: llm_messages,
       source: entry,
-      response_format: :text,
+      response_format: response_format.to_sym,
       system_prompt: system_prompt,
       available_model_tools: available_model_tools
     )
@@ -48,7 +48,7 @@ class Raif::Conversation < Raif::ApplicationRecord
     messages = []
 
     entries.oldest_first.includes(:sentinel_model_tool_invocations).each do |entry|
-      messages << { "role" => "user", "content" => entry.user_message }
+      messages << { "role" => "user", "content" => entry.user_message } unless entry.user_message.blank?
       next unless entry.completed?
 
       messages << { "role" => "assistant", "content" => entry.model_response_message } unless entry.model_response_message.blank?
