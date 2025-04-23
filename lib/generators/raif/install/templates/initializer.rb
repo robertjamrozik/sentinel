@@ -28,6 +28,18 @@ Raif.configure do |config|
   # Whether Titan embedding models are enabled. Defaults to true
   # config.aws_bedrock_titan_embedding_models_enabled = true
 
+  # Your OpenRouter API key. Defaults to ENV["OPENROUTER_API_KEY"]
+  # config.open_router_api_key = ENV["OPENROUTER_API_KEY"]
+
+  # Whether OpenRouter models are enabled. Defaults to true
+  # config.open_router_models_enabled = true
+
+  # The app name to include in OpenRouter API requests headers. Optional.
+  # config.open_router_app_name = "My App"
+
+  # The site URL to include in OpenRouter API requests headers. Optional.
+  # config.open_router_site_url = "https://myapp.com"
+
   # The default LLM model to use. Defaults to "open_ai_gpt_4o"
   # Available keys:
   #   open_ai_gpt_4_1
@@ -44,6 +56,11 @@ Raif.configure do |config|
   #   bedrock_claude_3_7_sonnet
   #   bedrock_claude_3_5_haiku
   #   bedrock_claude_3_opus
+  #   open_router_claude_3_7_sonnet
+  #   open_router_llama_3_3_70b_instruct
+  #   open_router_llama_3_1_8b_instruct
+  #   open_router_gemini_2_0_flash
+  #   open_router_deepseek_chat_v3
   #
   # config.default_llm_model_key = "open_ai_gpt_4o"
 
