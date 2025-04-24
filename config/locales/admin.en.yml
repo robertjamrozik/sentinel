@@ -73,6 +73,7 @@ en:
         tool_invocations: Tool Invocations
         tool_name: Tool Name
         tool_type: Tool Type
+        total_cost: Total Cost
         total_tokens: Total Tokens
         type: Type
         update: Update
