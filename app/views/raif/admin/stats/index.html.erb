@@ -1,4 +1,21 @@
-<h1 class="my-4"><%= t("sentinel.admin.common.stats") %></h1>
+<div class="d-flex justify-content-between align-items-center my-4">
+  <h1 class="mb-0"><%= t("sentinel.admin.common.stats") %></h1>
+  
+  <div class="period-filter">
+    <%= form_tag sentinel.admin_stats_path, method: :get, id: "period_filter_form", class: "d-flex align-items-center" do %>
+      <%= select_tag :period, 
+        options_for_select([
+          [t("sentinel.admin.common.period_day"), "day"],
+          [t("sentinel.admin.common.period_week"), "week"],
+          [t("sentinel.admin.common.period_month"), "month"],
+          [t("sentinel.admin.common.period_all"), "all"]
+        ], @selected_period),
+        class: "form-select form-select-sm me-2"
+      %>
+      <%= submit_tag t("sentinel.admin.common.update"), class: "btn btn-sm btn-primary" %>
+    <% end %>
+  </div>
+</div>
 
 <div class="row">
   <div class="col-12">
@@ -47,7 +64,7 @@
                 <span class="stats-icon bg-info-subtle text-info rounded p-2 me-3">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chat-dots" viewBox="0 0 16 16">
                     <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
-                    <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9.06 9.06 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.437 10.437 0 0 1-.524 2.318l-.003.011a10.722 10.722 0 0 1-.244.637c-.079.186.074.394.273.362a21.673 21.673 0 0 0 .693-.125zm.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6c0 3.193-3.004 6-7 6a8.06 8.06 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a10.97 10.97 0 0 0 .398-2z" />
+                    <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9.06 9.06 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.437 10.437 0 0 1-.524 2.318l-.003.011a10.722 10.722 0 0 1-.244.637c-.079.186.074.394.273.362a21.673 21.673 0 0 0 .693-.125zm.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6c0 3.193-3.004 6-7 6a8.06 8.06 0 0 1-2.088-.272a1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a10.97 10.97 0 0 0 .398-2z" />
                   </svg>
                 </span>
                 <div>
@@ -76,7 +93,7 @@
             </div>
           </div>
           
-          <!-- Agent Invocations -->
+          <!-- Agents -->
           <div class="col-md-4 col-lg-4">
             <div class="stats-card p-3 border rounded shadow-sm h-100">
               <div class="d-flex align-items-center mb-2">
@@ -98,17 +115,3 @@
   </div>
 </div>
 
-<style>
-  .stats-icon {
-    min-width: 46px;
-    text-align: center;
-  }
-  
-  .stats-card {
-    transition: transform 0.2s;
-  }
-  
-  .stats-card:hover {
-    transform: translateY(-5px);
-  }
-</style> 

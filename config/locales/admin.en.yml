@@ -45,6 +45,10 @@ en:
         no_tasks: No tasks found.
         no_tool_calls: No tool calls
         pending: Pending
+        period_day: Past 24 hours
+        period_week: Past week
+        period_month: Past month
+        period_all: All time
         prettified: Prettified
         prompt: Prompt
         prompt_tokens: Prompt Tokens
@@ -71,6 +75,7 @@ en:
         tool_type: Tool Type
         total_tokens: Total Tokens
         type: Type
+        update: Update
         user_message: User Message
       conversations:
         show:

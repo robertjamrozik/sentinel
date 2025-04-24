@@ -4,11 +4,31 @@ module Raif
   module Admin
     class StatsController < Raif::Admin::ApplicationController
       def index
-        @model_completion_count = Raif::ModelCompletion.count
-        @task_count = Raif::Task.count
-        @conversation_count = Raif::Conversation.count
-        @conversation_entry_count = Raif::ConversationEntry.count
-        @agent_count = Raif::Agent.count
+        @selected_period = params[:period] || "day"
+        @time_range = get_time_range(@selected_period)
+
+        @model_completion_count = Raif::ModelCompletion.where(created_at: @time_range).count
+        @task_count = Raif::Task.where(created_at: @time_range).count
+        @conversation_count = Raif::Conversation.where(created_at: @time_range).count
+        @conversation_entry_count = Raif::ConversationEntry.where(created_at: @time_range).count
+        @agent_count = Raif::Agent.where(created_at: @time_range).count
+      end
+
+    private
+
+      def get_time_range(period)
+        case period
+        when "day"
+          24.hours.ago..Time.current
+        when "week"
+          1.week.ago..Time.current
+        when "month"
+          1.month.ago..Time.current
+        when "all"
+          Time.at(0)..Time.current
+        else
+          24.hours.ago..Time.current
+        end
       end
     end
   end
