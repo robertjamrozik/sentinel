@@ -38,7 +38,7 @@ RSpec.describe Raif::Conversation, type: :model do
         { "role" => "assistant", "content" => entry1.model_response_message },
         { "role" => "user", "content" => entry2.user_message },
         { "role" => "assistant", "content" => "Invoking tool: #{mti.tool_name} with arguments: #{mti.tool_arguments.to_json}" },
-        { "role" => "assistant", "content" => "Result from #{mti.tool_name}: Mock Observation for #{mti.id}. Result was: success" },
+        { "role" => "assistant", "content" => "Mock Observation for #{mti.id}. Result was: success" },
         { "role" => "user", "content" => entry3.user_message },
         { "role" => "assistant", "content" => entry3.model_response_message },
         { "role" => "assistant", "content" => "Invoking tool: #{mti2.tool_name} with arguments: #{mti2.tool_arguments.to_json}" }
@@ -86,6 +86,14 @@ RSpec.describe Raif::Conversation, type: :model do
       expect(completion).to be_a(Raif::ModelCompletion)
       expect(completion.raw_response).to eq("Hello user")
       expect(completion.response_format).to eq("text")
+    end
+  end
+
+  describe "#process_model_response_message" do
+    it "allows for conversation type-specific processing of the model response message" do
+      conversation = FB.create(:sentinel_test_conversation, creator: creator)
+      entry = FB.create(:sentinel_conversation_entry, sentinel_conversation: conversation, creator: creator)
+      expect(conversation.process_model_response_message(message: "Hello jerk.", entry: entry)).to eq("Hello [REDACTED].")
     end
   end
 end

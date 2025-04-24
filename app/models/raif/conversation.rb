@@ -44,6 +44,12 @@ class Raif::Conversation < Raif::ApplicationRecord
     )
   end
 
+  def process_model_response_message(message:, entry:)
+    # no-op by default.
+    # Override in subclasses for type-specific processing of the model response message
+    message
+  end
+
   def llm_messages
     messages = []
 
