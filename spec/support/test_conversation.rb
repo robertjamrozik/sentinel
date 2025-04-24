@@ -11,4 +11,8 @@ class Raif::TestConversation < Raif::Conversation
     ]
   end
 
+  def process_model_response_message(message:, entry:)
+    message.gsub("jerk", "[REDACTED]")
+  end
+
 end

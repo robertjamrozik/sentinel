@@ -76,7 +76,7 @@ private
   def extract_message_and_invoke_tools!
     transaction do
       self.raw_response = sentinel_model_completion.raw_response
-      self.model_response_message = sentinel_model_completion.parsed_response
+      self.model_response_message = sentinel_conversation.process_model_response_message(message: sentinel_model_completion.parsed_response, entry: self)
       save!
 
       if sentinel_model_completion.response_tool_calls.present?

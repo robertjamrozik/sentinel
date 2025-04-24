@@ -88,4 +88,12 @@ RSpec.describe Raif::Conversation, type: :model do
       expect(completion.response_format).to eq("text")
     end
   end
+
+  describe "#process_model_response_message" do
+    it "allows for conversation type-specific processing of the model response message" do
+      conversation = FB.create(:sentinel_test_conversation, creator: creator)
+      entry = FB.create(:sentinel_conversation_entry, sentinel_conversation: conversation, creator: creator)
+      expect(conversation.process_model_response_message(message: "Hello jerk.", entry: entry)).to eq("Hello [REDACTED].")
+    end
+  end
 end
