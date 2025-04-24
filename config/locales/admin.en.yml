@@ -46,10 +46,10 @@ en:
         no_tasks: No tasks found.
         no_tool_calls: No tool calls
         pending: Pending
-        period_day: Past 24 hours
-        period_week: Past week
-        period_month: Past month
         period_all: All time
+        period_day: Past 24 hours
+        period_month: Past month
+        period_week: Past week
         prettified: Prettified
         prompt: Prompt
         prompt_tokens: Prompt Tokens
