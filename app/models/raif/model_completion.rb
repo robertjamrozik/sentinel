@@ -21,8 +21,6 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
     source.json_response_schema if source&.respond_to?(:json_response_schema)
   end
 
-protected
-
   def set_total_tokens
     self.total_tokens ||= completion_tokens.present? && prompt_tokens.present? ? completion_tokens + prompt_tokens : nil
   end
