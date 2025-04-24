@@ -59,6 +59,7 @@ en:
         since: Since
         source: Source
         started_at: Started At
+        stats: Stats
         status: Status
         system_prompt: System Prompt
         task: Task

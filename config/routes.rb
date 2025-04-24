@@ -13,6 +13,7 @@ Raif::Engine.routes.draw do
 
   namespace :admin do
     root to: redirect("admin/model_completions")
+    resources :stats, only: [:index]
     resources :tasks, only: [:index, :show]
     resources :conversations, only: [:index, :show]
     resources :model_completions, only: [:index, :show]
