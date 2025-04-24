@@ -37,6 +37,7 @@
                 </div>
               </div>
               <h3 class="fw-bold mb-0"><%= number_with_delimiter(@model_completion_count) %></h3>
+              <p class="text-muted mt-2 mb-0"><small>Cost: <%= number_to_currency(@model_completion_total_cost, precision: 6) %></small></p>
             </div>
           </div>
           

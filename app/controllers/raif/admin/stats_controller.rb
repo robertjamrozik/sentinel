@@ -8,6 +8,7 @@ module Raif
         @time_range = get_time_range(@selected_period)
 
         @model_completion_count = Raif::ModelCompletion.where(created_at: @time_range).count
+        @model_completion_total_cost = Raif::ModelCompletion.where(created_at: @time_range).sum(:total_cost)
         @task_count = Raif::Task.where(created_at: @time_range).count
         @conversation_count = Raif::Conversation.where(created_at: @time_range).count
         @conversation_entry_count = Raif::ConversationEntry.where(created_at: @time_range).count
