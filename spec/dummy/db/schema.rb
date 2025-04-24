@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_21_202149) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_24_200755) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -87,6 +87,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_21_202149) do
     t.integer "total_tokens"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "prompt_token_cost", precision: 10, scale: 6
+    t.decimal "output_token_cost", precision: 10, scale: 6
+    t.decimal "total_cost", precision: 10, scale: 6
     t.index ["source_type", "source_id"], name: "index_sentinel_model_completions_on_source"
   end
 

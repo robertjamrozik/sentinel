@@ -12,6 +12,7 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
   delegate :json_response_schema, to: :source, allow_nil: true
 
   before_save :set_total_tokens
+  before_save :calculate_costs
 
   after_initialize -> { self.messages ||= [] }
   after_initialize -> { self.available_model_tools ||= [] }
@@ -20,28 +21,24 @@ class Raif::ModelCompletion < Raif::ApplicationRecord
     source.json_response_schema if source&.respond_to?(:json_response_schema)
   end
 
-  def prompt_token_cost
-    return if prompt_tokens.blank? || llm_config[:input_token_cost].blank?
-
-    llm_config[:input_token_cost] * prompt_tokens
-  end
-
-  def output_token_cost
-    return if completion_tokens.blank? || llm_config[:output_token_cost].blank?
-
-    llm_config[:output_token_cost] * completion_tokens
-  end
-
-  def total_cost
-    return if prompt_token_cost.blank? && output_token_cost.blank?
-
-    prompt_token_cost + output_token_cost
-  end
-
 protected
 
   def set_total_tokens
     self.total_tokens ||= completion_tokens.present? && prompt_tokens.present? ? completion_tokens + prompt_tokens : nil
+  end
+
+  def calculate_costs
+    if prompt_tokens.present? && llm_config[:input_token_cost].present?
+      self.prompt_token_cost = llm_config[:input_token_cost] * prompt_tokens
+    end
+
+    if completion_tokens.present? && llm_config[:output_token_cost].present?
+      self.output_token_cost = llm_config[:output_token_cost] * completion_tokens
+    end
+
+    if prompt_token_cost.present? || output_token_cost.present?
+      self.total_cost = (prompt_token_cost || 0) + (output_token_cost || 0)
+    end
   end
 
 private
