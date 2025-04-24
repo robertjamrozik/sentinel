@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_24_200755) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_24_232946) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,6 +33,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_200755) do
     t.jsonb "conversation_history", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_sentinel_agents_on_created_at"
     t.index ["creator_type", "creator_id"], name: "index_sentinel_agents_on_creator"
   end
 
@@ -48,6 +49,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_200755) do
     t.text "model_response_message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_sentinel_conversation_entries_on_created_at"
     t.index ["creator_type", "creator_id"], name: "index_sentinel_conversation_entries_on_creator"
     t.index ["sentinel_conversation_id"], name: "index_sentinel_conversation_entries_on_sentinel_conversation_id"
   end
@@ -65,6 +67,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_200755) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "response_format", default: 0, null: false
+    t.index ["created_at"], name: "index_sentinel_conversations_on_created_at"
     t.index ["creator_type", "creator_id"], name: "index_sentinel_conversations_on_creator"
   end
 
@@ -90,6 +93,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_200755) do
     t.decimal "prompt_token_cost", precision: 10, scale: 6
     t.decimal "output_token_cost", precision: 10, scale: 6
     t.decimal "total_cost", precision: 10, scale: 6
+    t.index ["created_at"], name: "index_sentinel_model_completions_on_created_at"
     t.index ["source_type", "source_id"], name: "index_sentinel_model_completions_on_source"
   end
 
@@ -122,6 +126,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_24_200755) do
     t.string "llm_model_key", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_sentinel_tasks_on_created_at"
     t.index ["creator_type", "creator_id"], name: "index_sentinel_tasks_on_creator"
     t.index ["type"], name: "index_sentinel_tasks_on_type"
   end
