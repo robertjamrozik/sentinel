@@ -16,6 +16,7 @@ en:
         conversation_entries: Conversation Entries
         conversation_history: Conversation History
         conversations: Conversations
+        count: Count
         created_at: Created At
         creator: Creator
         details: Details
@@ -96,6 +97,7 @@ en:
       stats:
         tasks:
           back_to_stats: Back to Stats
+          title: Task Stats
       tasks:
         show:
           back_to_tasks: Back to Tasks
