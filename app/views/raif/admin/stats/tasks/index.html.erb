@@ -1,0 +1,40 @@
+<div class="d-flex justify-content-between align-items-center my-4">
+  <h1 class="mb-0">Task Stats</h1>
+  
+  <div class="period-filter">
+    <%= form_tag sentinel.admin_stats_tasks_path, method: :get, id: "period_filter_form", class: "d-flex align-items-center" do %>
+      <%= select_tag :period, 
+        options_for_select([
+          [t("sentinel.admin.common.period_day"), "day"],
+          [t("sentinel.admin.common.period_week"), "week"],
+          [t("sentinel.admin.common.period_month"), "month"],
+          [t("sentinel.admin.common.period_all"), "all"]
+        ], @selected_period),
+        class: "form-select form-select-sm me-2"
+      %>
+      <%= submit_tag t("sentinel.admin.common.update"), class: "btn btn-sm btn-primary" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12 mb-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="card-title mb-0">Task Overview</h5>
+          <%= link_to t("sentinel.admin.stats.tasks.back_to_stats"), sentinel.admin_stats_path, class: "btn btn-sm btn-outline-secondary" %>
+        </div>
+        
+        <div class="row">
+          <div class="col-md-6 col-lg-4">
+            <div class="p-3 border rounded shadow-sm mb-3">
+              <h6 class="text-muted">Total Tasks</h6>
+              <h2 class="fw-bold"><%= number_with_delimiter(@task_count) %></h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
