@@ -33,11 +33,13 @@
                   </svg>
                 </span>
                 <div>
-                  <h6 class="mb-0 text-muted">Model Completions</h6>
+                  <h6 class="mb-0 text-muted"><%= t("sentinel.admin.common.model_completions") %></h6>
                 </div>
               </div>
-              <h3 class="fw-bold mb-0"><%= number_with_delimiter(@model_completion_count) %></h3>
-              <p class="text-muted mt-2 mb-0"><small>Cost: <%= number_to_currency(@model_completion_total_cost, precision: 6) %></small></p>
+              <div class="d-flex justify-content-between align-items-center">
+                <h3 class="fw-bold mb-0"><%= number_with_delimiter(@model_completion_count) %></h3>
+                <p class="text-muted mt-2 mb-0"><small><%= t("sentinel.admin.common.est_cost")%>: <%= number_to_currency(@model_completion_total_cost, precision: 6) %></small></p>
+              </div>
             </div>
           </div>
           
@@ -51,13 +53,15 @@
                   </svg>
                 </span>
                 <div>
-                  <h6 class="mb-0 text-muted">Tasks</h6>
+                  <h6 class="mb-0 text-muted"><%= t("sentinel.admin.common.tasks") %></h6>
                 </div>
               </div>
               <div class="d-flex justify-content-between align-items-center">
                 <h3 class="fw-bold mb-0"><%= number_with_delimiter(@task_count) %></h3>
                 <div class="mt-2">
-                  <%= link_to t("sentinel.admin.common.details"), sentinel.admin_stats_tasks_path(period: @selected_period) %>
+                  <%= link_to sentinel.admin_stats_tasks_path(period: @selected_period) do %>
+                    <%= t("sentinel.admin.common.details") %> &raquo;
+                  <% end %>
                 </div>
               </div>
             </div>
@@ -74,7 +78,7 @@
                   </svg>
                 </span>
                 <div>
-                  <h6 class="mb-0 text-muted">Conversations</h6>
+                  <h6 class="mb-0 text-muted"><%= t("sentinel.admin.common.conversations") %></h6>
                 </div>
               </div>
               <h3 class="fw-bold mb-0"><%= number_with_delimiter(@conversation_count) %></h3>
@@ -92,7 +96,7 @@
                   </svg>
                 </span>
                 <div>
-                  <h6 class="mb-0 text-muted">Conversation Entries</h6>
+                  <h6 class="mb-0 text-muted"><%= t("sentinel.admin.common.conversation_entries") %></h6>
                 </div>
               </div>
               <h3 class="fw-bold mb-0"><%= number_with_delimiter(@conversation_entry_count) %></h3>
@@ -109,7 +113,7 @@
                   </svg>
                 </span>
                 <div>
-                  <h6 class="mb-0 text-muted">Agents</h6>
+                  <h6 class="mb-0 text-muted"><%= t("sentinel.admin.common.agents") %></h6>
                 </div>
               </div>
               <h3 class="fw-bold mb-0"><%= number_with_delimiter(@agent_count) %></h3>
