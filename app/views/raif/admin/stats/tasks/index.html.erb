@@ -1,0 +1,45 @@
+<%= link_to sentinel.admin_stats_path do %>
+  &laquo; <%= t("sentinel.admin.stats.tasks.back_to_stats") %>
+<% end %>
+
+<div class="d-flex justify-content-between align-items-center my-4">
+  <h1 class="mb-0"><%= t("sentinel.admin.stats.tasks.title") %></h1>
+
+  <div class="period-filter">
+    <%= form_tag sentinel.admin_stats_tasks_path, method: :get, id: "period_filter_form", class: "d-flex align-items-center" do %>
+      <%= select_tag :period,
+            options_for_select(
+              [
+                [t("sentinel.admin.common.period_day"), "day"],
+                [t("sentinel.admin.common.period_week"), "week"],
+                [t("sentinel.admin.common.period_month"), "month"],
+                [t("sentinel.admin.common.period_all"), "all"]
+              ],
+              @selected_period
+            ),
+            class: "form-select form-select-sm me-2" %>
+      <%= submit_tag t("sentinel.admin.common.update"), class: "btn btn-sm btn-primary" %>
+    <% end %>
+  </div>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead class="table-light">
+      <tr>
+        <th><%= t("sentinel.admin.common.type") %></th>
+        <th><%= t("sentinel.admin.common.count") %></th>
+        <th><%= t("sentinel.admin.common.est_cost") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @task_counts_by_type.each do |type, count| %>
+        <tr>
+          <td><%= type %></td>
+          <td><%= number_with_delimiter(count) %></td>
+          <td><%= number_to_currency(@task_costs_by_type[type] || 0, precision: 6) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
