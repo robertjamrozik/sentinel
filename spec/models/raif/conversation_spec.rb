@@ -38,7 +38,7 @@ RSpec.describe Raif::Conversation, type: :model do
         { "role" => "assistant", "content" => entry1.model_response_message },
         { "role" => "user", "content" => entry2.user_message },
         { "role" => "assistant", "content" => "Invoking tool: #{mti.tool_name} with arguments: #{mti.tool_arguments.to_json}" },
-        { "role" => "assistant", "content" => "Result from #{mti.tool_name}: Mock Observation for #{mti.id}. Result was: success" },
+        { "role" => "assistant", "content" => "Mock Observation for #{mti.id}. Result was: success" },
         { "role" => "user", "content" => entry3.user_message },
         { "role" => "assistant", "content" => entry3.model_response_message },
         { "role" => "assistant", "content" => "Invoking tool: #{mti2.tool_name} with arguments: #{mti2.tool_arguments.to_json}" }

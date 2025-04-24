@@ -29,10 +29,7 @@ class Raif::ModelToolInvocation < Raif::ApplicationRecord
   def result_llm_message
     return unless tool.respond_to?(:observation_for_invocation)
 
-    observation = tool.observation_for_invocation(self)
-    return if observation.blank?
-
-    "Result from #{tool_name}: #{observation}"
+    tool.observation_for_invocation(self)
   end
 
   def to_partial_path
