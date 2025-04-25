@@ -235,7 +235,7 @@ RSpec.describe Raif::Agents::NativeToolCallingAgent, type: :model do
         {
           "role" => "assistant",
           "content" =>
-          "<observation>Error: No tool call found. I need make a tool call at each step. Available tools: wikipedia_search, fetch_url, agent_final_answer</observation>" # rubocop:disable Layout/LineLength
+          "<observation>Error: No tool call found. I need to make a tool call at each step. Available tools: wikipedia_search, fetch_url, agent_final_answer</observation>" # rubocop:disable Layout/LineLength
         }
       ])
     end
