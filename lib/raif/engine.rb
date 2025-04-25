@@ -61,6 +61,14 @@ module Raif
     end
 
     config.after_initialize do
+      next unless Raif.config.open_router_models_enabled
+
+      Raif.default_llms[Raif::Llms::OpenRouter].each do |llm_config|
+        Raif.register_llm(Raif::Llms::OpenRouter, **llm_config)
+      end
+    end
+
+    config.after_initialize do
       next unless Raif.config.aws_bedrock_titan_embedding_models_enabled
 
       require "aws-sdk-bedrockruntime"

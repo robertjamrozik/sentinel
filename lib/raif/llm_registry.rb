@@ -139,6 +139,38 @@ module Raif
           output_token_cost: 0.075 / 1000,
           max_completion_tokens: 4096
         },
+      ],
+      Raif::Llms::OpenRouter => [
+        {
+          key: :open_router_claude_3_7_sonnet,
+          api_name: "anthropic/claude-3.7-sonnet",
+          input_token_cost: 3.0 / 1_000_000,
+          output_token_cost: 15.0 / 1_000_000,
+        },
+        {
+          key: :open_router_llama_3_3_70b_instruct,
+          api_name: "meta-llama/llama-3.3-70b-instruct",
+          input_token_cost: 0.10 / 1_000_000,
+          output_token_cost: 0.25 / 1_000_000,
+        },
+        {
+          key: :open_router_llama_3_1_8b_instruct,
+          api_name: "meta-llama/llama-3.1-8b-instruct",
+          input_token_cost: 0.02 / 1_000_000,
+          output_token_cost: 0.03 / 1_000_000,
+        },
+        {
+          key: :open_router_gemini_2_0_flash,
+          api_name: "google/gemini-2.0-flash-001",
+          input_token_cost: 0.1 / 1_000_000,
+          output_token_cost: 0.4 / 1_000_000,
+        },
+        {
+          key: :open_router_deepseek_chat_v3,
+          api_name: "deepseek/deepseek-chat-v3-0324",
+          input_token_cost: 0.27 / 1_000_000,
+          output_token_cost: 1.1 / 1_000_000,
+        },
       ]
     }
   end

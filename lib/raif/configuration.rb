@@ -23,6 +23,10 @@ module Raif
       :open_ai_api_key,
       :open_ai_embedding_models_enabled,
       :open_ai_models_enabled,
+      :open_router_api_key,
+      :open_router_models_enabled,
+      :open_router_app_name,
+      :open_router_site_url,
       :task_system_prompt_intro,
       :user_tool_types
 
@@ -31,7 +35,7 @@ module Raif
       @agent_types = Set.new(["Raif::Agents::ReActAgent", "Raif::Agents::NativeToolCallingAgent"])
       @anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
       @anthropic_bedrock_models_enabled = true
-      @anthropic_models_enabled = true
+      @anthropic_models_enabled = ENV["ANTHROPIC_API_KEY"].present?
       @authorize_admin_controller_action = ->{ false }
       @authorize_controller_action = ->{ false }
       @aws_bedrock_region = "us-east-1"
@@ -48,8 +52,12 @@ module Raif
       @llm_api_requests_enabled = true
       @model_superclass = "ApplicationRecord"
       @open_ai_api_key = ENV["OPENAI_API_KEY"]
-      @open_ai_embedding_models_enabled = true
-      @open_ai_models_enabled = true
+      @open_ai_embedding_models_enabled = ENV["OPENAI_API_KEY"].present?
+      @open_ai_models_enabled = ENV["OPENAI_API_KEY"].present?
+      @open_router_api_key = ENV["OPENROUTER_API_KEY"]
+      @open_router_models_enabled = ENV["OPENROUTER_API_KEY"].present?
+      @open_router_app_name = nil
+      @open_router_site_url = nil
       @user_tool_types = []
     end
 
@@ -91,6 +99,11 @@ module Raif
       if anthropic_models_enabled && anthropic_api_key.blank?
         raise Raif::Errors::InvalidConfigError,
           "Raif.config.anthropic_api_key is required when Raif.config.anthropic_models_enabled is true. Set it via Raif.config.anthropic_api_key or ENV['ANTHROPIC_API_KEY']" # rubocop:disable Layout/LineLength
+      end
+
+      if open_router_models_enabled && open_router_api_key.blank?
+        raise Raif::Errors::InvalidConfigError,
+          "Raif.config.open_router_api_key is required when Raif.config.open_router_models_enabled is true. Set it via Raif.config.open_router_api_key or ENV['OPENROUTER_API_KEY']" # rubocop:disable Layout/LineLength
       end
     end
 

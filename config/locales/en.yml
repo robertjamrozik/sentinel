@@ -60,4 +60,9 @@ en:
       open_ai_gpt_4_1_nano: OpenAI GPT-4.1 Nano
       open_ai_gpt_4o: OpenAI GPT-4o
       open_ai_gpt_4o_mini: OpenAI GPT-4o Mini
+      open_router_claude_3_7_sonnet: Anthropic Claude 3.7 Sonnet (via OpenRouter)
+      open_router_deepseek_chat_v3: DeepSeek Chat v3 (via OpenRouter)
+      open_router_gemini_2_0_flash: Google Gemini 2.0 Flash (via OpenRouter)
+      open_router_llama_3_1_8b_instruct: Meta Llama 3.1 8B Instruct (via OpenRouter)
+      open_router_llama_3_3_70b_instruct: Meta Llama 3.3 70B Instruct (via OpenRouter)
       sentinel_test_llm: Raif Test LLM
