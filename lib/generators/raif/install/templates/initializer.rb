@@ -4,17 +4,17 @@ Raif.configure do |config|
   # Your OpenAI API key. Defaults to ENV["OPENAI_API_KEY"]
   # config.open_ai_api_key = ENV["OPENAI_API_KEY"]
 
-  # Whether OpenAI models are enabled. Defaults to true
-  # config.open_ai_models_enabled = true
+  # Whether OpenAI models are enabled.
+  # config.open_ai_models_enabled = ENV["OPENAI_API_KEY"].present?
 
-  # Whether OpenAI embedding models are enabled. Defaults to true
-  # config.open_ai_embedding_models_enabled = true
+  # Whether OpenAI embedding models are enabled.
+  # config.open_ai_embedding_models_enabled = ENV["OPENAI_API_KEY"].present?
 
   # Your Anthropic API key. Defaults to ENV["ANTHROPIC_API_KEY"]
   # config.anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
 
-  # Whether Anthropic models are enabled. Defaults to true
-  # config.anthropic_models_enabled = true
+  # Whether Anthropic models are enabled.
+  # config.anthropic_models_enabled = ENV["ANTHROPIC_API_KEY"].present?
 
   # Whether Anthropic models via AWS Bedrock are enabled. Defaults to true
   # config.anthropic_bedrock_models_enabled = true
@@ -31,8 +31,8 @@ Raif.configure do |config|
   # Your OpenRouter API key. Defaults to ENV["OPENROUTER_API_KEY"]
   # config.open_router_api_key = ENV["OPENROUTER_API_KEY"]
 
-  # Whether OpenRouter models are enabled. Defaults to true
-  # config.open_router_models_enabled = true
+  # Whether OpenRouter models are enabled.
+  # config.open_router_models_enabled = ENV["OPENROUTER_API_KEY"].present?
 
   # The app name to include in OpenRouter API requests headers. Optional.
   # config.open_router_app_name = "My App"
