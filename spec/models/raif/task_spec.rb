@@ -44,6 +44,7 @@ RSpec.describe Raif::Task, type: :model do
 
           expect(task.sentinel_model_completion).to be_persisted
           expect(task.sentinel_model_completion.source).to eq(task)
+          expect(task.sentinel_model_completion.temperature).to eq(0.5) # Raif::TestTask sets the temperature to 0.5
           expect(task.sentinel_model_completion.raw_response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
         end
       end
@@ -64,6 +65,7 @@ RSpec.describe Raif::Task, type: :model do
 
           expect(task.sentinel_model_completion).to be_persisted
           expect(task.sentinel_model_completion.source).to eq(task)
+          expect(task.sentinel_model_completion.temperature).to eq(0.5) # Raif::TestTask sets the temperature to 0.5
           expect(task.sentinel_model_completion.raw_response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
         end
       end
@@ -85,6 +87,7 @@ RSpec.describe Raif::Task, type: :model do
 
           expect(task.sentinel_model_completion).to be_persisted
           expect(task.sentinel_model_completion.source).to eq(task)
+          expect(task.sentinel_model_completion.temperature).to eq(0.5) # Raif::TestTask sets the temperature to 0.5
           expect(task.sentinel_model_completion.raw_response).to eq("Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.") # rubocop:disable Layout/LineLength
         end
       end
@@ -113,6 +116,7 @@ RSpec.describe Raif::Task, type: :model do
 
         expect(task.sentinel_model_completion).to be_persisted
         expect(task.sentinel_model_completion.source).to eq(task)
+        expect(task.sentinel_model_completion.temperature).to eq(0.75) # Raif::TestJsonTask sets the temperature to 0.75
         expect(task.sentinel_model_completion.raw_response).to eq("{\"joke\":\"Why is a pirate's favorite letter 'R'? Because, if you think about it, 'R' is the only letter that makes sense.\",\"answer\":\"R\"}") # rubocop:disable Layout/LineLength
       end
     end
@@ -137,6 +141,7 @@ RSpec.describe Raif::Task, type: :model do
 
         expect(task.sentinel_model_completion).to be_persisted
         expect(task.sentinel_model_completion.source).to eq(task)
+        expect(task.sentinel_model_completion.temperature).to eq(0.7) # Raif::TestHtmlTask doesn't set a temperature, so it inherits the default
         expect(task.sentinel_model_completion.raw_response).to eq("<p>Why is a pirate's favorite letter 'R'?</p><p>Because, if you think about it, <strong>'R'</strong> is the only letter that makes sense.</p>") # rubocop:disable Layout/LineLength
       end
     end
