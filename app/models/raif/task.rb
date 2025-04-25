@@ -7,6 +7,9 @@ module Raif
     include Raif::Concerns::HasAvailableModelTools
     include Raif::Concerns::InvokesModelTools
     include Raif::Concerns::LlmResponseParsing
+    include Raif::Concerns::LlmTemperature
+
+    llm_temperature 0.7
 
     belongs_to :creator, polymorphic: true
 
@@ -57,12 +60,14 @@ module Raif
 
       populate_prompts
       messages = [{ "role" => "user", "content" => prompt }]
+
       mc = llm.chat(
         messages: messages,
         source: self,
         system_prompt: system_prompt,
         response_format: response_format.to_sym,
-        available_model_tools: available_model_tools
+        available_model_tools: available_model_tools,
+        temperature: self.class.temperature
       )
 
       self.sentinel_model_completion = mc.becomes(Raif::ModelCompletion)

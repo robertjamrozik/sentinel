@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Raif::TestTask < Raif::Task
+  llm_temperature 0.5
+
   def build_prompt
     "Tell me a joke"
   end
@@ -12,6 +14,7 @@ end
 
 class Raif::TestJsonTask < Raif::Task
   llm_response_format :json
+  llm_temperature 0.75
 
   def self.json_response_schema
     {

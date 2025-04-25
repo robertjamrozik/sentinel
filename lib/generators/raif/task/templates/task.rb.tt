@@ -6,6 +6,9 @@ module Raif
       # Set the response format for the task. Options are :html, :text, or :json.
       llm_response_format :<%= options[:response_format] %>
 
+      # Set the temperature for the task
+      # llm_temperature 0.7
+
       # Define any attributes that are needed for the task.
       # You can then pass them when running the task and they will be available in build_prompt:
       # Raif::Tasks::<%= task_class_name %>.run(your_attribute: "some value")
