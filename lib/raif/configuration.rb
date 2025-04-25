@@ -34,13 +34,13 @@ module Raif
       # Set default config
       @agent_types = Set.new(["Raif::Agents::ReActAgent", "Raif::Agents::NativeToolCallingAgent"])
       @anthropic_api_key = ENV["ANTHROPIC_API_KEY"]
-      @anthropic_bedrock_models_enabled = true
+      @anthropic_bedrock_models_enabled = false
       @anthropic_models_enabled = ENV["ANTHROPIC_API_KEY"].present?
       @authorize_admin_controller_action = ->{ false }
       @authorize_controller_action = ->{ false }
       @aws_bedrock_region = "us-east-1"
       @aws_bedrock_model_name_prefix = "us"
-      @aws_bedrock_titan_embedding_models_enabled = true
+      @aws_bedrock_titan_embedding_models_enabled = false
       @task_system_prompt_intro = "You are a helpful assistant."
       @conversation_entries_controller = "Raif::ConversationEntriesController"
       @conversation_system_prompt_intro = "You are a helpful assistant who is collaborating with a teammate."

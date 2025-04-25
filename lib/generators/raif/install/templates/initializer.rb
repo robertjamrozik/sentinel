@@ -16,8 +16,8 @@ Raif.configure do |config|
   # Whether Anthropic models are enabled.
   # config.anthropic_models_enabled = ENV["ANTHROPIC_API_KEY"].present?
 
-  # Whether Anthropic models via AWS Bedrock are enabled. Defaults to true
-  # config.anthropic_bedrock_models_enabled = true
+  # Whether Anthropic models via AWS Bedrock are enabled. Defaults to false
+  # config.anthropic_bedrock_models_enabled = false
 
   # The AWS Bedrock region to use. Defaults to "us-east-1"
   # config.aws_bedrock_region = "us-east-1"
@@ -25,8 +25,8 @@ Raif.configure do |config|
   # Prefix to apply to the model name in AWS Bedrock API calls (e.g. us.anthropic.claude-3-5-haiku-20241022-v1:0)
   # config.aws_bedrock_model_name_prefix = "us"
 
-  # Whether Titan embedding models are enabled. Defaults to true
-  # config.aws_bedrock_titan_embedding_models_enabled = true
+  # Whether Titan embedding models are enabled. Defaults to false
+  # config.aws_bedrock_titan_embedding_models_enabled = false
 
   # Your OpenRouter API key. Defaults to ENV["OPENROUTER_API_KEY"]
   # config.open_router_api_key = ENV["OPENROUTER_API_KEY"]
