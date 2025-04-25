@@ -23,6 +23,140 @@ RSpec.describe Raif::ModelCompletion, type: :model do
     end
   end
 
+  describe "callbacks" do
+    describe "#set_total_tokens" do
+      it "sets total_tokens based on completion_tokens and prompt_tokens" do
+        model_completion = described_class.new(
+          llm_model_key: "open_ai_gpt_4o",
+          model_api_name: "gpt-4o",
+          prompt_tokens: 100,
+          completion_tokens: 50
+        )
+
+        model_completion.save(validate: false)
+        expect(model_completion.total_tokens).to eq(150)
+      end
+
+      it "does not set total_tokens if completion_tokens is missing" do
+        model_completion = described_class.new(
+          llm_model_key: "open_ai_gpt_4o",
+          model_api_name: "gpt-4o",
+          prompt_tokens: 100
+        )
+
+        model_completion.save(validate: false)
+        expect(model_completion.total_tokens).to be_nil
+      end
+
+      it "does not set total_tokens if prompt_tokens is missing" do
+        model_completion = described_class.new(
+          llm_model_key: "open_ai_gpt_4o",
+          model_api_name: "gpt-4o",
+          completion_tokens: 50
+        )
+
+        model_completion.save(validate: false)
+        expect(model_completion.total_tokens).to be_nil
+      end
+    end
+
+    describe "#calculate_costs" do
+      it "calculates prompt_token_cost based on input_token_cost and prompt_tokens" do
+        model_completion = described_class.new(
+          llm_model_key: "open_ai_gpt_4o",
+          model_api_name: "gpt-4o",
+          prompt_tokens: 1000
+        )
+
+        # open_ai_gpt_4o has an input_token_cost of 2.5 / 1_000_000
+        expected_cost = 2.5 / 1_000_000 * 1000
+
+        model_completion.save(validate: false)
+        expect(model_completion.prompt_token_cost).to eq(expected_cost)
+      end
+
+      it "calculates output_token_cost based on output_token_cost and completion_tokens" do
+        model_completion = described_class.new(
+          llm_model_key: "open_ai_gpt_4o",
+          model_api_name: "gpt-4o",
+          completion_tokens: 500
+        )
+
+        # open_ai_gpt_4o has an output_token_cost of 10.0 / 1_000_000
+        expected_cost = 10.0 / 1_000_000 * 500
+
+        model_completion.save(validate: false)
+        expect(model_completion.output_token_cost).to eq(expected_cost)
+      end
+
+      it "calculates total_cost based on prompt_token_cost and output_token_cost" do
+        model_completion = described_class.new(
+          llm_model_key: "open_ai_gpt_4o",
+          model_api_name: "gpt-4o",
+          prompt_tokens: 1000,
+          completion_tokens: 500
+        )
+
+        # open_ai_gpt_4o has an input_token_cost of 2.5 / 1_000_000 and output_token_cost of 10.0 / 1_000_000
+        expected_prompt_cost = 2.5 / 1_000_000 * 1000
+        expected_output_cost = 10.0 / 1_000_000 * 500
+        expected_total_cost = expected_prompt_cost + expected_output_cost
+
+        model_completion.save(validate: false)
+        expect(model_completion.total_cost).to eq(expected_total_cost)
+      end
+
+      it "calculates total_cost when only prompt_token_cost is present" do
+        model_completion = described_class.new(
+          llm_model_key: "open_ai_gpt_4o",
+          model_api_name: "gpt-4o",
+          prompt_tokens: 1000
+        )
+
+        # open_ai_gpt_4o has an input_token_cost of 2.5 / 1_000_000
+        expected_prompt_cost = 2.5 / 1_000_000 * 1000
+
+        model_completion.save(validate: false)
+        expect(model_completion.total_cost).to eq(expected_prompt_cost)
+      end
+
+      it "calculates total_cost when only output_token_cost is present" do
+        model_completion = described_class.new(
+          llm_model_key: "open_ai_gpt_4o",
+          model_api_name: "gpt-4o",
+          completion_tokens: 500
+        )
+
+        # open_ai_gpt_4o has an output_token_cost of 10.0 / 1_000_000
+        expected_output_cost = 10.0 / 1_000_000 * 500
+
+        model_completion.save(validate: false)
+        expect(model_completion.total_cost).to eq(expected_output_cost)
+      end
+
+      it "does not calculate costs for a model that doesn't have cost configs" do
+        # Create a mock of Raif.llm_config that returns a config without cost data
+        allow(Raif).to receive(:llm_config).and_return({
+          key: :test_model,
+          api_name: "test-model"
+          # Intentionally omitting input_token_cost and output_token_cost
+        })
+
+        model_completion = described_class.new(
+          llm_model_key: "test_model",
+          model_api_name: "test-model",
+          prompt_tokens: 1000,
+          completion_tokens: 500
+        )
+
+        model_completion.save(validate: false)
+        expect(model_completion.prompt_token_cost).to be_nil
+        expect(model_completion.output_token_cost).to be_nil
+        expect(model_completion.total_cost).to be_nil
+      end
+    end
+  end
+
   describe "#parsed_response" do
     context "with text format" do
       let(:model_completion) do

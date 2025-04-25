@@ -27,6 +27,13 @@ module Raif
       # def initial_chat_message
       #   I18n.t("#{self.class.name.underscore.gsub("/", ".")}.initial_chat_message")
       # end
+
+      # This method will be called when receing a model response to a Raif::ConversationEntry
+      # By default, it just passes the model response message through, but you can override
+      # for custom response message processing
+      # def process_model_response_message(message:, entry:)
+      #   message
+      # end
     end
   end
 end 

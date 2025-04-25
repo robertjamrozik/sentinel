@@ -16,6 +16,7 @@ en:
         conversation_entries: Conversation Entries
         conversation_history: Conversation History
         conversations: Conversations
+        count: Count
         created_at: Created At
         creator: Creator
         details: Details
@@ -45,6 +46,10 @@ en:
         no_tasks: No tasks found.
         no_tool_calls: No tool calls
         pending: Pending
+        period_all: All time
+        period_day: Past 24 hours
+        period_month: Past month
+        period_week: Past week
         prettified: Prettified
         prompt: Prompt
         prompt_tokens: Prompt Tokens
@@ -59,6 +64,7 @@ en:
         since: Since
         source: Source
         started_at: Started At
+        stats: Stats
         status: Status
         system_prompt: System Prompt
         task: Task
@@ -68,8 +74,10 @@ en:
         tool_invocations: Tool Invocations
         tool_name: Tool Name
         tool_type: Tool Type
+        total_cost: Total Cost
         total_tokens: Total Tokens
         type: Type
+        update: Update
         user_message: User Message
       conversations:
         show:
@@ -86,6 +94,10 @@ en:
         show:
           back_to_model_tool_invocations: Back to Model Tool Invocations
           title: 'Model Tool Invocation #%{id}'
+      stats:
+        tasks:
+          back_to_stats: Back to Stats
+          title: Task Stats
       tasks:
         show:
           back_to_tasks: Back to Tasks

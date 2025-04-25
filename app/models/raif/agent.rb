@@ -113,7 +113,7 @@ module Raif
     end
 
     def process_iteration_model_completion(model_completion)
-      raise NotImplementedError, "#{self.class.name} must implement execute_agent_iteration"
+      raise NotImplementedError, "#{self.class.name} must implement process_iteration_model_completion"
     end
 
     def native_model_tools
