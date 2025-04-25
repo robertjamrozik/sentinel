@@ -59,7 +59,7 @@ module Raif
         if model_completion.response_tool_calls.blank?
           add_conversation_history_entry({
             role: "assistant",
-            content: "<observation>Error: No tool call found. I need make a tool call at each step. Available tools: #{available_model_tools_map.keys.join(", ")}</observation>" # rubocop:disable Layout/LineLength
+            content: "<observation>Error: No tool call found. I need to make a tool call at each step. Available tools: #{available_model_tools_map.keys.join(", ")}</observation>" # rubocop:disable Layout/LineLength
           })
           return
         end
