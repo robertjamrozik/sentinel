@@ -49,7 +49,7 @@ class Raif::ModelTool
       schema_for(:tool_arguments)
     else
       raise NotImplementedError,
-        "#{self.class.name} must definte tool arguments schema or override #{self.class.name}.tool_arguments_schema"
+        "#{self.class.name} must define tool arguments schema via define_tool_arguments_schema or override #{self.class.name}.tool_arguments_schema"
     end
   end
 
