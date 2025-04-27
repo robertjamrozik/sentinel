@@ -2,8 +2,29 @@
 
 class Raif::ModelTools::<%= class_name %> < Raif::ModelTool
   # For example tool implementations, see: 
-  # Wikipedia Search Tool: https://github.com/CultivateLabs/sentinel/blob/main/app/models/sentinel/model_tools/wikipedia_search_tool.rb
-  # Fetch URL Tool: https://github.com/CultivateLabs/sentinel/blob/main/app/models/sentinel/model_tools/fetch_url_tool.rb
+  # Wikipedia Search Tool: https://github.com/CultivateLabs/sentinel/blob/main/app/models/sentinel/model_tools/wikipedia_search.rb
+  # Fetch URL Tool: https://github.com/CultivateLabs/sentinel/blob/main/app/models/sentinel/model_tools/fetch_url.rb
+
+  # Define the argument schema the LLM should use when calling your tool.
+  define_tool_arguments_schema do
+    # string :title, description: "The title of the operation", minLength: 3
+    #
+    # object :settings, description: "Configuration settings" do
+    #   boolean :enabled, description: "Whether the tool is enabled"
+    #   integer :priority, description: "Priority level (1-10)", minimum: 1, maximum: 10
+    #   array :tags, description: "Associated tags" do
+    #     items type: "string"
+    #   end
+    # end
+    #
+    # array :products, description: "List of products" do
+    #   object do
+    #     integer :id, description: "Product identifier"
+    #     string :name, description: "Product name"
+    #     number :price, description: "Product price", minimum: 0
+    #   end
+    # end
+  end
 
   # An example of how the LLM should invoke your tool. This should return a hash with name and arguments keys.
   # `to_json` will be called on it and provided to the LLM as an example of how to invoke your tool.
@@ -12,26 +33,6 @@ class Raif::ModelTools::<%= class_name %> < Raif::ModelTool
       "name": tool_name,
       "arguments": { }
     }
-  end
-
-  # Define your tool's argument schema here. It should be a valid JSON schema.
-  # When the model invokes your tool, the arguments it provides will be validated
-  # against this schema using JSON::Validator from the json-schema gem.
-  def self.tool_arguments_schema
-    # For example:
-    # {
-    #   type: "object",
-    #   additionalProperties: false,
-    #   required: ["query"],
-    #   properties: {
-    #     query: {
-    #       type: "string",
-    #       description: "The query to search for"
-    #     }
-    #   }
-    # }
-    # Would expect the model to invoke your tool with an arguments JSON object like:
-    # { "query" : "some query here" }
   end
 
   def self.tool_description

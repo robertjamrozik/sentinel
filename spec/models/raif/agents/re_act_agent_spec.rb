@@ -185,7 +185,7 @@ RSpec.describe Raif::Agents::ReActAgent, type: :model do
         {
           "role" => "assistant",
           "content" =>
-          "<observation>Error: Invalid tool arguments. Please provide valid arguments for the tool 'wikipedia_search'. Tool arguments schema: {\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"query\"],\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"The query to search Wikipedia for\"}}}</observation>" # rubocop:disable Layout/LineLength
+          "<observation>Error: Invalid tool arguments. Please provide valid arguments for the tool 'wikipedia_search'. Tool arguments schema: {\"type\":\"object\",\"additionalProperties\":false,\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"The query to search Wikipedia for\"}},\"required\":[\"query\"]}</observation>" # rubocop:disable Layout/LineLength
         }
       ])
     end
@@ -208,30 +208,31 @@ RSpec.describe Raif::Agents::ReActAgent, type: :model do
         {
           "type": "object",
           "additionalProperties": false,
-          "required": [
-            "items"
-          ],
           "properties": {
             "items": {
               "type": "array",
               "items": {
                 "type": "object",
-                "additionalProperties": false,
                 "properties": {
                   "title": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "The title of the item"
                   },
                   "description": {
                     "type": "string"
                   }
                 },
+                "additionalProperties": false,
                 "required": [
                   "title",
                   "description"
                 ]
               }
             }
-          }
+          },
+          "required": [
+            "items"
+          ]
         }
         Example Usage:
         {
@@ -253,15 +254,15 @@ RSpec.describe Raif::Agents::ReActAgent, type: :model do
         {
           "type": "object",
           "additionalProperties": false,
-          "required": [
-            "query"
-          ],
           "properties": {
             "query": {
               "type": "string",
               "description": "The query to search Wikipedia for"
             }
-          }
+          },
+          "required": [
+            "query"
+          ]
         }
         Example Usage:
         {

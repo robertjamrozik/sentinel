@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Raif::ModelTool
+  include Raif::Concerns::JsonSchemaDefinition
 
   delegate :tool_name, :tool_description, :tool_arguments_schema, to: :class
 
@@ -39,8 +40,17 @@ class Raif::ModelTool
     name.gsub("Raif::ModelTools::", "").underscore
   end
 
+  def self.define_tool_arguments_schema(&block)
+    json_schema_definition(:tool_arguments, &block)
+  end
+
   def self.tool_arguments_schema
-    raise NotImplementedError, "#{self.class.name}#tool_arguments_schema is not implemented"
+    if schema_defined?(:tool_arguments)
+      schema_for(:tool_arguments)
+    else
+      raise NotImplementedError,
+        "#{self.class.name} must definte tool arguments schema or override #{self.class.name}.tool_arguments_schema"
+    end
   end
 
   def self.renderable?
