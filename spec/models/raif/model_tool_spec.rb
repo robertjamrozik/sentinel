@@ -16,7 +16,7 @@ RSpec.describe Raif::ModelTool, type: :model do
               type: "object",
               additionalProperties: false,
               properties: {
-                title: { type: "string" },
+                title: { type: "string", description: "The title of the item" },
                 description: { type: "string" },
               },
               required: ["title", "description"],

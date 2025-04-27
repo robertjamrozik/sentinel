@@ -8,6 +8,7 @@ require "sentinel/errors"
 require "sentinel/utils"
 require "sentinel/llm_registry"
 require "sentinel/embedding_model_registry"
+require "sentinel/json_schema_builder"
 
 require "faraday"
 require "json-schema"

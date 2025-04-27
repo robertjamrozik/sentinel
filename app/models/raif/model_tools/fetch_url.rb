@@ -1,25 +1,14 @@
 # frozen_string_literal: true
 
 class Raif::ModelTools::FetchUrl < Raif::ModelTool
+  define_tool_arguments_schema do
+    string "url", description: "The URL to fetch content from"
+  end
 
   def self.example_model_invocation
     {
       "name": tool_name,
       "arguments": { "url": "https://en.wikipedia.org/wiki/NASA" }
-    }
-  end
-
-  def self.tool_arguments_schema
-    {
-      type: "object",
-      additionalProperties: false,
-      required: ["url"],
-      properties: {
-        url: {
-          type: "string",
-          description: "The URL to fetch content from"
-        }
-      }
     }
   end
 

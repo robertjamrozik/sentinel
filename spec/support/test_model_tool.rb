@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
 class Raif::TestModelTool < Raif::ModelTool
+  define_tool_arguments_schema do
+    array :items do
+      object do
+        string :title, description: "The title of the item"
+        string :description
+      end
+    end
+  end
+
   def self.process_invocation(tool_arguments)
   end
 
@@ -12,28 +21,6 @@ class Raif::TestModelTool < Raif::ModelTool
     {
       "name": tool_name,
       "arguments": { "items": [{ "title": "foo", "description": "bar" }] }
-    }
-  end
-
-  def self.tool_arguments_schema
-    {
-      type: "object",
-      additionalProperties: false,
-      required: ["items"],
-      properties: {
-        items: {
-          type: "array",
-          items: {
-            type: "object",
-            additionalProperties: false,
-            properties: {
-              title: { type: "string" },
-              description: { type: "string" },
-            },
-            required: ["title", "description"],
-          }
-        }
-      }
     }
   end
 

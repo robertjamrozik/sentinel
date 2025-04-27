@@ -1,25 +1,14 @@
 # frozen_string_literal: true
 
 class Raif::ModelTools::AgentFinalAnswer < Raif::ModelTool
+  define_tool_arguments_schema do
+    string "final_answer", description: "Your complete and final answer to the user's question or task"
+  end
 
   def self.example_model_invocation
     {
       "name" => tool_name,
       "arguments" => { "final_answer": "The answer to the user's question or task" }
-    }
-  end
-
-  def self.tool_arguments_schema
-    {
-      type: "object",
-      additionalProperties: false,
-      required: ["final_answer"],
-      properties: {
-        final_answer: {
-          type: "string",
-          description: "Your complete and final answer to the user's question or task"
-        }
-      }
     }
   end
 

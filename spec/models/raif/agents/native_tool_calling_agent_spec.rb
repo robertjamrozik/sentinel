@@ -214,7 +214,7 @@ RSpec.describe Raif::Agents::NativeToolCallingAgent, type: :model do
         {
           "role" => "assistant",
           "content" =>
-          "<observation>Error: Invalid tool arguments. Please provide valid arguments for the tool 'wikipedia_search'. Tool arguments schema: {\"type\":\"object\",\"additionalProperties\":false,\"required\":[\"query\"],\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"The query to search Wikipedia for\"}}}</observation>" # rubocop:disable Layout/LineLength
+          "<observation>Error: Invalid tool arguments. Please provide valid arguments for the tool 'wikipedia_search'. Tool arguments schema: {\"type\":\"object\",\"additionalProperties\":false,\"properties\":{\"query\":{\"type\":\"string\",\"description\":\"The query to search Wikipedia for\"}},\"required\":[\"query\"]}</observation>" # rubocop:disable Layout/LineLength
         }
       ])
     end

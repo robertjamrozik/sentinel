@@ -1,25 +1,14 @@
 # frozen_string_literal: true
 
 class Raif::ModelTools::WikipediaSearch < Raif::ModelTool
+  define_tool_arguments_schema do
+    string "query", description: "The query to search Wikipedia for"
+  end
 
   def self.example_model_invocation
     {
       "name" => tool_name,
       "arguments" => { "query": "Jimmy Buffett" }
-    }
-  end
-
-  def self.tool_arguments_schema
-    {
-      type: "object",
-      additionalProperties: false,
-      required: ["query"],
-      properties: {
-        query: {
-          type: "string",
-          description: "The query to search Wikipedia for"
-        }
-      }
     }
   end
 
