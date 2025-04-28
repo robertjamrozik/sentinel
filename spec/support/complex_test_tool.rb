@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Raif::ModelTools::ComplexTestTool < Raif::ModelTool
-  define_tool_arguments_schema do
+  tool_arguments_schema do
     string :title, description: "The title of the operation", minLength: 3
 
     object :settings, description: "Configuration settings" do
@@ -21,7 +21,7 @@ class Raif::ModelTools::ComplexTestTool < Raif::ModelTool
     end
   end
 
-  def self.example_model_invocation
+  example_model_invocation do
     {
       "name" => tool_name,
       "arguments" => {
@@ -40,7 +40,7 @@ class Raif::ModelTools::ComplexTestTool < Raif::ModelTool
     }
   end
 
-  def self.tool_description
+  tool_description do
     "An example tool demonstrating complex schema capabilities"
   end
 
