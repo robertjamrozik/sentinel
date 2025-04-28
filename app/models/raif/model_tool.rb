@@ -46,7 +46,7 @@ class Raif::ModelTool
     end
 
     def process_invocation(invocation)
-      raise NotImplementedError, "#{self.class.name}#process_invocation is not implemented"
+      raise NotImplementedError, "#{name}#process_invocation is not implemented"
     end
 
     def invocation_partial_name
@@ -60,7 +60,7 @@ class Raif::ModelTool
         schema_for(:tool_arguments)
       else
         raise NotImplementedError,
-          "#{self.class.name} must define tool arguments schema via tool_arguments_schema or override #{self.class.name}.tool_arguments_schema"
+          "#{name} must define tool arguments schema via tool_arguments_schema or override #{name}.tool_arguments_schema"
       end
     end
 

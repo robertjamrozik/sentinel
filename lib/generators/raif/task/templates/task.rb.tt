@@ -41,7 +41,7 @@ module Raif
 
       def build_prompt
         # Implement the LLM prompt for this task.
-        raise NotImplementedError, "Implement #build_prompt in #{self.class}"
+        raise NotImplementedError, "Implement #build_prompt in #{self.class.name}"
       end
 
       # Optional: Override build_system_prompt if you need custom system instructions.
