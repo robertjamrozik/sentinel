@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Raif::TestModelTool < Raif::ModelTool
-  define_tool_arguments_schema do
+  tool_arguments_schema do
     array :items do
       object do
         string :title, description: "The title of the item"
@@ -10,18 +10,18 @@ class Raif::TestModelTool < Raif::ModelTool
     end
   end
 
-  def self.process_invocation(tool_arguments)
-  end
-
-  def self.tool_description
-    "Mock Tool Description"
-  end
-
-  def self.example_model_invocation
+  example_model_invocation do
     {
       "name": tool_name,
       "arguments": { "items": [{ "title": "foo", "description": "bar" }] }
     }
+  end
+
+  def self.process_invocation(tool_arguments)
+  end
+
+  tool_description do
+    "Mock Tool Description"
   end
 
   def self.observation_for_invocation(tool_invocation)
