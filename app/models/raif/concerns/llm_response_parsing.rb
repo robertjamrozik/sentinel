@@ -9,6 +9,9 @@ module Raif::Concerns::LlmResponseParsing
     enum :response_format, Raif::Llm.valid_response_formats, prefix: true
 
     validates :response_format, presence: true, inclusion: { in: response_formats.keys }
+
+    class_attribute :allowed_tags
+    class_attribute :allowed_attributes
   end
 
   class_methods do
@@ -16,6 +19,14 @@ module Raif::Concerns::LlmResponseParsing
       raise ArgumentError, "response_format must be one of: #{response_formats.keys.join(", ")}" unless response_formats.keys.include?(format.to_s)
 
       after_initialize -> { self.response_format = format }, if: :new_record?
+    end
+
+    def llm_response_allowed_tags(tags)
+      self.allowed_tags = tags
+    end
+
+    def llm_response_allowed_attributes(attributes)
+      self.allowed_attributes = attributes
     end
   end
 
@@ -47,6 +58,9 @@ module Raif::Concerns::LlmResponseParsing
       end
     end
 
-    ActionController::Base.helpers.sanitize(fragment.to_html).strip
+    allowed_tags = self.class.allowed_tags || Rails::HTML5::SafeListSanitizer.allowed_tags
+    allowed_attributes = self.class.allowed_attributes || Rails::HTML5::SafeListSanitizer.allowed_attributes
+
+    ActionController::Base.helpers.sanitize(fragment.to_html, tags: allowed_tags, attributes: allowed_attributes).strip
   end
 end
