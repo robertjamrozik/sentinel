@@ -124,7 +124,7 @@ RSpec.describe Raif::Task, type: :model do
     context "for a task requesting an HTML response" do
       before do
         stub_sentinel_task(Raif::TestHtmlTask) do |_messages|
-          "<p>Why is a pirate's favorite letter 'R'?</p><p>Because, if you think about it, <strong>'R'</strong> is the only letter that makes sense.</p>" # rubocop:disable Layout/LineLength
+          "<p>Why is a pirate's favorite letter 'R'?</p><p>Because, if you think about it, <strong style='color: red;'>'R'</strong> is the only letter that makes sense.</p>" # rubocop:disable Layout/LineLength
         end
       end
 
@@ -137,12 +137,12 @@ RSpec.describe Raif::Task, type: :model do
         expect(task.prompt).to eq("Tell me a joke")
         expect(task.system_prompt).to eq("You are a helpful assistant.\nYou are also good at telling jokes. Your response should be an HTML snippet that is formatted with basic HTML tags.") # rubocop:disable Layout/LineLength
         expect(task.response_format).to eq("html")
-        expect(task.raw_response).to eq("<p>Why is a pirate's favorite letter 'R'?</p><p>Because, if you think about it, <strong>'R'</strong> is the only letter that makes sense.</p>") # rubocop:disable Layout/LineLength
+        expect(task.raw_response).to eq("<p>Why is a pirate's favorite letter 'R'?</p><p>Because, if you think about it, <strong style='color: red;'>'R'</strong> is the only letter that makes sense.</p>") # rubocop:disable Layout/LineLength
 
         expect(task.sentinel_model_completion).to be_persisted
         expect(task.sentinel_model_completion.source).to eq(task)
         expect(task.sentinel_model_completion.temperature).to eq(0.7) # Raif::TestHtmlTask doesn't set a temperature, so it inherits the default
-        expect(task.sentinel_model_completion.raw_response).to eq("<p>Why is a pirate's favorite letter 'R'?</p><p>Because, if you think about it, <strong>'R'</strong> is the only letter that makes sense.</p>") # rubocop:disable Layout/LineLength
+        expect(task.sentinel_model_completion.raw_response).to eq("<p>Why is a pirate's favorite letter 'R'?</p><p>Because, if you think about it, <strong style='color: red;'>'R'</strong> is the only letter that makes sense.</p>") # rubocop:disable Layout/LineLength
       end
     end
   end

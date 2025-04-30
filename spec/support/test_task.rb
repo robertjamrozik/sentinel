@@ -39,6 +39,8 @@ end
 
 class Raif::TestHtmlTask < Raif::Task
   llm_response_format :html
+  llm_response_allowed_tags %w[p b i u s]
+  llm_response_allowed_attributes %w[style]
 
   def build_prompt
     "Tell me a joke"
