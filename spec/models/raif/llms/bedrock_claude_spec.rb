@@ -34,13 +34,14 @@ RSpec.describe Raif::Llms::BedrockClaude, type: :model do
       expect(model_completion.response_format).to eq("text")
       expect(model_completion.temperature).to eq(0.7)
       expect(model_completion.system_prompt).to eq("You are a helpful assistant.")
+      expect(model_completion.messages).to eq([{ "role" => "user", "content" => [{ "text" => "Hello" }] }])
     end
   end
 
   describe "#build_request_parameters" do
     let(:model_completion) do
       Raif::ModelCompletion.new(
-        messages: [{ role: "user", content: "Hello" }],
+        messages: [{ "role" => "user", "content" => [{ "text" => "Hello" }] }],
         system_prompt: "You are a helpful assistant.",
         llm_model_key: "bedrock_claude_3_5_sonnet",
         model_api_name: "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
@@ -52,6 +53,32 @@ RSpec.describe Raif::Llms::BedrockClaude, type: :model do
       expect(parameters[:model_id]).to eq("us.anthropic.claude-3-5-sonnet-20241022-v2:0")
       expect(parameters[:inference_config][:max_tokens]).to eq(8192)
       expect(parameters[:messages]).to eq([{ role: "user", content: [{ text: "Hello" }] }])
+    end
+  end
+
+  describe "#format_messages" do
+    it "formats the messages correctly" do
+      messages = [{ "role" => "user", "content" => "Hello" }]
+      formatted_messages = llm.format_messages(messages)
+      expect(formatted_messages).to eq([{ "role" => "user", "content" => [{ "text" => "Hello" }] }])
+    end
+
+    it "formats the messages correctly with an image" do
+      image_path = Raif::Engine.root.join("spec/fixtures/files/cultivate.png")
+      image = Raif::ModelImageInput.new(input: image_path)
+      image_bytes = File.binread(image_path)
+      messages = [{
+        "role" => "user",
+        "content" => [
+          { "text" => "Hello" },
+          image
+        ]
+      }]
+      formatted_messages = llm.format_messages(messages)
+      expect(formatted_messages).to eq([{
+        "role" => "user",
+        "content" => [{ "text" => "Hello" }, { "image" => { "format" => "png", "source" => { "bytes" => image_bytes } } }]
+      }])
     end
   end
 end
