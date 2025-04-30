@@ -9,6 +9,14 @@ module Raif
       # Set the temperature for the task
       # llm_temperature 0.7
 
+      # Optional: Set the allowed tags for the task. Only relevant if response_format is :html.
+      # Defaults to Rails::HTML5::SafeListSanitizer.allowed_tags
+      # llm_response_allowed_tags %w[p b i div strong]
+
+      # Optional: Set the allowed attributes for the task. Only relevant if response_format is :html.
+      # Defaults to Rails::HTML5::SafeListSanitizer.allowed_attributes
+      # llm_response_allowed_attributes %w[style]
+
       # Define any attributes that are needed for the task.
       # You can then pass them when running the task and they will be available in build_prompt:
       # Raif::Tasks::<%= task_class_name %>.run(your_attribute: "some value")
