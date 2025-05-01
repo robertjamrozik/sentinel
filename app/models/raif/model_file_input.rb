@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class Raif::ModelFileInput
-  BASE64_REGEX = %r{\A[a-zA-Z0-9+/\n\r]+={0,2}\z}
-
   include ActiveModel::Model
 
   attr_accessor :input, :url, :base64_data, :filename, :content_type, :source_type
