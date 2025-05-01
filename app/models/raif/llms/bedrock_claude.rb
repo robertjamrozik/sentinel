@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Raif::Llms::BedrockClaude < Raif::Llm
+  include Raif::Concerns::Llms::BedrockClaude::MessageFormatting
 
   def perform_model_completion!(model_completion)
     if Raif.config.aws_bedrock_model_name_prefix.present?
@@ -30,20 +31,11 @@ protected
     @bedrock_client ||= Aws::BedrockRuntime::Client.new(region: Raif.config.aws_bedrock_region)
   end
 
-  def format_messages(messages)
-    messages.map(&:symbolize_keys).map do |message|
-      {
-        role: message[:role],
-        content: [{ text: message[:content] }]
-      }
-    end
-  end
-
   def build_request_parameters(model_completion)
     params = {
       model_id: model_completion.model_api_name,
       inference_config: { max_tokens: model_completion.max_completion_tokens || 8192 },
-      messages: format_messages(model_completion.messages)
+      messages: model_completion.messages.map(&:deep_symbolize_keys)
     }
 
     params[:system] = [{ text: model_completion.system_prompt }] if model_completion.system_prompt.present?
