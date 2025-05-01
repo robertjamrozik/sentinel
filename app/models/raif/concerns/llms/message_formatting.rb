@@ -16,6 +16,9 @@ module Raif::Concerns::Llms::MessageFormatting
   # If it's an array, it could contain Raif::ModelImageInput or Raif::ModelFileInput objects,
   # which need to be formatted according to each model provider's API.
   def format_message_content(content)
+    raise ArgumentError,
+      "Message content must be an array or a string. Content was: #{content.inspect}" unless content.is_a?(Array) || content.is_a?(String)
+
     return format_string_message(content) if content.is_a?(String)
 
     content.map do |item|
@@ -23,6 +26,8 @@ module Raif::Concerns::Llms::MessageFormatting
         format_model_image_input_message(item)
       elsif item.is_a?(Raif::ModelFileInput)
         format_model_file_input_message(item)
+      elsif item.is_a?(String)
+        { "type" => "text", "text" => item }
       else
         item
       end

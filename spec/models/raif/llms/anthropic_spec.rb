@@ -147,10 +147,24 @@ RSpec.describe Raif::Llms::Anthropic, type: :model do
   end
 
   describe "#format_messages" do
-    it "formats the messages correctly" do
+    it "formats the messages correctly with a string as the content" do
       messages = [{ "role" => "user", "content" => "Hello" }]
       formatted_messages = llm.format_messages(messages)
       expect(formatted_messages).to eq([{ "role" => "user", "content" => "Hello" }])
+    end
+
+    it "formats the messages correctly with an array as the content" do
+      messages = [{ "role" => "user", "content" => ["Hello", "World"] }]
+      formatted_messages = llm.format_messages(messages)
+      expect(formatted_messages).to eq([
+        {
+          "role" => "user",
+          "content" => [
+            { "type" => "text", "text" => "Hello" },
+            { "type" => "text", "text" => "World" }
+          ]
+        }
+      ])
     end
 
     it "formats the messages correctly with an image" do
@@ -210,7 +224,7 @@ RSpec.describe Raif::Llms::Anthropic, type: :model do
       messages = [{
         "role" => "user",
         "content" => [
-          { "text" => "Hello" },
+          "What's in this file?",
           file
         ]
       }]
@@ -220,7 +234,7 @@ RSpec.describe Raif::Llms::Anthropic, type: :model do
         {
           "role" => "user",
           "content" => [
-            { "text" => "Hello" },
+            { "type" => "text", "text" => "What's in this file?" },
             {
               "type" => "document",
               "source" => {
