@@ -23,7 +23,7 @@ module Raif::Concerns::Llms::OpenAi::MessageFormatting
 
   def format_model_file_input_message(file_input)
     if file_input.source_type == :url
-      raise Raif::Errors::UnsupportedFeatureError, "OpenAI does not support providing a file by URL"
+      raise Raif::Errors::UnsupportedFeatureError, "#{self.class.name} does not support providing a file by URL"
     elsif file_input.source_type == :file_content
       file_params = {
         "filename" => file_input.filename,

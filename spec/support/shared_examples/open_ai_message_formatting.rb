@@ -5,7 +5,7 @@ RSpec.shared_examples "an LLM that uses OpenAI's message formatting" do
     it "formats the messages correctly with a string as the content" do
       messages = [{ "role" => "user", "content" => "Hello" }]
       formatted_messages = llm.format_messages(messages)
-      expect(formatted_messages).to eq([{ "role" => "user", "content" => "Hello" }])
+      expect(formatted_messages).to eq([{ "role" => "user", "content" => [{ "text" => "Hello", "type" => "text" }] }])
     end
 
     it "formats the messages correctly with an array as the content" do

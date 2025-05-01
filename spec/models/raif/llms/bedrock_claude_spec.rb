@@ -39,9 +39,39 @@ RSpec.describe Raif::Llms::BedrockClaude, type: :model do
   end
 
   describe "#build_request_parameters" do
+    let(:image_path) { Raif::Engine.root.join("spec/fixtures/files/cultivate.png") }
+    let(:file_path) { Raif::Engine.root.join("spec/fixtures/files/test.pdf") }
+
+    let(:messages) do
+      [
+        {
+          "role" => "user",
+          "content" => [
+            { "text" => "Hello" },
+            {
+              "image" => {
+                "format" => "png",
+                "source" => {
+                  "tmp_base64_data" => Base64.strict_encode64(File.read(image_path))
+                }
+              }
+            },
+            {
+              "document" => {
+                "format" => "pdf",
+                "name" => "test",
+                "source" => {
+                  "tmp_base64_data" => Base64.strict_encode64(File.read(file_path))
+                }
+              }
+            }
+          ]
+        }
+      ]
+    end
     let(:model_completion) do
       Raif::ModelCompletion.new(
-        messages: [{ "role" => "user", "content" => [{ "text" => "Hello" }] }],
+        messages:,
         system_prompt: "You are a helpful assistant.",
         llm_model_key: "bedrock_claude_3_5_sonnet",
         model_api_name: "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
@@ -52,7 +82,33 @@ RSpec.describe Raif::Llms::BedrockClaude, type: :model do
       parameters = llm.send(:build_request_parameters, model_completion)
       expect(parameters[:model_id]).to eq("us.anthropic.claude-3-5-sonnet-20241022-v2:0")
       expect(parameters[:inference_config][:max_tokens]).to eq(8192)
-      expect(parameters[:messages]).to eq([{ role: "user", content: [{ text: "Hello" }] }])
+
+      # It replaces the tmp_base64_data with bytes
+      expect(parameters[:messages]).to eq([
+        {
+          role: "user",
+          content: [
+            { text: "Hello" },
+            {
+              image: {
+                format: "png",
+                source: {
+                  bytes: File.binread(image_path)
+                }
+              }
+            },
+            {
+              document: {
+                format: "pdf",
+                name: "test",
+                source: {
+                  bytes: File.binread(file_path)
+                }
+              }
+            }
+          ]
+        }
+      ])
     end
   end
 
@@ -70,8 +126,8 @@ RSpec.describe Raif::Llms::BedrockClaude, type: :model do
         {
           "role" => "user",
           "content" => [
-            { "type" => "text", "text" => "Hello" },
-            { "type" => "text", "text" => "World" }
+            { "text" => "Hello" },
+            { "text" => "World" }
           ]
         }
       ])
@@ -95,11 +151,11 @@ RSpec.describe Raif::Llms::BedrockClaude, type: :model do
           "content" => [
             { "text" => "Hello" },
             {
-              "type" => "image",
-              "source" => {
-                "type" => "base64",
-                "media_type" => "image/png",
-                "data" => Base64.strict_encode64(File.read(image_path))
+              "image" => {
+                "format" => "png",
+                "source" => {
+                  "tmp_base64_data" => Base64.strict_encode64(File.read(image_path))
+                }
               }
             }
           ]
@@ -125,11 +181,12 @@ RSpec.describe Raif::Llms::BedrockClaude, type: :model do
           "content" => [
             { "text" => "Hello" },
             {
-              "type" => "document",
-              "source" => {
-                "type" => "base64",
-                "media_type" => "application/pdf",
-                "data" => Base64.strict_encode64(File.read(file_path))
+              "document" => {
+                "format" => "pdf",
+                "name" => "test",
+                "source" => {
+                  "tmp_base64_data" => Base64.strict_encode64(File.read(file_path))
+                }
               }
             }
           ]

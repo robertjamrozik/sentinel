@@ -19,7 +19,7 @@ module Raif::Concerns::Llms::MessageFormatting
     raise ArgumentError,
       "Message content must be an array or a string. Content was: #{content.inspect}" unless content.is_a?(Array) || content.is_a?(String)
 
-    return format_string_message(content) if content.is_a?(String)
+    return [format_string_message(content)] if content.is_a?(String)
 
     content.map do |item|
       if item.is_a?(Raif::ModelImageInput)
@@ -27,7 +27,7 @@ module Raif::Concerns::Llms::MessageFormatting
       elsif item.is_a?(Raif::ModelFileInput)
         format_model_file_input_message(item)
       elsif item.is_a?(String)
-        { "type" => "text", "text" => item }
+        format_string_message(item)
       else
         item
       end
@@ -35,7 +35,7 @@ module Raif::Concerns::Llms::MessageFormatting
   end
 
   def format_string_message(content)
-    content
+    { "type" => "text", "text" => content }
   end
 
 end
