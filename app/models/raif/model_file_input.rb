@@ -21,6 +21,10 @@ class Raif::ModelFileInput
       @source_type = :file_content
       process_input!
     end
+
+    unless valid?
+      raise Raif::Errors::InvalidModelFileInputError, errors.full_messages.join(", ")
+    end
   end
 
   def inspect

@@ -20,10 +20,30 @@ RSpec.describe Raif::ModelImageInput, type: :model do
     expect { described_class.new(input: Object.new) }.to raise_error(Raif::Errors::InvalidModelFileInputError)
   end
 
-  it "validates URL format" do
-    input = described_class.new(url: "invalid-url")
-    expect(input).not_to be_valid
-    expect(input.errors[:url]).to include("is not a valid URL")
+  it "raises an error for an invalid URL" do
+    expect do
+      described_class.new(url: "invalid-url")
+    end.to raise_error(Raif::Errors::InvalidModelFileInputError, "Url is not a valid URL")
+  end
+
+  it "raises an error when the file is missing" do
+    expect do
+      described_class.new(input: "missing.png")
+    end.to raise_error(Raif::Errors::InvalidModelFileInputError, "File does not exist: missing.png")
+  end
+
+  it "raises an error when unable to populate base64 data" do
+    allow(Base64).to receive(:strict_encode64).and_return(nil)
+    expect do
+      described_class.new(input: file_path)
+    end.to raise_error(Raif::Errors::InvalidModelFileInputError, "Base64 data could not be read from input")
+  end
+
+  it "raises an error when content type cannot be determined" do
+    allow(Marcel::MimeType).to receive(:for).and_return(nil)
+    expect do
+      described_class.new(input: file_path)
+    end.to raise_error(Raif::Errors::InvalidModelFileInputError, "Content type could not be determined")
   end
 
   it "handles URL input" do
