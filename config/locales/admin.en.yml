@@ -8,6 +8,7 @@ en:
           title: 'Agent #%{id}'
       common:
         agents: Agents
+        all: All
         arguments: Arguments
         at: at
         completed: Completed

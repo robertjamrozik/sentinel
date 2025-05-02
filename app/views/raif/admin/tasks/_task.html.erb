@@ -5,11 +5,12 @@
   <td><%= task.creator.try(:sentinel_display_name) || "#{task.creator_type} ##{task.creator_id}" %></td>
   <td><%= task.llm_model_key %></td>
   <td>
-    <% if task.completed_at? %>
+    <% case task.status %>
+    <% when :completed %>
       <span class="badge bg-success"><%= t("sentinel.admin.common.completed") %></span>
-    <% elsif task.failed_at? %>
+    <% when :failed %>
       <span class="badge bg-danger"><%= t("sentinel.admin.common.failed") %></span>
-    <% elsif task.started_at? %>
+    <% when :in_progress %>
       <span class="badge bg-warning text-dark"><%= t("sentinel.admin.common.in_progress") %></span>
     <% else %>
       <span class="badge bg-secondary"><%= t("sentinel.admin.common.pending") %></span>
