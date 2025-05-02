@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_30_201231) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_02_155330) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -154,8 +154,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_30_201231) do
     t.string "llm_model_key", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["completed_at"], name: "index_sentinel_tasks_on_completed_at"
     t.index ["created_at"], name: "index_sentinel_tasks_on_created_at"
     t.index ["creator_type", "creator_id"], name: "index_sentinel_tasks_on_creator"
+    t.index ["failed_at"], name: "index_sentinel_tasks_on_failed_at"
+    t.index ["started_at"], name: "index_sentinel_tasks_on_started_at"
+    t.index ["type", "completed_at"], name: "index_sentinel_tasks_on_type_and_completed_at"
+    t.index ["type", "failed_at"], name: "index_sentinel_tasks_on_type_and_failed_at"
+    t.index ["type", "started_at"], name: "index_sentinel_tasks_on_type_and_started_at"
     t.index ["type"], name: "index_sentinel_tasks_on_type"
   end
 
