@@ -24,9 +24,26 @@ module Raif
 
     delegate :json_response_schema, to: :class
 
+    scope :completed, -> { where.not(completed_at: nil) }
+    scope :failed, -> { where.not(failed_at: nil) }
+    scope :in_progress, -> { where.not(started_at: nil).where(completed_at: nil, failed_at: nil) }
+    scope :pending, -> { where(started_at: nil, completed_at: nil, failed_at: nil) }
+
     attr_accessor :files, :images
 
     after_initialize -> { self.available_model_tools ||= [] }
+
+    def status
+      if completed_at?
+        :completed
+      elsif failed_at?
+        :failed
+      elsif started_at?
+        :in_progress
+      else
+        :pending
+      end
+    end
 
     # The primary interface for running a task. It will hit the LLM with the task's prompt and system prompt and return a Raif::Task object.
     # It will also create a new Raif::ModelCompletion record.

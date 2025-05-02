@@ -4,10 +4,28 @@
   <div class="col-12">
     <%= form_tag sentinel.admin_tasks_path, method: :get, class: "mb-4" do %>
       <div class="row align-items-end">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <div class="form-group">
+            <label for="task_types"><%= t("sentinel.admin.common.type") %></label>
             <%= select_tag :task_types,
-                  options_for_select(@task_types.map{|type| [type, type] }, @selected_types),
+                  options_for_select([["All", "all"]] + @task_types.map{|type| [type, type] }, @selected_type),
+                  { class: "form-select" } %>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="task_statuses"><%= t("sentinel.admin.common.status") %></label>
+            <%= select_tag :task_statuses,
+                  options_for_select(
+                    [
+                      [t("sentinel.admin.common.all"), :all],
+                      [t("sentinel.admin.common.completed"), :completed],
+                      [t("sentinel.admin.common.failed"), :failed],
+                      [t("sentinel.admin.common.in_progress"), :in_progress],
+                      [t("sentinel.admin.common.pending"), :pending]
+                    ],
+                    @selected_statuses
+                  ),
                   { class: "form-select" } %>
           </div>
         </div>
