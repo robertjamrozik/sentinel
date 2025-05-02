@@ -8,6 +8,7 @@ module Raif
     include Raif::Concerns::InvokesModelTools
     include Raif::Concerns::LlmResponseParsing
     include Raif::Concerns::LlmTemperature
+    include Raif::Concerns::JsonSchemaDefinition
 
     llm_temperature 0.7
 
@@ -102,8 +103,12 @@ module Raif
       new(creator:, **args).system_prompt
     end
 
-    def self.json_response_schema
-      nil
+    def self.json_response_schema(&block)
+      if block_given?
+        json_schema_definition(:json_response, &block)
+      elsif schema_defined?(:json_response)
+        schema_for(:json_response)
+      end
     end
 
   private
