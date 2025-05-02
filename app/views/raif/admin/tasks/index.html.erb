@@ -16,13 +16,16 @@
           <div class="form-group">
             <label for="task_statuses"><%= t("sentinel.admin.common.status") %></label>
             <%= select_tag :task_statuses,
-                  options_for_select([
-                    [t("sentinel.admin.common.all"), :all],
-                    [t("sentinel.admin.common.completed"), :completed],
-                    [t("sentinel.admin.common.failed"), :failed],
-                    [t("sentinel.admin.common.in_progress"), :in_progress],
-                    [t("sentinel.admin.common.pending"), :pending]
-                  ], @selected_statuses),
+                  options_for_select(
+                    [
+                      [t("sentinel.admin.common.all"), :all],
+                      [t("sentinel.admin.common.completed"), :completed],
+                      [t("sentinel.admin.common.failed"), :failed],
+                      [t("sentinel.admin.common.in_progress"), :in_progress],
+                      [t("sentinel.admin.common.pending"), :pending]
+                    ],
+                    @selected_statuses
+                  ),
                   { class: "form-select" } %>
           </div>
         </div>
