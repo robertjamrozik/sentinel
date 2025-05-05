@@ -14,7 +14,12 @@ class Raif::Llms::OpenAi < Raif::Llm
 
     # Handle API errors
     unless response.success?
-      error_message = response_json.dig("error", "message") || "OpenAI API error: #{response.status}"
+      error_message = if response_json.is_a?(String)
+        response_json
+      else
+        response_json.dig("error", "message") || "OpenAI API error: #{response.status}"
+      end
+
       raise Raif::Errors::OpenAi::ApiError, error_message
     end
 
