@@ -81,6 +81,121 @@ RSpec.describe Raif::Llm, type: :model do
     end
   end
 
+  describe "retry functionality" do
+    let(:messages) { [{ role: "user", content: "Hello" }] }
+    let(:retry_exception) { Faraday::ConnectionFailed.new("Connection failed") }
+    let(:non_retry_exception) { StandardError.new("Standard error") }
+
+    let(:retriable_llm_class) do
+      Class.new(Raif::Llm) do
+        def initialize(failures_before_success: 0, exception_to_raise: nil, **args)
+          @failures_before_success = failures_before_success
+          @exception_to_raise = exception_to_raise
+          @attempts = 0
+          super(**args)
+        end
+
+        def perform_model_completion!(model_completion)
+          @attempts += 1
+
+          if @attempts <= @failures_before_success
+            raise @exception_to_raise
+          end
+
+          model_completion.raw_response = "Success after #{@attempts} attempts"
+          model_completion.completion_tokens = 100
+          model_completion.prompt_tokens = 100
+          model_completion.total_tokens = 200
+          model_completion.save!
+
+          model_completion
+        end
+      end
+    end
+
+    before do
+      allow(Raif.config).to receive(:llm_api_requests_enabled).and_return(true)
+      allow(Raif.config).to receive(:llm_request_max_retries).and_return(2)
+      allow(Raif.config).to receive(:llm_request_retriable_exceptions).and_return([Faraday::ConnectionFailed])
+
+      # Register a test LLM in the registry for validation
+      Raif.register_llm(retriable_llm_class, {
+        key: :test_retry_llm,
+        api_name: "test_retry_api"
+      })
+    end
+
+    after do
+      Raif.llm_registry.delete(:test_retry_llm)
+    end
+
+    context "when exceptions are retriable" do
+      it "retries the specified number of times and succeeds" do
+        llm = retriable_llm_class.new(
+          failures_before_success: 2,
+          exception_to_raise: retry_exception,
+          key: :test_retry_llm,
+          api_name: "test_retry_api"
+        )
+        allow(llm).to receive(:sleep) # Skip sleep delay in tests
+
+        result = llm.chat(messages: messages)
+
+        expect(result).to be_a(Raif::ModelCompletion)
+        expect(result.raw_response).to eq("Success after 3 attempts")
+        expect(result.retry_count).to eq(2)
+      end
+
+      it "retries the specified number of times and fails if max retries exceeded" do
+        llm = retriable_llm_class.new(
+          failures_before_success: 3,
+          exception_to_raise: retry_exception,
+          key: :test_retry_llm,
+          api_name: "test_retry_api"
+        )
+        allow(llm).to receive(:sleep) # Skip sleep delay in tests
+
+        expect do
+          llm.chat(messages: messages)
+        end.to raise_error(Faraday::ConnectionFailed)
+      end
+    end
+
+    context "when exceptions are not retriable" do
+      it "does not retry for non-retriable exceptions" do
+        llm = retriable_llm_class.new(
+          failures_before_success: 1,
+          exception_to_raise: non_retry_exception,
+          key: :test_retry_llm,
+          api_name: "test_retry_api"
+        )
+
+        expect do
+          llm.chat(messages: messages)
+        end.to raise_error(StandardError)
+      end
+    end
+
+    context "when Raif.config.llm_request_max_retries is 0" do
+      before do
+        allow(Raif.config).to receive(:llm_request_max_retries).and_return(0)
+      end
+
+      it "does not retry" do
+        llm = retriable_llm_class.new(
+          failures_before_success: 1,
+          exception_to_raise: retry_exception,
+          key: :test_retry_llm,
+          api_name: "test_retry_api"
+        )
+
+        expect do
+          llm.chat(messages: messages)
+        end.to raise_error(Faraday::ConnectionFailed)
+      end
+    end
+  end
+
   it "has model names for all built in LLMs" do
     Raif.default_llms.values.flatten.each do |llm_config|
       llm = Raif.llm(llm_config[:key])
