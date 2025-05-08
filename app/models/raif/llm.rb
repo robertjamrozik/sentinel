@@ -78,7 +78,10 @@ module Raif
         available_model_tools: available_model_tools
       )
 
-      perform_model_completion!(model_completion)
+      retry_with_backoff(model_completion) do
+        perform_model_completion!(model_completion)
+      end
+
       model_completion
     end
 
@@ -90,5 +93,29 @@ module Raif
       VALID_RESPONSE_FORMATS
     end
 
+  private
+
+    def retry_with_backoff(model_completion)
+      retries = 0
+      max_retries = Raif.config.llm_request_max_retries
+      base_delay = 3
+      max_delay = 30
+
+      begin
+        yield
+      rescue *Raif.config.llm_request_retriable_exceptions => e
+        retries += 1
+        if retries <= max_retries
+          delay = [base_delay * (2**(retries - 1)), max_delay].min
+          Raif.logger.warn("Retrying LLM API request after error: #{e.message}. Attempt #{retries}/#{max_retries}. Waiting #{delay} seconds...")
+          model_completion.increment!(:retry_count)
+          sleep delay
+          retry
+        else
+          Raif.logger.error("LLM API request failed after #{max_retries} retries. Last error: #{e.message}")
+          raise
+        end
+      end
+    end
   end
 end
