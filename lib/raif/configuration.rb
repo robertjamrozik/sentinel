@@ -19,6 +19,8 @@ module Raif
       :default_embedding_model_key,
       :default_llm_model_key,
       :llm_api_requests_enabled,
+      :llm_request_max_retries,
+      :llm_request_retriable_exceptions,
       :model_superclass,
       :open_ai_api_key,
       :open_ai_embedding_models_enabled,
@@ -50,6 +52,12 @@ module Raif
       @default_embedding_model_key = "open_ai_text_embedding_3_small"
       @default_llm_model_key = "open_ai_gpt_4o"
       @llm_api_requests_enabled = true
+      @llm_request_max_retries = 2
+      @llm_request_retriable_exceptions = [
+        Faraday::ConnectionFailed,
+        Faraday::TimeoutError,
+        Faraday::ServerError,
+      ]
       @model_superclass = "ApplicationRecord"
       @open_ai_api_key = ENV["OPENAI_API_KEY"]
       @open_ai_embedding_models_enabled = ENV["OPENAI_API_KEY"].present?
