@@ -241,4 +241,19 @@ RSpec.describe Raif::Task, type: :model do
       expect(Raif::TestTask.new.json_response_schema).to be_nil
     end
   end
+
+  fdescribe ".system_prompt" do
+    let(:user) { FB.build(:sentinel_test_user) }
+
+    it "defaults to Raif.config.task_system_prompt_intro" do
+      expect(Raif::Task.system_prompt(creator: user)).to eq("You are a helpful assistant.")
+    end
+
+    it "returns a dynamic system prompt if Raif.config.task_system_prompt_intro is a lambda" do
+      allow(Raif.config).to receive(:task_system_prompt_intro).and_return(->(task) {
+        "You are a helpful assistant. You're talking to #{task.creator.email}. Today's date is #{Date.today.strftime("%B %d, %Y")}."
+      })
+      expect(Raif::Task.system_prompt(creator: user)).to eq("You are a helpful assistant. You're talking to #{user.email}. Today's date is #{Date.today.strftime("%B %d, %Y")}.") # rubocop:disable Layout/LineLength
+    end
+  end
 end

@@ -96,4 +96,22 @@ RSpec.describe Raif::Conversation, type: :model do
       expect(conversation.process_model_response_message(message: "Hello jerk.", entry: entry)).to eq("Hello [REDACTED].")
     end
   end
+
+  describe "#system_prompt_intro" do
+    it "returns the config value when not a lambda" do
+      conversation = FB.build(:sentinel_conversation, creator: creator)
+      expect(conversation.system_prompt_intro).to eq("You are a helpful assistant who is collaborating with a teammate.")
+    end
+
+    it "returns a dynamic system prompt when config is a lambda" do
+      conversation = FB.build(:sentinel_conversation, creator: creator)
+
+      allow(Raif.config).to receive(:conversation_system_prompt_intro).and_return(->(conv) {
+        "You are a helpful assistant talking to #{conv.creator.email}. Today's date is #{Date.today.strftime("%B %d, %Y")}."
+      })
+
+      expected = "You are a helpful assistant talking to #{creator.email}. Today's date is #{Date.today.strftime("%B %d, %Y")}."
+      expect(conversation.system_prompt_intro).to eq(expected)
+    end
+  end
 end

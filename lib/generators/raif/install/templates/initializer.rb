@@ -86,9 +86,13 @@ Raif.configure do |config|
 
   # The system prompt intro for Raif::Task instances. Defaults to "You are a helpful assistant."
   # config.task_system_prompt_intro = "You are a helpful assistant."
+  # Or you can use a lambda to return a dynamic system prompt intro:
+  # config.task_system_prompt_intro = ->(task){ "You are a helpful assistant. Today's date is #{Date.today.strftime('%B %d, %Y')}." }
 
   # The system prompt intro for Raif::Conversation instances. Defaults to "You are a helpful assistant who is collaborating with a teammate."
   # config.conversation_system_prompt_intro = "You are a helpful assistant who is collaborating with a teammate."
+  # Or you can use a lambda to return a dynamic system prompt intro:
+  # config.conversation_system_prompt_intro = ->(conversation){ "You are a helpful assistant talking to #{conversation.creator.email}. Today's date is #{Date.today.strftime('%B %d, %Y')}." }
 
   # The conversation types that are available. Defaults to ["Raif::Conversation"]
   # If you want to use custom conversation types that inherits from Raif::Conversation, you can add them here.

@@ -117,7 +117,7 @@ module Raif
     # @param args [Hash] Additional arguments to pass to the instance of the task that is created.
     # @return [String] The LLM system prompt for the task.
     def self.system_prompt(creator:, **args)
-      new(creator:, **args).system_prompt
+      new(creator:, **args).build_system_prompt
     end
 
     def self.json_response_schema(&block)
@@ -126,6 +126,17 @@ module Raif
       elsif schema_defined?(:json_response)
         schema_for(:json_response)
       end
+    end
+
+    def build_prompt
+      raise NotImplementedError, "Raif::Task subclasses must implement #build_prompt"
+    end
+
+    def build_system_prompt
+      sp = Raif.config.task_system_prompt_intro
+      sp = sp.call(self) if sp.respond_to?(:call)
+      sp += system_prompt_language_preference if requested_language_key.present?
+      sp
     end
 
   private
@@ -151,16 +162,6 @@ module Raif
       end
 
       content
-    end
-
-    def build_prompt
-      raise NotImplementedError, "Raif::Task subclasses must implement #build_prompt"
-    end
-
-    def build_system_prompt
-      sp = Raif.config.task_system_prompt_intro
-      sp += system_prompt_language_preference if requested_language_key.present?
-      sp
     end
 
     def populate_prompts
