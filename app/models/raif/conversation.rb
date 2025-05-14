@@ -26,7 +26,8 @@ class Raif::Conversation < Raif::ApplicationRecord
   end
 
   def system_prompt_intro
-    Raif.config.conversation_system_prompt_intro
+    sp = Raif.config.conversation_system_prompt_intro
+    sp.respond_to?(:call) ? sp.call(self) : sp
   end
 
   # i18n-tasks-use t('sentinel.conversation.initial_chat_message')
