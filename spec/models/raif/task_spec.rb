@@ -253,7 +253,7 @@ RSpec.describe Raif::Task, type: :model do
       allow(Raif.config).to receive(:task_system_prompt_intro).and_return(->(task) {
         "You are a helpful assistant. You're talking to #{task.creator.email}. Today's date is #{Date.today.strftime("%B %d, %Y")}."
       })
-      expect(Raif::Task.system_prompt(creator: user)).to eq("You are a helpful assistant. You're talking to #{user.email}. Today's date is #{Date.today.strftime("%B %d, %Y")}.")
+      expect(Raif::Task.system_prompt(creator: user)).to eq("You are a helpful assistant. You're talking to #{user.email}. Today's date is #{Date.today.strftime("%B %d, %Y")}.") # rubocop:disable Layout/LineLength
     end
   end
 end
