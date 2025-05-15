@@ -6,13 +6,18 @@ RSpec.describe Raif::Llms::OpenRouter, type: :model do
   it_behaves_like "an LLM that uses OpenAI's message formatting"
 
   let(:llm){ Raif.llm(:open_router_claude_3_7_sonnet) }
-  let(:mock_connection) { instance_double(Faraday::Connection) }
-  let(:mock_response) { instance_double(Faraday::Response) }
+  let(:stubs) { Faraday::Adapter::Test::Stubs.new }
+  let(:test_connection) do
+    Faraday.new do |builder|
+      builder.adapter :test, stubs
+      builder.request :json
+      builder.response :json
+      builder.response :raise_error
+    end
+  end
 
   before do
-    allow(Faraday).to receive(:new).and_return(mock_connection)
-    allow(mock_connection).to receive(:post).and_return(mock_response)
-    allow(mock_response).to receive(:success?).and_return(true)
+    allow(llm).to receive(:connection).and_return(test_connection)
   end
 
   describe "#chat" do
@@ -24,12 +29,10 @@ RSpec.describe Raif::Llms::OpenRouter, type: :model do
         }
       end
 
-      let(:mock_request) { double("Request") }
-
       before do
-        allow(mock_response).to receive(:body).and_return(response_body)
-        allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
-        allow(mock_request).to receive(:body=)
+        stubs.post("chat/completions") do |_env|
+          [200, { "Content-Type" => "application/json" }, response_body]
+        end
       end
 
       it "makes a request to the OpenRouter API and processes the text response" do
@@ -47,30 +50,65 @@ RSpec.describe Raif::Llms::OpenRouter, type: :model do
       end
     end
 
-    context "when the API returns an error" do
+    context "when the API returns a 400-level error" do
       let(:error_response_body) do
-        {
-          "error" => {
-            "message" => "API rate limit exceeded",
-            "type" => "rate_limit_error"
+        <<~JSON
+          {
+            "error": {
+              "code": 429,
+              "message": "Rate limited",
+              "metadata": ""
+            }
           }
-        }
+        JSON
       end
-
-      let(:mock_request) { double("Request") }
 
       before do
-        allow(mock_response).to receive(:success?).and_return(false)
-        allow(mock_response).to receive(:status).and_return(429)
-        allow(mock_response).to receive(:body).and_return(error_response_body)
-        allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
-        allow(mock_request).to receive(:body=)
+        stubs.post("chat/completions") do |_env|
+          raise Faraday::ClientError.new(
+            "Rate limited",
+            { status: 429, body: error_response_body }
+          )
+        end
+
+        allow(Raif.config).to receive(:llm_request_max_retries).and_return(0)
       end
 
-      it "raises an ApiError with the error message" do
+      it "raises a Faraday::ClientError with the error message" do
         expect do
           llm.chat(message: "Hello")
-        end.to raise_error(Faraday::ClientError, "API rate limit exceeded")
+        end.to raise_error(Faraday::ClientError)
+      end
+    end
+
+    context "when the API returns a 500-level error" do
+      let(:error_response_body) do
+        <<~JSON
+          {
+            "error": {
+              "code": 500,
+              "message": "Internal server error",
+              "metadata": ""
+            }
+          }
+        JSON
+      end
+
+      before do
+        stubs.post("chat/completions") do |_env|
+          raise Faraday::ServerError.new(
+            "Internal server error",
+            { status: 500, body: error_response_body }
+          )
+        end
+
+        allow(Raif.config).to receive(:llm_request_max_retries).and_return(0)
+      end
+
+      it "raises a ServerError with the error message" do
+        expect do
+          llm.chat(message: "Hello")
+        end.to raise_error(Faraday::ServerError)
       end
     end
   end
