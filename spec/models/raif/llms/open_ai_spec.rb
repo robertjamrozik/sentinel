@@ -147,7 +147,7 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
         allow(Raif.config).to receive(:llm_request_max_retries).and_return(0)
       end
 
-      it "raises an ApiError with the error message" do
+      it "raises a Faraday::ClientError with the error message" do
         expect do
           llm.chat(messages: [{ role: "user", content: "Hello" }])
         end.to raise_error(Faraday::ClientError)
@@ -179,7 +179,7 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
         allow(Raif.config).to receive(:llm_request_max_retries).and_return(0)
       end
 
-      it "raises an ApiError with the error message" do
+      it "raises a Faraday::ServerError with the error message" do
         expect do
           llm.chat(messages: [{ role: "user", content: "Hello" }])
         end.to raise_error(Faraday::ServerError, "Internal server error")
