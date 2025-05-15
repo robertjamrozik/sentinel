@@ -4,8 +4,6 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![GitHub Stars](https://img.shields.io/github/stars/yourusername/sentinel.svg)](https://github.com/robertjamrozik/sentinel/stargazers)
-[![GitHub Issues](https://img.shields.io/github/issues/yourusername/sentinel.svg)](https://github.com/robertjamrozik/sentinel/issues)
 
 ## About
 
