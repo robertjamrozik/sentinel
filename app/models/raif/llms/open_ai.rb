@@ -6,22 +6,12 @@ class Raif::Llms::OpenAi < Raif::Llm
   def perform_model_completion!(model_completion)
     model_completion.temperature ||= default_temperature
     parameters = build_request_parameters(model_completion)
+
     response = connection.post("chat/completions") do |req|
       req.body = parameters
     end
 
     response_json = response.body
-
-    # Handle API errors
-    unless response.success?
-      error_message = if response_json.is_a?(String)
-        response_json
-      else
-        response_json.dig("error", "message") || "OpenAI API error: #{response.status}"
-      end
-
-      raise Raif::Errors::OpenAi::ApiError, error_message
-    end
 
     model_completion.update!(
       response_tool_calls: extract_response_tool_calls(response_json),
@@ -40,6 +30,7 @@ class Raif::Llms::OpenAi < Raif::Llm
       f.headers["Authorization"] = "Bearer #{Raif.config.open_ai_api_key}"
       f.request :json
       f.response :json
+      f.response :raise_error
     end
   end
 

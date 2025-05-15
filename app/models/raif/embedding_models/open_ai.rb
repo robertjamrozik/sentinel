@@ -10,11 +10,6 @@ class Raif::EmbeddingModels::OpenAi < Raif::EmbeddingModel
       req.body = build_request_parameters(input, dimensions:)
     end
 
-    unless response.success?
-      error_message = response.body["error"]&.dig("message") || "OpenAI API error: #{response.status}"
-      raise Raif::Errors::OpenAi::ApiError, error_message
-    end
-
     if input.is_a?(String)
       response.body["data"][0]["embedding"]
     else
@@ -39,6 +34,7 @@ private
       f.headers["Authorization"] = "Bearer #{Raif.config.open_ai_api_key}"
       f.request :json
       f.response :json
+      f.response :raise_error
     end
   end
 end

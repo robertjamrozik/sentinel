@@ -242,7 +242,7 @@ RSpec.describe Raif::Task, type: :model do
     end
   end
 
-  fdescribe ".system_prompt" do
+  describe ".system_prompt" do
     let(:user) { FB.build(:sentinel_test_user) }
 
     it "defaults to Raif.config.task_system_prompt_intro" do
