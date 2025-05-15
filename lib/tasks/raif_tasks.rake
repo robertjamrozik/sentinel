@@ -7,5 +7,9 @@ namespace :sentinel do
       ENV["FROM"] = "sentinel"
       Rake::Task["railties:install:migrations"].invoke
     end
+    task :integration do
+      ENV["FROM"] = "sentinel"
+      Rake::Task["tasks:download:integrations"].invoke
+    end
   end
 end
