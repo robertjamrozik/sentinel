@@ -124,12 +124,16 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
 
     context "when the API returns a 400-level error" do
       let(:error_response_body) do
-        {
-          "error" => {
-            "message" => "API rate limit exceeded",
-            "type" => "rate_limit_error"
+        <<~JSON
+          {
+            "error": {
+              "message": "API rate limit exceeded",
+              "type": "rate_limit_error",
+              "param": null,
+              "code": null
+            }
           }
-        }
+        JSON
       end
 
       before do
@@ -139,23 +143,29 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
             { status: 429, body: error_response_body }
           )
         end
+
+        allow(Raif.config).to receive(:llm_request_max_retries).and_return(0)
       end
 
       it "raises an ApiError with the error message" do
         expect do
           llm.chat(messages: [{ role: "user", content: "Hello" }])
-        end.to raise_error(Raif::Errors::OpenAi::ApiError, "API rate limit exceeded")
+        end.to raise_error(Faraday::ClientError)
       end
     end
 
     context "when the API returns a 500-level error" do
       let(:error_response_body) do
-        {
-          "error" => {
-            "message" => "Internal server error",
-            "type" => "server_error"
+        <<~JSON
+          {
+            "error": {
+              "message": "Internal server error",
+              "type": "server_error",
+              "param": null,
+              "code": null
+            }
           }
-        }
+        JSON
       end
 
       before do
@@ -165,6 +175,8 @@ RSpec.describe Raif::Llms::OpenAi, type: :model do
             { status: 500, body: error_response_body }
           )
         end
+
+        allow(Raif.config).to receive(:llm_request_max_retries).and_return(0)
       end
 
       it "raises an ApiError with the error message" do

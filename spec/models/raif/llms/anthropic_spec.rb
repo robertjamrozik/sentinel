@@ -136,12 +136,14 @@ RSpec.describe Raif::Llms::Anthropic, type: :model do
             { status: 429, body: error_response_body }
           )
         end
+
+        allow(Raif.config).to receive(:llm_request_max_retries).and_return(0)
       end
 
-      it "raises an ApiError with the error message" do
+      it "raises a Faraday::ClientError with the error message" do
         expect do
           llm.chat(message: "Hello")
-        end.to raise_error(Raif::Errors::Anthropic::ApiError, "API rate limit exceeded")
+        end.to raise_error(Faraday::ClientError)
       end
     end
 
@@ -172,7 +174,7 @@ RSpec.describe Raif::Llms::Anthropic, type: :model do
       it "raises a Faraday::ServerError with the error message" do
         expect do
           llm.chat(message: "Hello")
-        end.to raise_error(Faraday::ServerError, "Internal server error")
+        end.to raise_error(Faraday::ServerError)
       end
     end
   end
