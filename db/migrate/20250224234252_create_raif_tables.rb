@@ -25,19 +25,6 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    create_table :sentinel_conversations do |t|
-      t.string :llm_model_key, null: false
-      t.references :creator, polymorphic: true, null: false, index: true
-      t.string :requested_language_key
-      t.string :type, null: false
-      t.text :system_prompt
-      t.send json_column_type, :available_model_tools, null: false
-      t.send json_column_type, :available_user_tools, null: false
-      t.integer :conversation_entries_count, default: 0, null: false
-
-      t.timestamps
-    end
-
     create_table :sentinel_conversation_entries do |t|
       t.references :sentinel_conversation, null: false, foreign_key: true
       t.references :creator, polymorphic: true, null: false, index: true
@@ -86,6 +73,19 @@ class CreateRaifTables < ActiveRecord::Migration[8.0]
       t.datetime :failed_at
       t.text :failure_reason
       t.send json_column_type, :conversation_history, null: false
+
+      t.timestamps
+    end
+
+  create_table :sentinel_conversations do |t|
+      t.string :llm_model_key, null: false
+      t.references :creator, polymorphic: true, null: false, index: true
+      t.string :requested_language_key
+      t.string :type, null: false
+      t.text :system_prompt
+      t.send json_column_type, :available_model_tools, null: false
+      t.send json_column_type, :available_user_tools, null: false
+      t.integer :conversation_entries_count, default: 0, null: false
 
       t.timestamps
     end
