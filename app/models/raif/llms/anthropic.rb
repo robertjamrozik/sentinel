@@ -11,11 +11,6 @@ class Raif::Llms::Anthropic < Raif::Llm
 
     response_json = response.body
 
-    unless response.success?
-      error_message = response_json.dig("error", "message") || "Anthropic API error: #{response.status}"
-      raise Raif::Errors::Anthropic::ApiError, error_message
-    end
-
     model_completion.raw_response = if model_completion.response_format_json?
       extract_json_response(response_json)
     else
@@ -36,6 +31,7 @@ class Raif::Llms::Anthropic < Raif::Llm
       f.headers["anthropic-version"] = "2023-06-01"
       f.request :json
       f.response :json
+      f.response :raise_error
     end
   end
 

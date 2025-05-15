@@ -23,9 +23,6 @@ class Raif::Llms::OpenAi < Raif::Llm
     )
 
     model_completion
-  rescue Faraday::ClientError => e
-    message = e.response.dig(:body, "error", "message") || "OpenAI API error: #{e.response[:status]}"
-    raise Raif::Errors::OpenAi::ApiError, message
   end
 
   def connection

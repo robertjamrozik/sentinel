@@ -70,7 +70,7 @@ RSpec.describe Raif::Llms::OpenRouter, type: :model do
       it "raises an ApiError with the error message" do
         expect do
           llm.chat(message: "Hello")
-        end.to raise_error(Raif::Errors::OpenRouter::ApiError, "API rate limit exceeded")
+        end.to raise_error(Faraday::ClientError, "API rate limit exceeded")
       end
     end
   end

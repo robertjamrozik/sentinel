@@ -12,12 +12,6 @@ class Raif::Llms::OpenRouter < Raif::Llm
 
     response_json = response.body
 
-    # Handle API errors
-    unless response.success?
-      error_message = response_json.dig("error", "message") || "OpenRouter API error: #{response.status}"
-      raise Raif::Errors::OpenRouter::ApiError, error_message
-    end
-
     model_completion.update!(
       response_tool_calls: extract_response_tool_calls(response_json),
       raw_response: response_json.dig("choices", 0, "message", "content"),
@@ -36,6 +30,7 @@ class Raif::Llms::OpenRouter < Raif::Llm
       f.headers["X-Title"] = Raif.config.open_router_app_name if Raif.config.open_router_app_name.present?
       f.request :json
       f.response :json
+      f.response :raise_error
     end
   end
 
