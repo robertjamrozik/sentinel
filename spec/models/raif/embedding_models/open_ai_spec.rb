@@ -4,12 +4,18 @@ require "rails_helper"
 
 RSpec.describe Raif::EmbeddingModels::OpenAi, type: :model do
   let(:model) { Raif.embedding_model(:open_ai_text_embedding_3_small) }
-  let(:mock_connection) { instance_double(Faraday::Connection) }
-  let(:mock_response) { instance_double(Faraday::Response) }
+  let(:stubs) { Faraday::Adapter::Test::Stubs.new }
+  let(:test_connection) do
+    Faraday.new do |builder|
+      builder.adapter :test, stubs
+      builder.request :json
+      builder.response :json
+      builder.response :raise_error
+    end
+  end
 
   before do
-    allow(Faraday).to receive(:new).and_return(mock_connection)
-    allow(model).to receive(:connection).and_return(mock_connection)
+    allow(model).to receive(:connection).and_return(test_connection)
   end
 
   describe "initialization" do
@@ -26,23 +32,14 @@ RSpec.describe Raif::EmbeddingModels::OpenAi, type: :model do
       let(:embedding_vector) { Array.new(model.default_output_vector_size) { rand(-1.0..1.0) } }
       let(:response_body) { { "data" => [{ "embedding" => embedding_vector }] } }
 
-      before do
-        allow(mock_response).to receive(:success?).and_return(true)
-        allow(mock_response).to receive(:body).and_return(response_body)
-        allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
-      end
-
-      let(:mock_request) { double("Request") }
-      before do
-        allow(mock_request).to receive(:body=)
-      end
-
       it "makes a request to the OpenAI API with the correct parameters" do
-        expect(mock_connection).to receive(:post).with("embeddings")
-        expect(mock_request).to receive(:body=).with({
-          model: "text-embedding-3-small",
-          input: input
-        })
+        stubs.post("embeddings") do |env|
+          expect(JSON.parse(env.body)).to eq({
+            "model" => "text-embedding-3-small",
+            "input" => input
+          })
+          [200, { "Content-Type" => "application/json" }, response_body]
+        end
 
         result = model.generate_embedding!(input)
         expect(result).to eq(embedding_vector)
@@ -51,15 +48,20 @@ RSpec.describe Raif::EmbeddingModels::OpenAi, type: :model do
       context "with dimensions parameter" do
         let(:dimensions) { 256 }
 
-        it "includes the dimensions parameter in the request" do
-          expect(mock_connection).to receive(:post).with("embeddings")
-          expect(mock_request).to receive(:body=).with({
-            model: "text-embedding-3-small",
-            input: input,
-            dimensions: dimensions
-          })
+        before do
+          stubs.post("embeddings") do |env|
+            expect(JSON.parse(env.body)).to eq({
+              "model" => "text-embedding-3-small",
+              "input" => input,
+              "dimensions" => dimensions
+            })
+            [200, { "Content-Type" => "application/json" }, response_body]
+          end
+        end
 
-          model.generate_embedding!(input, dimensions: dimensions)
+        it "includes the dimensions parameter in the request" do
+          result = model.generate_embedding!(input, dimensions: dimensions)
+          expect(result).to eq(embedding_vector)
         end
       end
     end
@@ -76,23 +78,16 @@ RSpec.describe Raif::EmbeddingModels::OpenAi, type: :model do
       let(:response_body) { { "data" => [{ "embedding" => embedding_vectors[0] }, { "embedding" => embedding_vectors[1] }] } }
 
       before do
-        allow(mock_response).to receive(:success?).and_return(true)
-        allow(mock_response).to receive(:body).and_return(response_body)
-        allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
-      end
-
-      let(:mock_request) { double("Request") }
-      before do
-        allow(mock_request).to receive(:body=)
+        stubs.post("embeddings") do |env|
+          expect(JSON.parse(env.body)).to eq({
+            "model" => "text-embedding-3-small",
+            "input" => input
+          })
+          [200, { "Content-Type" => "application/json" }, response_body]
+        end
       end
 
       it "makes a request to the OpenAI API with the array input" do
-        expect(mock_connection).to receive(:post).with("embeddings")
-        expect(mock_request).to receive(:body=).with({
-          model: "text-embedding-3-small",
-          input: input
-        })
-
         result = model.generate_embedding!(input)
         expect(result).to eq(embedding_vectors)
       end
@@ -114,37 +109,66 @@ RSpec.describe Raif::EmbeddingModels::OpenAi, type: :model do
       end
     end
 
-    context "when the API returns an error" do
+    context "when the API returns a 400-level error" do
       let(:input) { "Test input" }
-      let(:error_response_body) { { "error" => { "message" => "API rate limit exceeded", "type" => "rate_limit_error" } } }
-      let(:mock_request) { double("Request") }
+      let(:error_response_body) do
+        <<~JSON
+          {
+            "error": {
+              "message": "Rate limited",
+              "type": "rate_limit_error",
+              "code": 429
+            }
+          }
+        JSON
+      end
 
       before do
-        allow(mock_response).to receive(:success?).and_return(false)
-        allow(mock_response).to receive(:status).and_return(429)
-        allow(mock_response).to receive(:body).and_return(error_response_body)
-        allow(mock_connection).to receive(:post).and_yield(mock_request).and_return(mock_response)
-        allow(mock_request).to receive(:body=)
+        stubs.post("embeddings") do |_env|
+          raise Faraday::ClientError.new(
+            "Rate limited",
+            { status: 429, body: error_response_body }
+          )
+        end
+
+        allow(Raif.config).to receive(:llm_request_max_retries).and_return(0)
       end
 
-      it "raises an ApiError with the error message" do
+      it "raises a Faraday::ClientError" do
         expect do
           model.generate_embedding!(input)
-        end.to raise_error(Raif::Errors::OpenAi::ApiError, "API rate limit exceeded")
+        end.to raise_error(Faraday::ClientError)
+      end
+    end
+
+    context "when the API returns a 500-level error" do
+      let(:input) { "Test input" }
+      let(:error_response_body) do
+        <<~JSON
+          {
+            "error": {
+              "message": "Internal server error",
+              "code": 500
+            }
+          }
+        JSON
       end
 
-      context "when error message is missing" do
-        let(:error_response_body) { {} }
-
-        before do
-          allow(mock_response).to receive(:status).and_return(500)
+      before do
+        stubs.post("embeddings") do |_env|
+          raise Faraday::ServerError.new(
+            "Internal server error",
+            { status: 500, body: error_response_body }
+          )
         end
 
-        it "raises an ApiError with the status code" do
-          expect do
-            model.generate_embedding!(input)
-          end.to raise_error(Raif::Errors::OpenAi::ApiError, "OpenAI API error: 500")
-        end
+        allow(Raif.config).to receive(:llm_request_max_retries).and_return(0)
+      end
+
+      it "raises a Faraday::ServerError" do
+        expect do
+          model.generate_embedding!(input)
+        end.to raise_error(Faraday::ServerError)
       end
     end
   end
